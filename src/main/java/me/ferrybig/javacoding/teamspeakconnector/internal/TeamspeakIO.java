@@ -73,12 +73,11 @@ public class TeamspeakIO {
 		}
 		future.addListener(upstream -> {
 			assert upstream == future;
-			if (upstream.isSuccess()) {
-				return;
-			}
-			synchronized (incomingQueue) {
-				if (incomingQueue.removeIf(prom::equals)) {
-					prom.setFailure(new TeamspeakException("Exception during sending", upstream.cause()));
+			if (!upstream.isSuccess()) {
+				synchronized (incomingQueue) {
+					if (incomingQueue.removeIf(prom::equals)) {
+						prom.setFailure(new TeamspeakException("Exception during sending", upstream.cause()));
+					}
 				}
 			}
 		});
@@ -156,8 +155,9 @@ public class TeamspeakIO {
 			closed = true;
 			PendingPacket poll;
 			TeamspeakException ex = new TeamspeakException("Channel closed");
-			if(upstream != null)
+			if (upstream != null) {
 				ex.initCause(upstream);
+			}
 			LOG.log(Level.FINE, "Marking {0} PendingPackets as closed", incomingQueue.size());
 			while ((poll = incomingQueue.poll()) != null) {
 				poll.onChannelClose(upstream);
@@ -168,7 +168,7 @@ public class TeamspeakIO {
 	public void start() {
 		this.channel.pipeline().addLast(new SimpleChannelInboundHandler<ComplexResponse>() {
 			private Throwable lastException = null;
-			
+
 			@Override
 			protected void messageReceived(ChannelHandlerContext ctx, ComplexResponse msg) throws Exception {
 				recievePacket(msg);
@@ -196,7 +196,7 @@ public class TeamspeakIO {
 			prom = incomingQueue.remove();
 		}
 		prom.onResponseReceived(r);
-		
+
 	}
 
 	public <T> Future<T> getCompletedFuture(T object) {
