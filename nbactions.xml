@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+        <action>
+            <actionName>CUSTOM-findbugs</actionName>
+            <displayName>findbugs</displayName>
+            <goals>
+                <goal>findbugs:findbugs</goal>
+            </goals>
+        </action>
+    </actions>
