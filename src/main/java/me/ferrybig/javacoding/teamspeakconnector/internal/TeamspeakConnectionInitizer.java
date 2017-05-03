@@ -5,6 +5,8 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.internal;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -34,6 +36,11 @@ public class TeamspeakConnectionInitizer extends ChannelInitializer<SocketChanne
 	private static final StringEncoder ENCODER = new StringEncoder();
 	private static final PacketDecoder PACKET_DECODER = new PacketDecoder();
 	private static final PacketEncoder PACKET_ENCODER = new PacketEncoder();
+	private static final ByteBuf[] LINES = new ByteBuf[] {
+                Unpooled.wrappedBuffer(new byte[] { '\r', '\n' }), // I hate you teamspeak, Why do you use this format??
+                Unpooled.wrappedBuffer(new byte[] { '\n', '\r' }),
+                Unpooled.wrappedBuffer(new byte[] { '\n' }),
+        };
 	private final Promise<TeamspeakConnection> prom;
 	private final int timeout;
 
@@ -45,17 +52,17 @@ public class TeamspeakConnectionInitizer extends ChannelInitializer<SocketChanne
 	@Override
 	protected void initChannel(SocketChannel ch) throws Exception {
 		ChannelPipeline pipeline = ch.pipeline();
-		pipeline.addLast(new DelimiterBasedFrameDecoder(Short.MAX_VALUE, Delimiters.lineDelimiter()));
+		pipeline.addLast(new DelimiterBasedFrameDecoder(Short.MAX_VALUE, LINES));
 		pipeline.addLast(DECODER);
 		pipeline.addLast(ENCODER);
 		pipeline.addLast(new ReadTimeoutHandler(timeout));
 		pipeline.addLast(new HandshakeListener(prom));
 		
-		pipeline.addLast(new LoggingHandler(LogLevel.INFO));
-		
 		pipeline.addLast(PACKET_DECODER);
 		pipeline.addLast(new ComplexPacketDecoder());
 		pipeline.addLast(PACKET_ENCODER);
+		
+		pipeline.addLast(new LoggingHandler(LogLevel.INFO));
 		
 		pipeline.addLast(new PacketRateLimitingHandler());
 	}

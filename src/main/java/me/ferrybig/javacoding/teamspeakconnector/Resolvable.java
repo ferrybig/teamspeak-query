@@ -9,16 +9,13 @@ import io.netty.util.concurrent.Future;
 
 /**
  *
- * @author Fernando
+ * @author Fernando van Loenhout <mailmehere@ferrybig.me>
+ * @param <T>
  */
-public class UnresolvedUser {
-
-	public UnresolvedUser(TeamspeakConnection con, int id) {
-		throw new UnsupportedOperationException("Not supported yet."); //TODO
-	}
-
-	public Future<User> resolv() {
-		throw new UnsupportedOperationException("Not supported yet."); //TODO
-	}
+public interface Resolvable<T> {
+	public Future<T> resolve();
 	
+	public Future<T> forcrResolve();
+	
+	public boolean isResolved();
 }

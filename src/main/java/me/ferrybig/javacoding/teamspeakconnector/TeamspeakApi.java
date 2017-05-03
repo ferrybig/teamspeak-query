@@ -16,6 +16,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.Promise;
 import java.net.SocketAddress;
+import me.ferrybig.javacoding.teamspeakconnector.util.FutureUtil;
 
 /**
  *
@@ -38,6 +39,10 @@ public class TeamspeakApi {
 			}
 		});
 		return prom;
+	}
+	
+	public Future<TeamspeakConnection> connect(SocketAddress addr, String username, String password) {
+		return FutureUtil.chainFutureFlat(this.group.next().newPromise(), connect(addr), con -> con.login(username, password));
 	}
 
 	private ChannelFuture openChannel(SocketAddress addr, ChannelInitializer<? extends SocketChannel> ch, int timneout) {

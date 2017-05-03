@@ -7,11 +7,12 @@ package me.ferrybig.javacoding.teamspeakconnector;
 
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
 import java.net.InetSocketAddress;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -24,17 +25,15 @@ public class TeamspeakConnectionIT {
 
 	@Test
 	public void testSomeMethod() throws InterruptedException, ExecutionException {
+		Logger.getLogger(TeamspeakConnection.class.getName()).setLevel(Level.ALL);
 		NioEventLoopGroup group = new NioEventLoopGroup();
 		try {
 			System.out.println("Creating!");
 			TeamspeakApi api = new TeamspeakApi(group);
-			Future<TeamspeakConnection> connect = api.connect(new InetSocketAddress("127.0.0.1", 10011));
+			Future<TeamspeakConnection> connect = api.connect(new InetSocketAddress("127.0.0.1", 10011), "serveradmin", "test1234");
 			
 			System.out.println("Connected!");
 			TeamspeakConnection con = connect.sync().get();
-			
-			System.out.println("Logging in!");
-			con.login("serveradmin", "test1234").sync().get();
 			
 			System.out.println("Selecting server!");
 			con.getUnresolvedServerById(1).select().sync().get();
@@ -59,10 +58,15 @@ public class TeamspeakConnectionIT {
 			System.out.println(con.getServer().sync().get());
 			
 			System.out.println("Channel create!");
-			System.out.println(con.getChannelList().sync().get());
+			List<Channel> channels = con.getChannelList().sync().get();
+			for(Channel channel : channels) {
+				channel.sendMessage("Channel detected: " + channel);
+			}
 			
 			System.out.println("Closing...!");
 			con.quit().sync().get();
+			
+			
 			
 		} finally {
 			group.shutdownGracefully();

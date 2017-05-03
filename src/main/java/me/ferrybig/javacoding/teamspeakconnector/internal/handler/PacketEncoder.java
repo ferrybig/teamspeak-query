@@ -9,6 +9,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -20,9 +21,9 @@ import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequest
  */
 public class PacketEncoder extends MessageToMessageEncoder<ComplexRequest> {
 
-	private static final ByteBuf SPACE = Unpooled.wrappedBuffer(" ".getBytes());
-	private static final ByteBuf EQUALS = Unpooled.wrappedBuffer("=".getBytes());
-	private static final ByteBuf LINEFEED = Unpooled.wrappedBuffer("\n".getBytes());
+	private static final ByteBuf SPACE = Unpooled.wrappedBuffer(" ".getBytes(StandardCharsets.UTF_8));
+	private static final ByteBuf EQUALS = Unpooled.wrappedBuffer("=".getBytes(StandardCharsets.UTF_8));
+	private static final ByteBuf LINEFEED = Unpooled.wrappedBuffer("\n".getBytes(StandardCharsets.UTF_8));
 
 	String encodeTeamspeakCode(String input) {
 
@@ -30,7 +31,7 @@ public class PacketEncoder extends MessageToMessageEncoder<ComplexRequest> {
 		char[] output = Arrays.copyOf(chars, chars.length + 16);
 		int writeIndex = 0;
 		for (int readIndex = 0; readIndex < chars.length; readIndex++) {
-			char encoded = 0;
+			char encoded;
 			switch (chars[readIndex]) {
 				case '\\':
 					encoded = '\\';
@@ -65,6 +66,8 @@ public class PacketEncoder extends MessageToMessageEncoder<ComplexRequest> {
 				case '\u000b':
 					encoded = 'v';
 					break;
+				default:
+					encoded = 0;
 			}
 			if (output.length < writeIndex + 1) {
 				output = Arrays.copyOf(output, output.length + 16);

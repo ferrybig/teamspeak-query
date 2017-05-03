@@ -7,6 +7,7 @@ package me.ferrybig.javacoding.teamspeakconnector.internal.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import java.util.HashMap;
 import java.util.List;
@@ -61,6 +62,9 @@ public class PacketDecoder extends MessageToMessageDecoder<String> {
 					case 'v':
 						chars[i] = '\u000b';
 						break;
+					default: 
+						throw new DecoderException("Unable to decode pattern \\" + 
+								chars[i + ahead + 1] + " in the following text: " + input);
 				}
 
 				ahead++;

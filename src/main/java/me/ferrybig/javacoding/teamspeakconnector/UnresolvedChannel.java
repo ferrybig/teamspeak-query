@@ -5,8 +5,9 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector;
 
-import io.netty.channel.Channel;
 import io.netty.util.concurrent.Future;
+import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequest;
+import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequestBuilder;
 
 /**
  *
@@ -14,7 +15,7 @@ import io.netty.util.concurrent.Future;
  */
 public class UnresolvedChannel {
 
-	private final TeamspeakConnection con;
+	protected final TeamspeakConnection con;
 
 	private final int id;
 
@@ -26,11 +27,11 @@ public class UnresolvedChannel {
 	public Future<Channel> resolv() {
 		return forceResolv();
 	}
-	
+
 	public Future<Channel> forceResolv() {
 		return con.getChannelById(id);
 	}
-	
+
 	public int getId() {
 		return id;
 	}
@@ -39,7 +40,14 @@ public class UnresolvedChannel {
 	public String toString() {
 		return "UnresolvedChannel{" + "id=" + id + '}';
 	}
-	
-	
-	
+
+	public Future<?> sendMessage(String message) {
+		return this.con.io().sendPacket(
+				new ComplexRequestBuilder("sendtextmessage")
+						.addData("targetmode", "2")
+						.addData("target", String.valueOf(getId()))
+						.addData("msg", message)
+						.build());
+	}
+
 }

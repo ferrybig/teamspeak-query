@@ -5,6 +5,8 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector;
 
+import io.netty.util.concurrent.Future;
+
 /**
  *
  * @author Fernando
@@ -29,9 +31,9 @@ public class Channel extends UnresolvedChannel {
 	private final int codec;
 	private final int codecQuality;
 
-	public Channel(TeamspeakConnection con, int cid, int order, 
-			UnresolvedChannel parent, String name, String topic, 
-			boolean password, int neededSubscribePower, int neededTalkPower, 
+	public Channel(TeamspeakConnection con, int cid, int order,
+			UnresolvedChannel parent, String name, String topic,
+			boolean password, int neededSubscribePower, int neededTalkPower,
 			boolean defaultChannel, boolean permanent, int iconId,
 			int totalClientsFamily, int maxFamilyClients, int maxClients,
 			int totalClients, boolean semiPermanent, int codec,
@@ -54,7 +56,7 @@ public class Channel extends UnresolvedChannel {
 		this.semiPermanent = semiPermanent;
 		this.codec = codec;
 		this.codecQuality = codecQuality;
-		
+
 	}
 
 	public int getOrder() {
@@ -130,10 +132,13 @@ public class Channel extends UnresolvedChannel {
 	}
 
 	@Override
+	public Future<Channel> resolv() {
+		return con.io().getChannel().eventLoop().newSucceededFuture(this);
+	}
+
+	@Override
 	public String toString() {
 		return "Channel{" + "id=" + getId() + ", order=" + order + ", parent=" + parent + ", name=" + name + ", topic=" + topic + ", password=" + password + ", neededSubscribePower=" + neededSubscribePower + ", neededTalkPower=" + neededTalkPower + ", defaultChannel=" + defaultChannel + ", permanent=" + permanent + ", iconId=" + iconId + ", totalClientsFamily=" + totalClientsFamily + ", maxFamilyClients=" + maxFamilyClients + ", maxClients=" + maxClients + ", totalClients=" + totalClients + ", semiPermanent=" + semiPermanent + ", codec=" + codec + ", codecQuality=" + codecQuality + '}';
 	}
-	
-	
 
 }

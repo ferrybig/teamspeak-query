@@ -7,6 +7,7 @@ package me.ferrybig.javacoding.teamspeakconnector.internal.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.DecoderException;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.util.concurrent.Promise;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakApi;
@@ -20,8 +21,9 @@ import me.ferrybig.javacoding.teamspeakconnector.internal.TeamspeakIO;
  */
 public class HandshakeListener extends SimpleChannelInboundHandler<String> {
 
-	private static final String TS_HEADER = "TS3";
-	private String motd;
+	private static final String TS_HEADER_1 = "TS3";
+	private static final String TS_HEADER_2 = 
+			"Welcome to the TeamSpeak 3 ServerQuery interface, type \"help\" for a list of commands and \"help <command>\" for information on a specific command.";
 	private boolean headerReceived = false;
 	private final Promise<TeamspeakConnection> prom;
 
@@ -46,12 +48,12 @@ public class HandshakeListener extends SimpleChannelInboundHandler<String> {
 		ctx.close();
 	}
 	
-	
-	
 	@Override
 	protected void messageReceived(ChannelHandlerContext ctx, String msg) throws Exception {
 		if(headerReceived) {
-			motd = msg;
+			if(!TS_HEADER_2.equals(msg)) {
+				throw new DecoderException("Line 2 of magic header mismatch, expected: " + TS_HEADER_2 + "; got:" + msg);
+			}
 			ctx.pipeline().remove(ReadTimeoutHandler.class);
 			TeamspeakConnection con = new TeamspeakConnection(new TeamspeakIO(ctx.channel()));
 			con.start();
@@ -59,10 +61,10 @@ public class HandshakeListener extends SimpleChannelInboundHandler<String> {
 			ctx.pipeline().remove(this);
 		} else {
 			headerReceived = true;
-			if(TS_HEADER.equals(msg)) {
+			if(TS_HEADER_1.equals(msg)) {
 				return;
 			}
-			ctx.close();
+			throw new DecoderException("Line 1 of magic header mismatch, expected: " + TS_HEADER_1 + "; got:" + msg);
 		}
 	}
 	

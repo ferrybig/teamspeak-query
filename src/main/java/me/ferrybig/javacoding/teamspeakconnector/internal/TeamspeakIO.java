@@ -27,6 +27,7 @@ import me.ferrybig.javacoding.teamspeakconnector.internal.handler.PacketDecoder;
 import me.ferrybig.javacoding.teamspeakconnector.internal.handler.PacketEncoder;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequest;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexResponse;
+import me.ferrybig.javacoding.teamspeakconnector.util.FutureUtil;
 
 /**
  * Internal object to the teamspeak connection, contains potentially usafe
@@ -95,59 +96,8 @@ public class TeamspeakIO {
 		return prom;
 	}
 
-	private <T, R> Future<R> delegateFutureResult(Future<T> future, Promise<R> prom, Function<T, R> map) {
-		future.addListener(ignored -> {
-			assert ignored == future;
-			try {
-				if (future.isSuccess()) {
-					prom.setSuccess(map.apply(future.getNow()));
-				} else {
-					prom.setFailure(future.cause());
-				}
-			} catch (Throwable e) {
-				prom.setFailure(e);
-			}
-		});
-		return prom;
-	}
-
 	public <T, R> Future<R> chainFuture(Future<T> future, Function<T, R> mapping) {
-		if (future.isDone()) {
-			if (future.isSuccess()) {
-				return channel.eventLoop().newSucceededFuture(mapping.apply(future.getNow()));
-			} else {
-				return channel.eventLoop().newFailedFuture(future.cause());
-			}
-		}
-		return delegateFutureResult(future, channel.eventLoop().newPromise(), mapping);
-	}
-
-	public <T, R> Future<R> chainFutureFlat(Future<T> future, Function<T, Future<R>> mapping) {
-		return chainFutureFlat(future, mapping, Function.identity());
-	}
-
-	public <T, I, R> Future<R> chainFutureFlat(Future<T> future, Function<T, Future<I>> mapping, Function<I, R> secondary) {
-		if (future.isDone()) {
-			if (future.isSuccess()) {
-				return chainFuture(mapping.apply(future.getNow()), secondary);
-			} else {
-				return channel.eventLoop().newFailedFuture(future.cause());
-			}
-		}
-		Promise<R> result = channel.eventLoop().newPromise();
-		future.addListener(ignored -> {
-			assert ignored == future;
-			try {
-				if (future.isSuccess()) {
-					delegateFutureResult(mapping.apply(future.getNow()), result, secondary);
-				} else {
-					result.setFailure(future.cause());
-				}
-			} catch (Throwable e) {
-				result.setFailure(e);
-			}
-		});
-		return result;
+		return FutureUtil.chainFuture(this.channel.eventLoop().newPromise(), future, mapping);
 	}
 
 	private void channeClosed(Throwable upstream) {
@@ -205,6 +155,10 @@ public class TeamspeakIO {
 
 	public Channel getChannel() {
 		return channel;
+	}
+	
+	public enum SendPriority {
+		
 	}
 
 }
