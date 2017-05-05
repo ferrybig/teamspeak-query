@@ -27,6 +27,10 @@ public class Response {
 	public String getCmd() {
 		return cmd;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "Response{" + "options=" + options + ", cmd=" + cmd + '}';
+	}
 	
 }

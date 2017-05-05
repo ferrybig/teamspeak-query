@@ -57,10 +57,14 @@ public class TeamspeakConnectionIT {
 			System.out.println("Queue make!");
 			System.out.println(con.getServer().sync().get());
 			
-			System.out.println("Channel create!");
-			List<Channel> channels = con.getChannelList().sync().get();
-			for(Channel channel : channels) {
-				channel.sendMessage("Channel detected: " + channel);
+			
+			System.out.println("Username seting....");
+			con.setOwnName("TestingBot").sync().get();
+			
+			System.out.println("User list!");
+			List<User> users = con.getUsersList().sync().get();
+			for(User user : users) {
+				user.poke("Hello: " + user.getNickname() + ", Your ip address: " + user.getIp());
 			}
 			
 			System.out.println("Closing...!");

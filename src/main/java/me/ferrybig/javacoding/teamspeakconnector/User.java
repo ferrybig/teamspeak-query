@@ -5,6 +5,7 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector;
 
+import io.netty.util.concurrent.Future;
 import java.net.InetAddress;
 import java.util.List;
 
@@ -301,4 +302,21 @@ public class User extends UnresolvedUser {
 	public boolean hasIp() {
 		return ip != null;
 	}
+
+	@Override
+	public boolean isResolved() {
+		return true;
+	}
+
+	@Override
+	public Future<User> resolve() {
+		return this.con.io().getCompletedFuture(this);
+	}
+
+	@Override
+	public String toString() {
+		return "User{" + "id=" + getId() + ",channel=" + channel + ", databaseId=" + databaseId + ", nickname=" + nickname + ", type=" + type + ", awayMessage=" + awayMessage + ", talking=" + talking + ", inputMuted=" + inputMuted + ", outputMuted=" + outputMuted + ", inputHardware=" + inputHardware + ", outputHardware=" + outputHardware + ", talkPower=" + talkPower + ", talker=" + talker + ", prioritySpeaker=" + prioritySpeaker + ", recording=" + recording + ", channelCommander=" + channelCommander + ", uniqueIdentifier=" + uniqueIdentifier + ", serverGroup=" + serverGroup + ", channelGroup=" + channelGroup + ", channelGroupInherited=" + channelGroupInherited + ", version=" + version + ", platform=" + platform + ", idleTime=" + idleTime + ", created=" + created + ", lastConnected=" + lastConnected + ", iconId=" + iconId + ", country=" + country + ", ip=" + ip + '}';
+	}
+	
+	
 }

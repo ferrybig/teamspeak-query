@@ -11,11 +11,10 @@ import io.netty.util.concurrent.Future;
  *
  * @author Fernando
  */
-public class Channel extends UnresolvedChannel {
+public class Channel extends NamedChannel {
 
 	private final int order;
 	private UnresolvedChannel parent;
-	private final String name;
 	private final String topic;
 	private final boolean password;
 	private final int neededSubscribePower;
@@ -38,10 +37,9 @@ public class Channel extends UnresolvedChannel {
 			int totalClientsFamily, int maxFamilyClients, int maxClients,
 			int totalClients, boolean semiPermanent, int codec,
 			int codecQuality) {
-		super(con, cid);
+		super(con, cid, name);
 		this.order = order;
 		this.parent = parent;
-		this.name = name;
 		this.topic = topic;
 		this.password = password;
 		this.neededSubscribePower = neededSubscribePower;
@@ -65,10 +63,6 @@ public class Channel extends UnresolvedChannel {
 
 	public UnresolvedChannel getParent() {
 		return parent;
-	}
-
-	public String getName() {
-		return name;
 	}
 
 	public String getTopic() {
@@ -127,8 +121,8 @@ public class Channel extends UnresolvedChannel {
 		return codecQuality;
 	}
 
-	void setParent(UnresolvedChannel parent) {
-		this.parent = parent;
+	public void setParent(UnresolvedChannel parent) {
+		this.parent = parent; // TODO: make package private
 	}
 
 	@Override
@@ -138,7 +132,7 @@ public class Channel extends UnresolvedChannel {
 
 	@Override
 	public String toString() {
-		return "Channel{" + "id=" + getId() + ", order=" + order + ", parent=" + parent + ", name=" + name + ", topic=" + topic + ", password=" + password + ", neededSubscribePower=" + neededSubscribePower + ", neededTalkPower=" + neededTalkPower + ", defaultChannel=" + defaultChannel + ", permanent=" + permanent + ", iconId=" + iconId + ", totalClientsFamily=" + totalClientsFamily + ", maxFamilyClients=" + maxFamilyClients + ", maxClients=" + maxClients + ", totalClients=" + totalClients + ", semiPermanent=" + semiPermanent + ", codec=" + codec + ", codecQuality=" + codecQuality + '}';
+		return "Channel{" + "id=" + getId() + ", order=" + order + ", parent=" + parent + ", name=" + getName() + ", topic=" + topic + ", password=" + password + ", neededSubscribePower=" + neededSubscribePower + ", neededTalkPower=" + neededTalkPower + ", defaultChannel=" + defaultChannel + ", permanent=" + permanent + ", iconId=" + iconId + ", totalClientsFamily=" + totalClientsFamily + ", maxFamilyClients=" + maxFamilyClients + ", maxClients=" + maxClients + ", totalClients=" + totalClients + ", semiPermanent=" + semiPermanent + ", codec=" + codec + ", codecQuality=" + codecQuality + '}';
 	}
 
 }

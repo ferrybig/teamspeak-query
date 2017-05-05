@@ -17,12 +17,12 @@ import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRespons
 public class PendingPacket {
 	private final Promise<ComplexResponse> promise;
 	private final ComplexRequest request;
-	private final boolean closeRequested;
+	private final SendBehaviour sendBehaviour;
 
-	public PendingPacket(Promise<ComplexResponse> promise, ComplexRequest request, boolean closeRequested) {
+	public PendingPacket(Promise<ComplexResponse> promise, ComplexRequest request, SendBehaviour sendBehaviour) {
 		this.promise = promise;
 		this.request = request;
-		this.closeRequested = closeRequested;
+		this.sendBehaviour = sendBehaviour;
 	}
 	
 	public void onResponseReceived(ComplexResponse response) {
@@ -40,7 +40,7 @@ public class PendingPacket {
 	}
 	
 	public void onChannelClose(Throwable lastException) {
-		if(closeRequested) {
+		if(sendBehaviour != SendBehaviour.NORMAL) {
 			promise.setSuccess(null);
 		} else {
 			TeamspeakException ex;

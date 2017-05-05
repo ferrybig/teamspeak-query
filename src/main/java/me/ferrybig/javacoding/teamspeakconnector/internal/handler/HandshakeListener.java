@@ -57,7 +57,9 @@ public class HandshakeListener extends SimpleChannelInboundHandler<String> {
 			ctx.pipeline().remove(ReadTimeoutHandler.class);
 			TeamspeakConnection con = new TeamspeakConnection(new TeamspeakIO(ctx.channel()));
 			con.start();
-			prom.setSuccess(con);
+			if(!prom.trySuccess(con)) {
+				ctx.channel().close();
+			}
 			ctx.pipeline().remove(this);
 		} else {
 			headerReceived = true;

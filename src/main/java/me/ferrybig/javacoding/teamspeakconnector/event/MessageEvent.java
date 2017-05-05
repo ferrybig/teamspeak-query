@@ -9,7 +9,7 @@ package me.ferrybig.javacoding.teamspeakconnector.event;
  *
  * @author Fernando van Loenhout <mailmehere@ferrybig.me>
  */
-public class MessageEvent {
+public abstract class MessageEvent {
 
 	/**
 	 * The received message

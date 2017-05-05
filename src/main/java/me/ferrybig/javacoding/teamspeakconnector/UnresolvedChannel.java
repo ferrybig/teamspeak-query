@@ -6,6 +6,7 @@
 package me.ferrybig.javacoding.teamspeakconnector;
 
 import io.netty.util.concurrent.Future;
+import java.util.List;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequest;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequestBuilder;
 
@@ -40,14 +41,15 @@ public class UnresolvedChannel {
 	public String toString() {
 		return "UnresolvedChannel{" + "id=" + id + '}';
 	}
-
-	public Future<?> sendMessage(String message) {
-		return this.con.io().sendPacket(
-				new ComplexRequestBuilder("sendtextmessage")
-						.addData("targetmode", "2")
-						.addData("target", String.valueOf(getId()))
-						.addData("msg", message)
-						.build());
+	
+	public Future<List<File>> getFileTransferList() {
+		return getFileTransferList("/");
+	}
+	
+	public Future<List<File>> getFileTransferList(String path) {
+		return con.io().mapComplexReponseList(con.io().sendPacket(
+				new ComplexRequestBuilder("ftgetfilelist").addData("cid", getId()).addData("path", path).build()),
+				con.io()::mapFile);
 	}
 
 }

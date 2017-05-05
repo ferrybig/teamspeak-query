@@ -5,10 +5,16 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.event;
 
+import io.netty.util.concurrent.Future;
+
 /**
  *
  * @author Fernando van Loenhout <mailmehere@ferrybig.me>
  */
-public interface PrivateTextListener {
-	public void onPrivateMessage(PrivateMessageEvent event);
+public interface Handler<L> {
+
+	Future<?> addHandler(L handler);
+
+	Future<?> removeHandler(L handler);
+	
 }

@@ -33,6 +33,10 @@ public class UnresolvedFile {
 	public String getName() {
 		return name;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "UnresolvedFile{" + "connection=" + connection + ", channel=" + channel + ", name=" + name + '}';
+	}
 	
 }

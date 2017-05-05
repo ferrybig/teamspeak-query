@@ -42,7 +42,14 @@ public class TeamspeakApi {
 	}
 	
 	public Future<TeamspeakConnection> connect(SocketAddress addr, String username, String password) {
-		return FutureUtil.chainFutureFlat(this.group.next().newPromise(), connect(addr), con -> con.login(username, password));
+		final Future<TeamspeakConnection> connectFuture = connect(addr);
+		final Future<TeamspeakConnection> result = FutureUtil.chainFutureFlat(this.group.next().newPromise(), connectFuture, con -> con.login(username, password));
+		result.addListener(f -> {
+			if(!f.isSuccess()) {
+				
+			}
+		});
+		return result;
 	}
 
 	private ChannelFuture openChannel(SocketAddress addr, ChannelInitializer<? extends SocketChannel> ch, int timneout) {

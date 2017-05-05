@@ -13,9 +13,11 @@ import io.netty.util.concurrent.Future;
  * @param <T>
  */
 public interface Resolvable<T> {
-	public Future<T> resolve();
+	public default Future<T> resolve() {
+		return this.forceResolve();
+	}
 	
-	public Future<T> forcrResolve();
+	public Future<T> forceResolve();
 	
 	public boolean isResolved();
 }

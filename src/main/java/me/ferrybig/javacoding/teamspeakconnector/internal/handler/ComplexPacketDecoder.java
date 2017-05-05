@@ -28,11 +28,12 @@ public class ComplexPacketDecoder extends MessageToMessageDecoder<Response> {
 			queue.add(msg.getOptions());
 			return;
 		}
-		if (msg.getCmd().equals("notifytextmessage")) {
+		if (!msg.getCmd().equals("error")) {
 			out.add(msg);
+		} else {
+			out.add(new ComplexResponse(new ArrayList<>(queue), Integer.parseInt(msg.getOptions().get("id")), msg.getOptions().get("msg"), msg.getOptions().get("extra_msg")));
+			queue.clear();
 		}
-		out.add(new ComplexResponse(new ArrayList<>(queue), Integer.parseInt(msg.getOptions().get("id")), msg.getOptions().get("msg"), msg.getOptions().get("extra_msg")));
-		queue.clear();
 	}
 
 }

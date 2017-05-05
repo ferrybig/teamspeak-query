@@ -11,6 +11,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
+import me.ferrybig.javacoding.teamspeakconnector.event.Handler;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequest;
 
 /**
@@ -18,7 +19,7 @@ import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequest
  * @author Fernando van Loenhout <mailmehere@ferrybig.me>
  * @param <L>
  */
-public class SubscriptionHandler<L> {
+public class SubscriptionHandler<L> implements Handler<L> {
 
 	private final ComplexRequest subscribe;
 	private final ComplexRequest unsubscribe;
@@ -47,6 +48,7 @@ public class SubscriptionHandler<L> {
 		}
 	}
 
+	@Override
 	public Future<?> addHandler(L handler) {
 		Future<?> f;
 		synchronized (this) {
@@ -69,6 +71,7 @@ public class SubscriptionHandler<L> {
 
 	}
 
+	@Override
 	public Future<?> removeHandler(L handler) {
 		synchronized (this) {
 			if (!listeners.remove(handler)) {

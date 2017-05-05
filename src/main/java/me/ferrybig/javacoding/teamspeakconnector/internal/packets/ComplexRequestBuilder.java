@@ -30,6 +30,10 @@ public class ComplexRequestBuilder {
 		return this;
 	}
 	
+	public ComplexRequestBuilder addData(String key, Object value) {
+		return this.addData(key, String.valueOf(value));
+	}
+	
 	public ComplexRequestBuilder addData(String key, String value) {
 		if(data.isEmpty()) {
 			data = new LinkedHashMap<>();
