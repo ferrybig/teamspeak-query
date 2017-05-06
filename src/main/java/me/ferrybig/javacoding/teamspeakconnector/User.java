@@ -29,14 +29,13 @@ import java.util.List;
 
 public class User extends ShallowUser {
 
-	private final boolean talking;
-	private final String version;
-	private final String platform;
-	private final int idleTime;
-	private final long created;
-	private final long lastConnected;
-	private final InetAddress ip;
-	private final int databaseId;
+	protected final boolean talking;
+	protected final String version;
+	protected final String platform;
+	protected final int idleTime;
+	protected final long created;
+	protected final long lastConnected;
+	protected final InetAddress ip;
 
 	public User(TeamspeakConnection con, int id, UnresolvedChannel channel, int databaseId, String nickname,
 			ClientType type, String awayMessage,
@@ -52,7 +51,6 @@ public class User extends ShallowUser {
 		this.created = created;
 		this.lastConnected = lastConnected;
 		this.ip = ip;
-		this.databaseId = databaseId;
 	}
 
 	@Override

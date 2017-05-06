@@ -153,5 +153,9 @@ public class ShallowUser extends NamedUser {
 		return country;
 	}
 
-	//TODO: tostring
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + "{" + "id=" + getId() + ",uniqueid=" + uniqueid + ", nickname=" + nickname + ", databaseId=" + databaseId + ", channel=" + channel + ", channelGroupInherited=" + channelGroupInherited + ", type=" + type + ", awayMessage=" + awayMessage + ", inputMuted=" + inputMuted + ", outputMuted=" + outputMuted + ", inputHardware=" + inputHardware + ", outputHardware=" + outputHardware + ", talkPower=" + talkPower + ", talker=" + talker + ", prioritySpeaker=" + prioritySpeaker + ", recording=" + recording + ", channelCommander=" + channelCommander + ", serverGroup=" + serverGroup + ", channelGroup=" + channelGroup + ", iconId=" + iconId + ", country=" + country + '}';
+	}
+
 }

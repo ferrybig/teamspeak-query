@@ -29,8 +29,8 @@ package me.ferrybig.javacoding.teamspeakconnector;
  */
 public class NamedUser extends UnresolvedUser {
 
-	private final String uniqueid;
-	private final String nickname;
+	protected final String uniqueid;
+	protected final String nickname;
 
 	public NamedUser(TeamspeakConnection con, int id, String uniqueid, String nickname) {
 		super(con, id);
@@ -46,5 +46,9 @@ public class NamedUser extends UnresolvedUser {
 		return nickname;
 	}
 
-	//todo: tostring
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + "{" + "id=" + getId() + ", uniqueid=" + uniqueid + ", nickname=" + nickname + '}';
+	}
+
 }
