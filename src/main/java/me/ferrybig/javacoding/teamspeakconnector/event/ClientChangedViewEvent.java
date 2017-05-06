@@ -31,7 +31,7 @@ public class ClientChangedViewEvent extends ClientEnterViewEvent {
 
 	private final UnresolvedChannel from;
 
-	public ClientChangedViewEvent(ShallowUser client, UnresolvedChannel from, UnresolvedChannel to, ClientChannelChangeReason reason, String message, NamedUser invoker) {
+	public ClientChangedViewEvent(ShallowUser client, UnresolvedChannel from, UnresolvedChannel to, ChangeReason reason, String message, NamedUser invoker) {
 		super(client, to, reason, invoker);
 		this.from = from;
 	}

@@ -27,7 +27,7 @@ package me.ferrybig.javacoding.teamspeakconnector.event;
  *
  * @author Fernando van Loenhout
  */
-public enum ClientChannelChangeReason {
+public enum ChangeReason {
 	INDEPENDENT(0, true, true),
 	USER_CHANNEL_CHANGE(1, false, true),
 	TIMEOUT(3, true, true),
@@ -42,7 +42,7 @@ public enum ClientChannelChangeReason {
 	private final boolean serverEvent;
 	private final boolean channelEvent;
 
-	private ClientChannelChangeReason(int id, boolean serverEvent, boolean channelEvent) {
+	private ChangeReason(int id, boolean serverEvent, boolean channelEvent) {
 		this.id = id;
 		this.serverEvent = serverEvent;
 		this.channelEvent = channelEvent;
@@ -59,20 +59,20 @@ public enum ClientChannelChangeReason {
 	public boolean isChannelEvent() {
 		return channelEvent;
 	}
-	private static final ClientChannelChangeReason[] reasons;
+	private static final ChangeReason[] reasons;
 
 	static {
-		reasons = new ClientChannelChangeReason[16];
-		for (ClientChannelChangeReason reason : ClientChannelChangeReason.values()) {
+		reasons = new ChangeReason[16];
+		for (ChangeReason reason : ChangeReason.values()) {
 			reasons[reason.getId()] = reason;
 		}
 	}
 
-	public static ClientChannelChangeReason getById(int id) {
+	public static ChangeReason getById(int id) {
 		if (id > reasons.length) {
 			throw new IllegalArgumentException("Invalid reason id: " + id);
 		}
-		ClientChannelChangeReason r = reasons[id];
+		ChangeReason r = reasons[id];
 		if (r == null) {
 			throw new IllegalArgumentException("Invalid reason id: " + id);
 		}

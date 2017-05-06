@@ -24,24 +24,23 @@
 package me.ferrybig.javacoding.teamspeakconnector.event;
 
 import me.ferrybig.javacoding.teamspeakconnector.NamedUser;
-import me.ferrybig.javacoding.teamspeakconnector.Server;
 
 public class ServerEditEvent extends InvokedEvent {
 
-	private final Server server;
+	private final ChangeReason reason;
 
-	public ServerEditEvent(Server server, NamedUser invoker) {
+	public ServerEditEvent(ChangeReason reason, NamedUser invoker) {
 		super(invoker);
-		this.server = server;
+		this.reason = reason;
 	}
 
-	public Server getServer() {
-		return server;
+	public ChangeReason getReason() {
+		return reason;
 	}
 
 	@Override
 	public String toString() {
-		return "ServerEditEvent{" + "newData=" + server + ", invoker=" + getInvoker() + '}';
+		return "ServerEditEvent{" + "reason=" + reason + ", invoker=" + getInvoker() + '}';
 	}
 
 }

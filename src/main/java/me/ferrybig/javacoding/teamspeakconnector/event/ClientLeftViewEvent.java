@@ -29,13 +29,13 @@ import me.ferrybig.javacoding.teamspeakconnector.UnresolvedUser;
 public class ClientLeftViewEvent extends ClientEvent {
 
 	private final UnresolvedChannel from;
-	private final ClientChannelChangeReason reason;
+	private final ChangeReason reason;
 	private final String message;
 	private final UnresolvedUser invoker;
 	private final String invokerName;
 	private final String invokerUid;
 
-	public ClientLeftViewEvent(UnresolvedUser client, UnresolvedChannel from, ClientChannelChangeReason reason, String message, UnresolvedUser invoker, String invokerName, String invokerUid) {
+	public ClientLeftViewEvent(UnresolvedUser client, UnresolvedChannel from, ChangeReason reason, String message, UnresolvedUser invoker, String invokerName, String invokerUid) {
 		super(client);
 		this.from = from;
 		this.reason = reason;
@@ -45,7 +45,7 @@ public class ClientLeftViewEvent extends ClientEvent {
 		this.invokerUid = invokerUid;
 	}
 
-	public ClientChannelChangeReason getReason() {
+	public ChangeReason getReason() {
 		return reason;
 	}
 

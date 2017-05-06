@@ -30,10 +30,10 @@ import me.ferrybig.javacoding.teamspeakconnector.ShallowUser;
 public class ClientEnterViewEvent extends ClientResolvedEvent {
 
 	private final UnresolvedChannel to;
-	private final ClientChannelChangeReason reason;
+	private final ChangeReason reason;
 	private final NamedUser invoker;
 
-	public ClientEnterViewEvent(ShallowUser client, UnresolvedChannel to, ClientChannelChangeReason reason, NamedUser invoker) {
+	public ClientEnterViewEvent(ShallowUser client, UnresolvedChannel to, ChangeReason reason, NamedUser invoker) {
 		super(client);
 		this.to = to;
 		this.reason = reason;
@@ -44,7 +44,7 @@ public class ClientEnterViewEvent extends ClientResolvedEvent {
 		return to;
 	}
 
-	public ClientChannelChangeReason getReason() {
+	public ChangeReason getReason() {
 		return reason;
 	}
 

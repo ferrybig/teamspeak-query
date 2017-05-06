@@ -35,11 +35,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import me.ferrybig.javacoding.teamspeakconnector.event.ChannelMessageEvent;
 import me.ferrybig.javacoding.teamspeakconnector.event.ChannelMessageListener;
-import me.ferrybig.javacoding.teamspeakconnector.event.ClientChannelChangeReason;
+import me.ferrybig.javacoding.teamspeakconnector.event.ChangeReason;
 import me.ferrybig.javacoding.teamspeakconnector.event.ClientEnterViewEvent;
 import me.ferrybig.javacoding.teamspeakconnector.event.Handler;
 import me.ferrybig.javacoding.teamspeakconnector.event.PrivateMessageEvent;
 import me.ferrybig.javacoding.teamspeakconnector.event.PrivateMessageListener;
+import me.ferrybig.javacoding.teamspeakconnector.event.ServerEditEvent;
 import me.ferrybig.javacoding.teamspeakconnector.event.ServerListener;
 import me.ferrybig.javacoding.teamspeakconnector.event.ServerMessageEvent;
 import me.ferrybig.javacoding.teamspeakconnector.event.ServerMessageListener;
@@ -113,7 +114,7 @@ public class TeamspeakConnection implements Closeable {
 						options.put("cid", options.get("ctid"));
 						ShallowUser client = io.mapShallowUser(options);
 						UnresolvedChannel from = "0".equals(options.get("cfid")) ? null : getUnresolvedChannelById(parseInt(options.get("cfid")));
-						ClientChannelChangeReason reason = ClientChannelChangeReason.getById(parseInt(options.get("reasonid")));
+						ChangeReason reason = ChangeReason.getById(parseInt(options.get("reasonid")));
 						ClientEnterViewEvent event;
 						if (true && from == null) {
 							event = new ClientEnterViewEvent(client, client.getChannel(), reason, null);
@@ -125,7 +126,16 @@ public class TeamspeakConnection implements Closeable {
 					}
 					break;
 					case "notifyclientleftview": {
-
+						// TODO: leave notification
+					}
+					break;
+					case "notifyserveredited": {
+						final int invokerId = Integer.parseInt(options.get("invokerid"));
+						final String invokerName = options.get("invokername");
+						final String invokeruid = options.get("invokeruid");
+						serverHandler.callAll(ServerListener::onEditServer, new ServerEditEvent(
+								ChangeReason.getById(parseInt(options.get("reasonid"))), 
+								getUnresolvedNamedUser(invokerId, invokerName, invokeruid)));
 					}
 					break;
 					default: {
