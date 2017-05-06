@@ -24,39 +24,24 @@
 package me.ferrybig.javacoding.teamspeakconnector.event;
 
 import me.ferrybig.javacoding.teamspeakconnector.NamedUser;
+import me.ferrybig.javacoding.teamspeakconnector.Server;
 
-public abstract class MessageEvent extends InvokedEvent {
+public class ServerEditEvent extends InvokedEvent {
 
-	/**
-	 * The received message
-	 */
-	private final String message;
-	/**
-	 * Target of the message
-	 */
-	private final TargetMode targetMode;
+	private final Server server;
 
-	public MessageEvent(String message, TargetMode targetMode, NamedUser invoker) {
+	public ServerEditEvent(Server server, NamedUser invoker) {
 		super(invoker);
-		this.message = message;
-		this.targetMode = targetMode;
+		this.server = server;
 	}
 
-	public String getMessage() {
-		return message;
-	}
-
-	public TargetMode getTargetMode() {
-		return targetMode;
+	public Server getServer() {
+		return server;
 	}
 
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + "{" + "message=" + message + ", targetMode=" + targetMode + ", invoker=" + getInvoker() + '}';
+		return "ServerEditEvent{" + "newData=" + server + ", invoker=" + getInvoker() + '}';
 	}
 
-	public enum TargetMode {
-
-		SERVER, CHANNEL, PRIVATE
-	}
 }

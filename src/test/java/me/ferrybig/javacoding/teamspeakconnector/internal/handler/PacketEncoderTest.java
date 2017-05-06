@@ -7,11 +7,10 @@ package me.ferrybig.javacoding.teamspeakconnector.internal.handler;
 
 import org.junit.Assert;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
- * @author Fernando van Loenhout <mailmehere@ferrybig.me>
+
  */
 public class PacketEncoderTest {
 

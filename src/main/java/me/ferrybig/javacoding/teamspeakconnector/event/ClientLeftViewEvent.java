@@ -23,40 +23,55 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.event;
 
-import me.ferrybig.javacoding.teamspeakconnector.NamedUser;
+import me.ferrybig.javacoding.teamspeakconnector.UnresolvedChannel;
+import me.ferrybig.javacoding.teamspeakconnector.UnresolvedUser;
 
-public abstract class MessageEvent extends InvokedEvent {
+public class ClientLeftViewEvent extends ClientEvent {
 
-	/**
-	 * The received message
-	 */
+	private final UnresolvedChannel from;
+	private final ClientChannelChangeReason reason;
 	private final String message;
-	/**
-	 * Target of the message
-	 */
-	private final TargetMode targetMode;
+	private final UnresolvedUser invoker;
+	private final String invokerName;
+	private final String invokerUid;
 
-	public MessageEvent(String message, TargetMode targetMode, NamedUser invoker) {
-		super(invoker);
+	public ClientLeftViewEvent(UnresolvedUser client, UnresolvedChannel from, ClientChannelChangeReason reason, String message, UnresolvedUser invoker, String invokerName, String invokerUid) {
+		super(client);
+		this.from = from;
+		this.reason = reason;
 		this.message = message;
-		this.targetMode = targetMode;
+		this.invoker = invoker;
+		this.invokerName = invokerName;
+		this.invokerUid = invokerUid;
+	}
+
+	public ClientChannelChangeReason getReason() {
+		return reason;
+	}
+
+	public UnresolvedUser getInvoker() {
+		return invoker;
+	}
+
+	public String getInvokerName() {
+		return invokerName;
+	}
+
+	public String getInvokerUid() {
+		return invokerUid;
+	}
+
+	@Override
+	public String toString() {
+		return "ClientLeftViewEvent{" + "client=" + getClient() + ",channel=" + from + ", reason=" + reason + ", message=" + message + ", invoker=" + invoker + ", invokerName=" + invokerName + ", invokerUid=" + invokerUid + '}';
+	}
+
+	public UnresolvedChannel getFrom() {
+		return from;
 	}
 
 	public String getMessage() {
 		return message;
 	}
 
-	public TargetMode getTargetMode() {
-		return targetMode;
-	}
-
-	@Override
-	public String toString() {
-		return this.getClass().getSimpleName() + "{" + "message=" + message + ", targetMode=" + targetMode + ", invoker=" + getInvoker() + '}';
-	}
-
-	public enum TargetMode {
-
-		SERVER, CHANNEL, PRIVATE
-	}
 }

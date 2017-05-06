@@ -1,4 +1,4 @@
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Fernando van Loenhout.
@@ -21,42 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package me.ferrybig.javacoding.teamspeakconnector.event;
+package me.ferrybig.javacoding.teamspeakconnector;
 
-import me.ferrybig.javacoding.teamspeakconnector.NamedUser;
+/**
+ *
+ * @author Fernando van Loenhout
+ */
+public class NamedUser extends UnresolvedUser {
 
-public abstract class MessageEvent extends InvokedEvent {
+	private final String uniqueid;
+	private final String nickname;
 
-	/**
-	 * The received message
-	 */
-	private final String message;
-	/**
-	 * Target of the message
-	 */
-	private final TargetMode targetMode;
-
-	public MessageEvent(String message, TargetMode targetMode, NamedUser invoker) {
-		super(invoker);
-		this.message = message;
-		this.targetMode = targetMode;
+	public NamedUser(TeamspeakConnection con, int id, String uniqueid, String nickname) {
+		super(con, id);
+		this.uniqueid = uniqueid;
+		this.nickname = nickname;
 	}
 
-	public String getMessage() {
-		return message;
+	public String getUniqueId() {
+		return uniqueid;
 	}
 
-	public TargetMode getTargetMode() {
-		return targetMode;
+	public String getNickname() {
+		return nickname;
 	}
 
-	@Override
-	public String toString() {
-		return this.getClass().getSimpleName() + "{" + "message=" + message + ", targetMode=" + targetMode + ", invoker=" + getInvoker() + '}';
-	}
-
-	public enum TargetMode {
-
-		SERVER, CHANNEL, PRIVATE
-	}
+	//todo: tostring
 }

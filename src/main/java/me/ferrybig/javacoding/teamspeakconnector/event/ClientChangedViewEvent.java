@@ -24,39 +24,20 @@
 package me.ferrybig.javacoding.teamspeakconnector.event;
 
 import me.ferrybig.javacoding.teamspeakconnector.NamedUser;
+import me.ferrybig.javacoding.teamspeakconnector.UnresolvedChannel;
+import me.ferrybig.javacoding.teamspeakconnector.ShallowUser;
 
-public abstract class MessageEvent extends InvokedEvent {
+public class ClientChangedViewEvent extends ClientEnterViewEvent {
 
-	/**
-	 * The received message
-	 */
-	private final String message;
-	/**
-	 * Target of the message
-	 */
-	private final TargetMode targetMode;
+	private final UnresolvedChannel from;
 
-	public MessageEvent(String message, TargetMode targetMode, NamedUser invoker) {
-		super(invoker);
-		this.message = message;
-		this.targetMode = targetMode;
+	public ClientChangedViewEvent(ShallowUser client, UnresolvedChannel from, UnresolvedChannel to, ClientChannelChangeReason reason, String message, NamedUser invoker) {
+		super(client, to, reason, invoker);
+		this.from = from;
 	}
 
-	public String getMessage() {
-		return message;
+	public UnresolvedChannel getFrom() {
+		return from;
 	}
 
-	public TargetMode getTargetMode() {
-		return targetMode;
-	}
-
-	@Override
-	public String toString() {
-		return this.getClass().getSimpleName() + "{" + "message=" + message + ", targetMode=" + targetMode + ", invoker=" + getInvoker() + '}';
-	}
-
-	public enum TargetMode {
-
-		SERVER, CHANNEL, PRIVATE
-	}
 }
