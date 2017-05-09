@@ -42,7 +42,7 @@ public class PacketRateLimitingHandler extends ChannelTrafficShapingHandler {
 	private void adjustRateLimits(ChannelHandlerContext ctx) {
 		InetSocketAddress addr = (InetSocketAddress) ctx.channel().remoteAddress();
 		if (!addr.getAddress().isLinkLocalAddress()) {
-			this.setPacketsPerSeconds(10d / 3);
+			this.setPacketsPerSeconds(10d / 4);
 		} else {
 			this.setPacketsPerSeconds(0);
 		}
