@@ -73,6 +73,7 @@ public class TeamspeakApi {
 		bootstrap.handler(ch);
 		bootstrap.group(group);
 		bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000);
+		bootstrap.option(ChannelOption.TCP_NODELAY, true); // We send relatively small packets, we benefit more from delayed ack
 		return bootstrap.connect();
 	}
 
