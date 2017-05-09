@@ -44,6 +44,8 @@ import me.ferrybig.javacoding.teamspeakconnector.event.ServerEditEvent;
 import me.ferrybig.javacoding.teamspeakconnector.event.ServerListener;
 import me.ferrybig.javacoding.teamspeakconnector.event.ServerMessageEvent;
 import me.ferrybig.javacoding.teamspeakconnector.event.ServerMessageListener;
+import me.ferrybig.javacoding.teamspeakconnector.event.TokenListener;
+import me.ferrybig.javacoding.teamspeakconnector.event.TokenUsedEvent;
 import me.ferrybig.javacoding.teamspeakconnector.internal.SendBehaviour;
 import me.ferrybig.javacoding.teamspeakconnector.internal.SubscriptionHandler;
 import me.ferrybig.javacoding.teamspeakconnector.internal.TeamspeakIO;
@@ -66,6 +68,9 @@ public class TeamspeakConnection implements Closeable {
 	private final SubscriptionHandler<ServerListener> serverHandler = new SubscriptionHandler<>(this,
 			new ComplexRequestBuilder("servernotifyregister").addData("event", "server").build(),
 			new ComplexRequestBuilder("servernotifyunregister").addData("event", "server").build());
+	private final SubscriptionHandler<TokenListener> tokenUsedHandler = new SubscriptionHandler<>(this,
+			new ComplexRequestBuilder("servernotifyregister").addData("event", "tokenused").build(),
+			new ComplexRequestBuilder("servernotifyunregister").addData("event", "tokenused").build());
 
 	public TeamspeakConnection(TeamspeakIO channel) {
 		this.io = channel;
@@ -136,6 +141,19 @@ public class TeamspeakConnection implements Closeable {
 						serverHandler.callAll(ServerListener::onEditServer, new ServerEditEvent(
 								ChangeReason.getById(parseInt(options.get("reasonid"))), 
 								getUnresolvedNamedUser(invokerId, invokerName, invokeruid)));
+					}
+					break;
+					case "notifytokenused": {
+						// clid=5 cldbid=4 cluid=zhPQ0oNLH8boM42jlbgTWC6G\\/64= token=4oquHhp03YKofI4dYVBLWZ9Ik+Mf0M6ogomh5RsU tokencustomset token1=7 token2=0
+						final UnresolvedUser client = getUnresolvedUserById(parseInt(options.get("clid")));
+						final int databaseId = parseInt(options.get("cldbid"));
+						final String uniqueId = options.get("cluid");
+						final String token = options.get("token");
+						final String tokencustomset = options.get("tokencustomset");
+						final String token1 = options.get("token1");
+						final String token2 = options.get("token2");
+						tokenUsedHandler.callAll(TokenListener::onTokenUsed, new TokenUsedEvent(
+								client, databaseId, uniqueId, token, tokencustomset, token1, token2));
 					}
 					break;
 					default: {
