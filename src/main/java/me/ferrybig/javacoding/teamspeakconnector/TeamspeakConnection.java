@@ -1,4 +1,4 @@
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Fernando van Loenhout.
@@ -54,8 +54,8 @@ import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Response;
 
 public class TeamspeakConnection implements Closeable {
 
-	private final TeamspeakIO io;
 	private static final Logger LOG = Logger.getLogger(TeamspeakConnection.class.getName());
+	private final TeamspeakIO io;
 	private final SubscriptionHandler<ServerMessageListener> serverMessageHandler = new SubscriptionHandler<>(this,
 			new ComplexRequestBuilder("servernotifyregister").addData("event", "textserver").build(),
 			new ComplexRequestBuilder("servernotifyunregister").addData("event", "textserver").build());
@@ -139,7 +139,7 @@ public class TeamspeakConnection implements Closeable {
 						final String invokerName = options.get("invokername");
 						final String invokeruid = options.get("invokeruid");
 						serverHandler.callAll(ServerListener::onEditServer, new ServerEditEvent(
-								ChangeReason.getById(parseInt(options.get("reasonid"))), 
+								ChangeReason.getById(parseInt(options.get("reasonid"))),
 								getUnresolvedNamedUser(invokerId, invokerName, invokeruid)));
 					}
 					break;
@@ -201,6 +201,9 @@ public class TeamspeakConnection implements Closeable {
 								invoker));
 			}
 			break;
+			default: {
+				assert false: "Target mode " + options.get("targetmode") + " invalid";
+			}
 		}
 
 	}
@@ -234,7 +237,7 @@ public class TeamspeakConnection implements Closeable {
 	}
 
 	public Future<UnresolvedFile> getUnresolvedFileByChannelAndName(UnresolvedChannel channel, String name) {
-		throw new UnsupportedOperationException(); // TODO; 
+		throw new UnsupportedOperationException(); // TODO;
 	}
 
 	public Future<File> getFileByChannelAndName(UnresolvedChannel channel, String name) {

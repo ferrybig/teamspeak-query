@@ -27,6 +27,7 @@ import java.util.Objects;
 import me.ferrybig.javacoding.teamspeakconnector.UnresolvedUser;
 
 public class TokenUsedEvent {
+
 	private final UnresolvedUser client;
 	private final int databaseId;
 	private final String uniqueId;
@@ -126,6 +127,5 @@ public class TokenUsedEvent {
 		}
 		return true;
 	}
-	
-	
+
 }

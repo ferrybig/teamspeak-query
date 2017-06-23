@@ -1,4 +1,4 @@
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Fernando van Loenhout.
@@ -292,7 +292,7 @@ public class TeamspeakIO {
 				data.get("client_country"),
 				tryConvertAddress(data.get("connection_client_ip")));
 	}
-	
+
 	public ShallowUser mapShallowUser(Map<String, String> data) {
 		return new ShallowUser(con,
 				Integer.parseInt(data.get("clid")),
@@ -341,7 +341,7 @@ public class TeamspeakIO {
 				Collections.emptyList(),
 				con.getUnresolvedChannelById(Integer.parseInt(data.get("client_channel_id"))),
 				"", // TODO program version
-				"", // TODO program platform 
+				"", // TODO program platform
 				0,
 				0,
 				0,

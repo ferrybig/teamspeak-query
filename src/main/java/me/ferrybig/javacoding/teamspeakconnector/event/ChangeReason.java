@@ -38,6 +38,15 @@ public enum ChangeReason {
 	SERER_CHANNEL_CHANGE(10, false, true),
 	SERVER_SHUTDOWN(11, true, true);
 
+	private static final ChangeReason[] reasons;
+
+	static {
+		reasons = new ChangeReason[16];
+		for (ChangeReason reason : ChangeReason.values()) {
+			reasons[reason.getId()] = reason;
+		}
+	}
+
 	private final int id;
 	private final boolean serverEvent;
 	private final boolean channelEvent;
@@ -58,14 +67,6 @@ public enum ChangeReason {
 
 	public boolean isChannelEvent() {
 		return channelEvent;
-	}
-	private static final ChangeReason[] reasons;
-
-	static {
-		reasons = new ChangeReason[16];
-		for (ChangeReason reason : ChangeReason.values()) {
-			reasons[reason.getId()] = reason;
-		}
 	}
 
 	public static ChangeReason getById(int id) {

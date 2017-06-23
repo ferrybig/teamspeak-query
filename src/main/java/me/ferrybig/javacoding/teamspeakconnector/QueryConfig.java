@@ -1,4 +1,4 @@
-/* 
+/*
  * The MIT License
  *
  * Copyright 2017 Fernando van Loenhout.
@@ -23,38 +23,38 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector;
 
-import io.netty.util.concurrent.Future;
-import java.net.SocketAddress;
-import java.util.List;
-import java.util.Objects;
+//import io.netty.util.concurrent.Future;
+//import java.net.SocketAddress;
+//import java.util.List;
+//import java.util.Objects;
 
 public class QueryConfig {
-
-	private String username;
-	private String password;
-	private List<SocketAddress> addresses;
-	private int virtualServerId;
-	private int virtualServerPort;
-	private String localName;
-
-	public QueryConfig login(String username, String password) {
-		this.username = Objects.requireNonNull(username, "username");
-		this.password = Objects.requireNonNull(password, "password");
-		return this;
-	}
-
-	public QueryConfig noLogin() {
-		this.username = null;
-		this.password = null;
-		return this;
-	}
-
-	public Future<TeamspeakConnection> connect(List<SocketAddress> endpoints) {
-		return null; //todo implement connect
-	}
-
-	private Future<TeamspeakConnection> decorateConnection(Future<TeamspeakConnection> connection) {
-		return null; //todo implement decorating of the future
-	}
+//
+//	private String username;
+//	private String password;
+//	private List<SocketAddress> addresses;
+//	private int virtualServerId;
+//	private int virtualServerPort;
+//	private String localName;
+//
+//	public QueryConfig login(String username, String password) {
+//		this.username = Objects.requireNonNull(username, "username");
+//		this.password = Objects.requireNonNull(password, "password");
+//		return this;
+//	}
+//
+//	public QueryConfig noLogin() {
+//		this.username = null;
+//		this.password = null;
+//		return this;
+//	}
+//
+//	public Future<TeamspeakConnection> connect(List<SocketAddress> endpoints) {
+//		return null; //todo implement connect
+//	}
+//
+//	private Future<TeamspeakConnection> decorateConnection(Future<TeamspeakConnection> connection) {
+//		return null; //todo implement decorating of the future
+//	}
 
 }
