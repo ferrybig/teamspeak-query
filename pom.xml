@@ -152,13 +152,22 @@
 						<fileSet>
 							<directory>${project.build.directory}</directory>
 							<includes>
-								<include>${project.artifactId}*-sources.zip</include>
-								<include>${project.artifactId}*-javadoc.zip</include>
+								<include>${project.artifactId}*.jar</include>
+								<include>${project.artifactId}*-sources.jar</include>
+								<include>${project.artifactId}*-javadoc.jar</include>
 							</includes>
 						</fileSet>
 					</fileSets>
 				</configuration>
 			</plugin>
+			<plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.5.3</version>
+        <configuration>
+          <preparationGoals>clean verify de.jutzig:github-release-plugin:release</preparationGoals>
+        </configuration>
+      </plugin>
 		</plugins>
 	</build>
 </project>
