@@ -36,6 +36,12 @@
 		<developerConnection>scm:git:git@github.com:ferrybig/teamspeak-query.git</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
+	<distributionManagement>
+		<repository>
+			<id>ferrybig-repository</id>
+			<url>scpexe://maven@dev.ferrybig.me/repository</url>
+		</repository>
+	</distributionManagement>
 	<build>
 		<extensions>
 			<extension>
@@ -141,7 +147,7 @@
 				<configuration>
 					<description>Description of your release</description>
 					<releaseName>Version ${project.version}</releaseName>
-					<tag>${project.version}</tag>
+					<tag>${project.artifactId}-${project.version}</tag>
 					<fileSets>
 						<fileSet>
 							<directory>${project.build.directory}</directory>
