@@ -25,6 +25,7 @@ package me.ferrybig.javacoding.teamspeakconnector.util;
 
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.Promise;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class FutureUtil {
@@ -54,15 +55,15 @@ public class FutureUtil {
 	}
 
 	public static <T, R> Future<R> chainFutureFlat(Promise<R> result, Future<T> future, Function<T, Future<R>> mapping) {
-		return chainFutureFlat(result, future, mapping, Function.identity());
+		return chainFutureFlat(result, future, mapping, (t, i) -> i);
 	}
 
-	public static <T, I, R> Future<R> chainFutureFlat(Promise<R> result, Future<T> future, Function<T, Future<I>> mapping, Function<I, R> secondary) {
+	public static <T, I, R> Future<R> chainFutureFlat(Promise<R> result, Future<T> future, Function<T, Future<I>> mapping, BiFunction<T, I, R> secondary) {
 		future.addListener(ignored -> {
 			assert ignored == future;
 			try {
 				if (future.isSuccess()) {
-					delegateFutureResult(mapping.apply(future.getNow()), result, secondary);
+					delegateFutureResult(mapping.apply(future.getNow()), result, i -> secondary.apply(future.getNow(), i));
 				} else {
 					result.setFailure(future.cause());
 				}
