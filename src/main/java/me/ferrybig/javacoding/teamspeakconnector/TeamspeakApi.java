@@ -36,14 +36,32 @@ import java.net.SocketAddress;
 import me.ferrybig.javacoding.teamspeakconnector.internal.TeamspeakConnectionInitizer;
 import me.ferrybig.javacoding.teamspeakconnector.util.FutureUtil;
 
+/**
+ *
+ * @deprecated Use TeamspeakBootstrap instead
+ */
+@Deprecated
 public class TeamspeakApi {
 
 	private final EventLoopGroup group;
 
+	/**
+	 *
+	 * @param group
+	 * @deprecated Use TeamspeakBootstrap instead
+	 */
+	@Deprecated
 	public TeamspeakApi(EventLoopGroup group) {
 		this.group = group;
 	}
 
+	/**
+	 *
+	 * @param addr
+	 * @return
+	 * @deprecated Use TeamspeakBootstrap instead
+	 */
+	@Deprecated
 	public Future<TeamspeakConnection> connect(SocketAddress addr) {
 		Promise<TeamspeakConnection> prom = this.group.next().newPromise();
 		ChannelFuture channel = openChannel(addr, new TeamspeakConnectionInitizer(prom, 20000), 20000);
@@ -55,6 +73,15 @@ public class TeamspeakApi {
 		return prom;
 	}
 
+	/**
+	 *
+	 * @param addr
+	 * @param username
+	 * @param password
+	 * @return
+	 * @deprecated Use TeamspeakBootstrap instead
+	 */
+	@Deprecated
 	public Future<TeamspeakConnection> connect(SocketAddress addr, String username, String password) {
 		final Future<TeamspeakConnection> connectFuture = connect(addr);
 		final Future<TeamspeakConnection> result = FutureUtil.chainFutureFlat(this.group.next().newPromise(), connectFuture, con -> con.login(username, password));
@@ -66,6 +93,15 @@ public class TeamspeakApi {
 		return result;
 	}
 
+	/**
+	 *
+	 * @param addr
+	 * @param ch
+	 * @param timneout
+	 * @return
+	 * @deprecated Use TeamspeakBootstrap instead
+	 */
+	@Deprecated
 	private ChannelFuture openChannel(SocketAddress addr, ChannelInitializer<? extends SocketChannel> ch, int timneout) {
 		Bootstrap bootstrap = new Bootstrap();
 		bootstrap.channel(NioSocketChannel.class);
