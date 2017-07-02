@@ -23,18 +23,9 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector;
 
-import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.Promise;
 import java.net.SocketAddress;
-import me.ferrybig.javacoding.teamspeakconnector.internal.TeamspeakConnectionInitizer;
-import me.ferrybig.javacoding.teamspeakconnector.util.FutureUtil;
 
 /**
  *
@@ -63,14 +54,7 @@ public class TeamspeakApi {
 	 */
 	@Deprecated
 	public Future<TeamspeakConnection> connect(SocketAddress addr) {
-		Promise<TeamspeakConnection> prom = this.group.next().newPromise();
-		ChannelFuture channel = openChannel(addr, new TeamspeakConnectionInitizer(prom, 20000), 20000);
-		channel.addListener(future -> {
-			if (!channel.isSuccess()) {
-				prom.setFailure(new TeamspeakException("Connection failed", channel.cause()));
-			}
-		});
-		return prom;
+		return new TeamspeakBootstrap(group).connect(addr);
 	}
 
 	/**
@@ -83,34 +67,7 @@ public class TeamspeakApi {
 	 */
 	@Deprecated
 	public Future<TeamspeakConnection> connect(SocketAddress addr, String username, String password) {
-		final Future<TeamspeakConnection> connectFuture = connect(addr);
-		final Future<TeamspeakConnection> result = FutureUtil.chainFutureFlat(this.group.next().newPromise(), connectFuture, con -> con.login(username, password));
-		result.addListener(f -> {
-			if (!f.isSuccess()) {
-
-			}
-		});
-		return result;
-	}
-
-	/**
-	 *
-	 * @param addr
-	 * @param ch
-	 * @param timneout
-	 * @return
-	 * @deprecated Use TeamspeakBootstrap instead
-	 */
-	@Deprecated
-	private ChannelFuture openChannel(SocketAddress addr, ChannelInitializer<? extends SocketChannel> ch, int timneout) {
-		Bootstrap bootstrap = new Bootstrap();
-		bootstrap.channel(NioSocketChannel.class);
-		bootstrap.remoteAddress(addr);
-		bootstrap.handler(ch);
-		bootstrap.group(group);
-		bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000);
-		bootstrap.option(ChannelOption.TCP_NODELAY, true); // We send relatively small packets, we benefit more from delayed ack
-		return bootstrap.connect();
+		return new TeamspeakBootstrap(group).login(username, password).connect(addr);
 	}
 
 }
