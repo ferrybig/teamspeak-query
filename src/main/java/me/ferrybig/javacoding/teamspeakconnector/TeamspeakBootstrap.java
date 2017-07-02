@@ -61,8 +61,21 @@ public class TeamspeakBootstrap {
 	private String password;
 	private Integer virtualServerId;
 	private Integer virtualServerPort;
-	private String localName;
+	private String clientName;
 	private EventLoopGroup group;
+
+	@SuppressWarnings("OverridableMethodCallInConstructor")
+	public TeamspeakBootstrap(EventLoopGroup group) {
+		group(group);
+	}
+
+	public String username() {
+		return this.username;
+	}
+
+	public String password() {
+		return this.password;
+	}
 
 	public TeamspeakBootstrap login(String username, String password) {
 		this.username = Objects.requireNonNull(username, "username");
@@ -73,6 +86,53 @@ public class TeamspeakBootstrap {
 	public TeamspeakBootstrap noLogin() {
 		this.username = null;
 		this.password = null;
+		return this;
+	}
+
+	public Integer selectServerID() {
+		return this.virtualServerId;
+	}
+
+	public TeamspeakBootstrap selectServerID(int serverId) {
+		this.virtualServerId = serverId;
+		return this;
+	}
+
+	public TeamspeakBootstrap noSelectServerID() {
+		this.virtualServerId = null;
+		return this;
+	}
+
+	public Integer selectServerPort() {
+		return this.virtualServerPort;
+	}
+
+	public TeamspeakBootstrap selectServerPort(int port) {
+		this.virtualServerPort = port;
+		return this;
+	}
+
+	public TeamspeakBootstrap noSelectServerPort() {
+		this.virtualServerPort = null;
+		return this;
+	}
+
+	public String clientName() {
+		return this.clientName;
+	}
+
+	public TeamspeakBootstrap clientName(String clientName) {
+		this.clientName = clientName;
+		return this;
+	}
+
+	public TeamspeakBootstrap noClientName() {
+		this.clientName = null;
+		return this;
+	}
+
+	public TeamspeakBootstrap group(EventLoopGroup group) {
+		this.group = Objects.requireNonNull(group, "group");
 		return this;
 	}
 
@@ -107,8 +167,11 @@ public class TeamspeakBootstrap {
 	}
 
 	public Future<TeamspeakConnection> connect(List<SocketAddress> endpoints) {
+		if (this.group == null) {
+			throw new IllegalStateException("Group is not defined");
+		}
 		final EventLoop next = this.group.next();
-		if(endpoints.isEmpty()) {
+		if (endpoints.isEmpty()) {
 			return next.newFailedFuture(new IllegalArgumentException("No addresses specified"));
 		}
 		Bootstrap bootstrap = this.generateBootstrap(group, new ChannelInitializer<SocketChannel>() {
@@ -120,14 +183,24 @@ public class TeamspeakBootstrap {
 		Future<SocketChannel> channel = happyEyeballs(bootstrap, endpoints);
 		Promise<TeamspeakConnection> connection = next.newPromise();
 		channel.addListener(f -> {
-			if(f.isSuccess()) {
+			if (f.isSuccess()) {
 				SocketChannel ch = channel.get();
 				ch.pipeline().get(PacketQueueBuffer.class).replace(new TeamspeakConnectionInitizer(connection, 20000));
 			} else {
 				connection.setFailure(new TeamspeakException("TSConnect: " + f.cause().getMessage(), f.cause()));
 			}
 		});
-		return decorateConnection(next, connection);
+		Future<TeamspeakConnection> con = decorateConnection(next, connection);
+		con.addListener(f -> {
+			if (!f.isSuccess()) {
+				if (connection.isSuccess()) {
+					connection.get().quit();
+				} else {
+					channel.get().close();
+				}
+			}
+		});
+		return con;
 	}
 
 	private Future<TeamspeakConnection> decorateConnection(EventLoop next, Future<TeamspeakConnection> connection) {
@@ -140,7 +213,7 @@ public class TeamspeakBootstrap {
 		if (virtualServerPort != null) {
 			connection = FutureUtil.chainFutureFlat(next.newPromise(), connection, con -> con.getUnresolvedServerByPort(virtualServerPort).select());
 		}
-		if (localName != null) {
+		if (clientName != null) {
 			connection = FutureUtil.chainFutureFlat(next.newPromise(), connection, con -> con.setOwnName("TestingBot"), (t, i) -> t);
 		}
 		return connection;
