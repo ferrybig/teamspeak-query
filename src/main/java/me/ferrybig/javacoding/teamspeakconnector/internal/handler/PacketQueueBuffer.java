@@ -24,19 +24,33 @@
 package me.ferrybig.javacoding.teamspeakconnector.internal.handler;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.ReferenceCountUtil;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  *
  * @author Fernando
  */
 public class PacketQueueBuffer extends ChannelHandlerAdapter {
+
 	private final List<ByteBuf> queue = new ArrayList<>(); // TODO optimalize using a single bytebuf
+	private boolean readComplete;
 	private ChannelHandlerContext ctx;
+
+	@Override
+	public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+		readComplete = true;
+	}
+
+	@Override
+	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+		queue.add((ByteBuf) msg);
+	}
 
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
@@ -54,7 +68,7 @@ public class PacketQueueBuffer extends ChannelHandlerAdapter {
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 		super.channelInactive(ctx);
 		this.ctx = ctx;
-		for(ByteBuf b : queue) {
+		for (ByteBuf b : queue) {
 			ReferenceCountUtil.release(b);
 		}
 		queue.clear();
@@ -62,11 +76,22 @@ public class PacketQueueBuffer extends ChannelHandlerAdapter {
 
 	public void replace(ChannelHandlerAdapter other) {
 		this.ctx.pipeline().addLast(other);
-		for(ByteBuf b : queue) {
+		flushBuffers();
+	}
+
+	public void replace(Consumer<? super Channel> other) {
+		other.accept(ctx.channel());
+		flushBuffers();
+	}
+
+	private void flushBuffers() {
+		for (ByteBuf b : queue) {
 			this.ctx.fireChannelRead(b);
 		}
 		queue.clear();
-		this.ctx.fireChannelReadComplete();
+		if (readComplete) {
+			this.ctx.fireChannelReadComplete();
+		}
 		this.ctx.pipeline().remove(this);
 	}
 
