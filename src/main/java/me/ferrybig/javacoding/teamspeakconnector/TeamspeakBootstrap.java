@@ -35,12 +35,14 @@ import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.Promise;
 import io.netty.util.concurrent.ScheduledFuture;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -53,8 +55,32 @@ import me.ferrybig.javacoding.teamspeakconnector.internal.TeamspeakConnectionIni
 import me.ferrybig.javacoding.teamspeakconnector.internal.handler.PacketQueueBuffer;
 import me.ferrybig.javacoding.teamspeakconnector.util.FutureUtil;
 
+/**
+ * Constructor for the Teamspeak api.
+ *
+ * Example usage:
+ * <pre>
+ * {@code
+ * TeamspeakBootstrap ts = new TeamspeakBootstrap(group);
+ * ts.login("root", "toor").selectServerID(1);
+ * ts.clientName("TSQuery");
+ * Future<TeamspeakConnection> future =
+ *     ts.connect("ts.example.com", TeamspeakBootstrap.DEFAULT_QUERY_PORT);
+ * future.addListener(f -> {
+ *     assert f == future;
+ *     if(future.isSuccess()) {
+ *         System.out.println("Connection success");
+ *     } else {
+ *         System.out.println("Connection failure");
+ *         future.cause().printStacktrace();
+ *     }
+ * });
+ * }
+ * </pre>
+ */
 public class TeamspeakBootstrap {
 
+	public static final int DEFAULT_QUERY_PORT = 10011;
 	private static final Logger LOG = Logger.getLogger(TeamspeakBootstrap.class.getName());
 
 	private String username;
@@ -69,73 +95,144 @@ public class TeamspeakBootstrap {
 		group(group);
 	}
 
+	/**
+	 * Returns the configured username, or null when no username is defined
+	 * @return the username or null
+	 */
 	public String username() {
 		return this.username;
 	}
 
+	/**
+	 * Returns the configured password, or null when no password is defined
+	 * @return the password or null
+	 */
 	public String password() {
 		return this.password;
 	}
 
+	/**
+	 * Sets the username and password
+	 * @param username Username used to login
+	 * @param password Password used to login
+	 * @return this
+	 */
 	public TeamspeakBootstrap login(String username, String password) {
 		this.username = Objects.requireNonNull(username, "username");
 		this.password = Objects.requireNonNull(password, "password");
 		return this;
 	}
 
+	/**
+	 * Removes any configured username and password login credentials
+	 * @return this
+	 */
 	public TeamspeakBootstrap noLogin() {
 		this.username = null;
 		this.password = null;
 		return this;
 	}
 
+	/**
+	 * Returns the selected server id, or null if none is selected
+	 * @return server id
+	 */
 	public Integer selectServerID() {
 		return this.virtualServerId;
 	}
 
+	/**
+	 * Configure a server id to select after connecting
+	 * @param serverId server id to connect to
+	 * @return
+	 */
 	public TeamspeakBootstrap selectServerID(int serverId) {
 		this.virtualServerId = serverId;
 		return this;
 	}
 
+	/**
+	 * Removes the selection of the server
+	 * @return this
+	 */
 	public TeamspeakBootstrap noSelectServerID() {
 		this.virtualServerId = null;
 		return this;
 	}
 
+	/**
+	 * Returns the selected server by port, or null if not defined
+	 * @return port selected server
+	 */
 	public Integer selectServerPort() {
 		return this.virtualServerPort;
 	}
 
+	/**
+	 * Select the final server by port
+	 * @param port port number of the virtual server
+	 * @return this
+	 */
 	public TeamspeakBootstrap selectServerPort(int port) {
 		this.virtualServerPort = port;
 		return this;
 	}
 
+	/**
+	 * Clears the selection of selected virtual server by port
+	 * @return this
+	 */
 	public TeamspeakBootstrap noSelectServerPort() {
 		this.virtualServerPort = null;
 		return this;
 	}
 
+	/**
+	 * Returns the selected clientname
+	 * @return the clientname
+	 */
 	public String clientName() {
 		return this.clientName;
 	}
 
+	/**
+	 * Select a clientname that will be used after connecting, if this name is
+	 * already in use, the connection fails
+	 * @param clientName
+	 * @return this
+	 */
 	public TeamspeakBootstrap clientName(String clientName) {
 		this.clientName = clientName;
 		return this;
 	}
 
+	/**
+	 * Clears the selected clientname
+	 * @return this
+	 */
 	public TeamspeakBootstrap noClientName() {
 		this.clientName = null;
 		return this;
 	}
 
+	/**
+	 * Configures the group that is used in the connection
+	 * @param group the group
+	 * @return this
+	 */
 	public TeamspeakBootstrap group(EventLoopGroup group) {
 		this.group = Objects.requireNonNull(group, "group");
 		return this;
 	}
 
+	/**
+	 * Internal method that generates the Netty bootstrap. This method can be
+	 * overriden for a custom bootstrap, it is recommended that this methods
+	 * calls the parent, and then adds more properties and options as needed.
+	 * @param group the selected group
+	 * @param init the initial ChannelHandler that should be added to the channel
+	 * @return the generated netty bootstrap.
+	 */
 	protected Bootstrap generateBootstrap(EventLoopGroup group, ChannelInitializer<SocketChannel> init) {
 		Bootstrap bootstrap = new Bootstrap();
 		bootstrap.channel(NioSocketChannel.class);
@@ -146,12 +243,26 @@ public class TeamspeakBootstrap {
 		return bootstrap;
 	}
 
+	/**
+	 * Happy eyeballs algorithm used to connect to a remote server in a
+	 * seamless way when it has multiple ip addresses.
+	 * @param bootstrap The generated bootstrap in the previous step
+	 * @param addresses addresses to connect to, the best ones first
+	 * @return a future giving the new connected socket.
+	 */
 	protected static Future<SocketChannel> happyEyeballs(
 			Bootstrap bootstrap,
 			List<SocketAddress> addresses) {
 		return new ConnectionAttempt(bootstrap.group().next().newPromise(), addresses, bootstrap.group(), bootstrap).start();
 	}
 
+	/**
+	 * Connect to a named domain name or ip address, any exceptions in the
+	 * resolving of the name are propagated back using the future.
+	 * @param endpoint domain name or ip address
+	 * @param port port used
+	 * @return the future connection
+	 */
 	public Future<TeamspeakConnection> connect(String endpoint, int port) {
 		try {
 			return connect(Arrays.stream(InetAddress.getAllByName(endpoint))
@@ -162,10 +273,20 @@ public class TeamspeakBootstrap {
 		}
 	}
 
+	/**
+	 * Connect using a single ip address and port as target
+	 * @param endpoint ip and port pair to connect to
+	 * @return the future connection
+	 */
 	public Future<TeamspeakConnection> connect(SocketAddress endpoint) {
 		return connect(Collections.singletonList(endpoint));
 	}
 
+	/**
+	 * Connect to any of the passed endpoints
+	 * @param endpoints a list of ip and port pairs
+	 * @return the future connection
+	 */
 	public Future<TeamspeakConnection> connect(List<SocketAddress> endpoints) {
 		if (this.group == null) {
 			throw new IllegalStateException("Group is not defined");
@@ -185,6 +306,7 @@ public class TeamspeakBootstrap {
 		channel.addListener(f -> {
 			if (f.isSuccess()) {
 				SocketChannel ch = channel.get();
+				LOG.log(Level.INFO, "Connecting done! {0}", ch);
 				ch.pipeline().get(PacketQueueBuffer.class).replace(new TeamspeakConnectionInitizer(connection, 20000));
 			} else {
 				connection.setFailure(new TeamspeakException("TSConnect: " + f.cause().getMessage(), f.cause()));
@@ -195,7 +317,7 @@ public class TeamspeakBootstrap {
 			if (!f.isSuccess()) {
 				if (connection.isSuccess()) {
 					connection.get().quit();
-				} else {
+				} else if(channel.isSuccess()) {
 					channel.get().close();
 				}
 			}
@@ -214,7 +336,7 @@ public class TeamspeakBootstrap {
 			connection = FutureUtil.chainFutureFlat(next.newPromise(), connection, con -> con.getUnresolvedServerByPort(virtualServerPort).select());
 		}
 		if (clientName != null) {
-			connection = FutureUtil.chainFutureFlat(next.newPromise(), connection, con -> con.setOwnName("TestingBot"), (t, i) -> t);
+			connection = FutureUtil.chainFutureFlat(next.newPromise(), connection, con -> con.setOwnName(clientName), (t, i) -> t);
 		}
 		return connection;
 	}
@@ -241,20 +363,24 @@ public class TeamspeakBootstrap {
 		}
 
 		private Throwable createException() {
-			assert !exceptions.isEmpty();
-			if (exceptions.size() == 1) {
-				return exceptions.get(0);
+			Iterator<Throwable> itr = exceptions.iterator();
+			assert itr.hasNext();
+			IOException ex = new IOException("Unable to connect");
+			ex.initCause(itr.next());
+			while(itr.hasNext()) {
+				ex.addSuppressed(itr.next());
 			}
-			return exceptions.get(0); // TODO
+			return ex;
 		}
 
 		private void newConnection() {
-			connecting.incrementAndGet();
-			int index = tried.incrementAndGet();
-			if (index > addresses.size() || result.isDone()) {
+			int index = tried.getAndIncrement();
+			if (index >= addresses.size() || result.isDone()) {
 				task.cancel(false);
 				return;
 			}
+			connecting.incrementAndGet();
+			LOG.log(Level.INFO, "Connecting to {0}", new Object[]{addresses.get(index)});
 			ChannelFuture channel = bootstrap.connect(addresses.get(index));
 			GenericFutureListener<Future<? super SocketChannel>> mainListener = (Future<? super SocketChannel> future) -> {
 				channel.cancel(true);
@@ -262,14 +388,16 @@ public class TeamspeakBootstrap {
 			GenericFutureListener<Future<Void>> subListener = ((Future<Void> future) -> {
 				result.removeListener(mainListener);
 				if (channel.isSuccess()) {
+					LOG.log(Level.INFO, "Connection finished to {0}", channel.channel().remoteAddress());
 					if (!result.trySuccess((SocketChannel) channel.channel())) {
-						LOG.log(Level.FINE, "{0}: Another channel finished the connection before we did: {1} was later than {2}", new Object[]{taskId, channel.channel(), result.get()});
+						LOG.log(Level.INFO, "{0}: Another channel finished the connection before we did: {1} was later than {2}", new Object[]{taskId, channel.channel(), result.get()});
 						channel.channel().close();
 					}
 				} else {
 					final Throwable cause = future.cause();
 					exceptions.add(cause);
 					int totalFailed = failed.incrementAndGet();
+					LOG.log(Level.INFO, "We failed {0}", new Object[]{cause});
 					if (totalFailed == addresses.size()) {
 						// All connection attemps failed, and we were the last to fail
 						result.setFailure(createException());
@@ -277,7 +405,7 @@ public class TeamspeakBootstrap {
 					}
 					int concurrentAttempts = connecting.decrementAndGet();
 					if (concurrentAttempts == 0) {
-						LOG.log(Level.FINE, "{0}: Forcing new connection attempt because no pending connections", taskId);
+						LOG.log(Level.INFO, "{0}: Forcing new connection attempt because no pending connections", taskId);
 						newConnection();
 					}
 				}
@@ -287,11 +415,10 @@ public class TeamspeakBootstrap {
 		}
 
 		public Promise<SocketChannel> start() {
-			task = group.next().schedule(this::newConnection, 50, TimeUnit.MILLISECONDS);
+			task = group.next().scheduleAtFixedRate(this::newConnection, 0, 60, TimeUnit.MILLISECONDS);
 			result.addListener(f -> {
 				task.cancel(false);
 			});
-			this.newConnection();
 			return result;
 		}
 	}
