@@ -38,8 +38,10 @@ public class TeamspeakApi {
 
 	/**
 	 *
-	 * @param group
+	 * @param group The {@code EventLoopGroup}
 	 * @deprecated Use TeamspeakBootstrap instead
+	 * @see
+	 * TeamspeakBootstrap#TeamspeakBootstrap(io.netty.channel.EventLoopGroup)
 	 */
 	@Deprecated
 	public TeamspeakApi(EventLoopGroup group) {
@@ -47,10 +49,12 @@ public class TeamspeakApi {
 	}
 
 	/**
+	 * Connects to the given endpoint
 	 *
-	 * @param addr
-	 * @return
+	 * @param addr The address to connect to
+	 * @return the final connection
 	 * @deprecated Use TeamspeakBootstrap instead
+	 * @see TeamspeakBootstrap#connect(java.net.SocketAddress)
 	 */
 	@Deprecated
 	public Future<TeamspeakConnection> connect(SocketAddress addr) {
@@ -58,12 +62,15 @@ public class TeamspeakApi {
 	}
 
 	/**
+	 * Connects, and then logins
 	 *
-	 * @param addr
-	 * @param username
-	 * @param password
-	 * @return
+	 * @param addr The address to connect to
+	 * @param username the username to use
+	 * @param password the password to use
+	 * @return the final connection
 	 * @deprecated Use TeamspeakBootstrap instead
+	 * @see TeamspeakBootstrap#login(java.lang.String, java.lang.String)
+	 * @see TeamspeakBootstrap#connect(java.net.SocketAddress)
 	 */
 	@Deprecated
 	public Future<TeamspeakConnection> connect(SocketAddress addr, String username, String password) {
