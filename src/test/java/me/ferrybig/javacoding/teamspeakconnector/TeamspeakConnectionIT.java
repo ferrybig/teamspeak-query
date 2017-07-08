@@ -30,21 +30,24 @@ public class TeamspeakConnectionIT {
 	public void testSomeMethod() throws InterruptedException, ExecutionException {
 		Logger.getGlobal().getParent().setLevel(Level.ALL);
 		Logger.getLogger(TeamspeakConnection.class.getName()).setLevel(Level.ALL);
+		Logger.getLogger(TeamspeakBootstrap.class.getName()).setLevel(Level.ALL);
 		NioEventLoopGroup group = new NioEventLoopGroup();
 		try {
 			System.out.println("Creating!");
-			TeamspeakApi api = new TeamspeakApi(group);
-			Future<TeamspeakConnection> connect = api.connect(new InetSocketAddress("127.0.0.1", 10011), "serveradmin", "test1234");
+			TeamspeakBootstrap ts = new TeamspeakBootstrap(group);
+			ts.login("serveradmin", "test1234");
+			ts.selectServerID(1);
+			ts.clientName("TestingBot");
 
-			System.out.println("Connected!");
+
+			System.out.println("Connecting...");
+			Future<TeamspeakConnection> connect = ts.connect("localhost", 10011);
 			TeamspeakConnection con = connect.sync().get();
 
-			System.out.println("Selecting server!");
-			con.getUnresolvedServerById(1).select().sync().get();
+//			System.out.println("Selecting server!");
+//			con.getUnresolvedServerById(1).select().sync().get();
 
-			System.out.println("Creating!");
-			con.getServer();
-			con.getServer();
+			System.out.println("Connected!");
 //			con.getServer();
 //			con.getServer();
 //			con.getServer();
@@ -57,12 +60,14 @@ public class TeamspeakConnectionIT {
 //			con.getServer();
 //			con.getServer();
 //			con.getServer();
-
-			System.out.println("Queue make!");
-			System.out.println(con.getServer().sync().get());
-
-			System.out.println("Username seting....");
-			con.setOwnName("TestingBot").sync().get();
+//			con.getServer();
+//			con.getServer();
+//
+//			System.out.println("Queue make!");
+//			System.out.println(con.getServer().sync().get());
+//
+//			System.out.println("Username seting....");
+//			con.setOwnName("TestingBot").sync().get();
 
 			System.out.println("User list!");
 			List<User> users = con.getUsersList().sync().get();
