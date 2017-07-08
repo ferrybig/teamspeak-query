@@ -16,6 +16,8 @@ import me.ferrybig.javacoding.teamspeakconnector.event.ClientEnterViewEvent;
 import me.ferrybig.javacoding.teamspeakconnector.event.ClientLeftViewEvent;
 import me.ferrybig.javacoding.teamspeakconnector.event.ServerEditEvent;
 import me.ferrybig.javacoding.teamspeakconnector.event.ServerListener;
+import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequest;
+import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequestBuilder;
 import org.junit.Test;
 
 /**
@@ -68,6 +70,8 @@ public class TeamspeakConnectionIT {
 //
 //			System.out.println("Username seting....");
 //			con.setOwnName("TestingBot").sync().get();
+
+			con.io().sendPacket(new ComplexRequestBuilder("servergrouplist").build());
 
 			System.out.println("User list!");
 			List<User> users = con.getUsersList().sync().get();

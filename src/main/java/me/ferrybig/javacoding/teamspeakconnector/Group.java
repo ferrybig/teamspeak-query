@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017 Fernando van Loenhout.
+ * Copyright 2017 Fernando.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,36 +23,50 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector;
 
-import io.netty.util.concurrent.Future;
+/**
+ *
+ * @author Fernando
+ */
+public class Group extends UnresolvedGroup {
 
-public class UnresolvedGroup implements Resolvable<User> {
+	private final int icon;
+	private final boolean savedb;
+	private final String name;
+	private final int memberRemovePrivilege;
+	private final int memberAddPrivilege;
+	private final int modifyPrivilege;
+	private final int namemode;
 
-	private final TeamspeakConnection con;
-
-	private final int serverGroupId;
-
-	public UnresolvedGroup(TeamspeakConnection con, int serverGroupId) {
-		this.con = con;
-		this.serverGroupId = serverGroupId;
-	}
-
-	public int getServerGroupId() {
-		return serverGroupId;
-	}
-
-	@Override
-	public String toString() {
-		return this.getClass().getSimpleName() + "{" + "con=" + con + ", serverGroupId=" + serverGroupId + '}';
-	}
-
-	@Override
-	public Future<User> forceResolve() {
-		return con.getGroupById(serverGroupId);
+	public Group(int icon, boolean savedb, String name, int memberRemovePrivilege, int memberAddPrivilege, int modifyPrivilege, int namemode, TeamspeakConnection con, int serverGroupId) {
+		super(con, serverGroupId);
+		this.icon = icon;
+		this.savedb = savedb;
+		this.name = name;
+		this.memberRemovePrivilege = memberRemovePrivilege;
+		this.memberAddPrivilege = memberAddPrivilege;
+		this.modifyPrivilege = modifyPrivilege;
+		this.namemode = namemode;
 	}
 
 	@Override
 	public boolean isResolved() {
-		return false;
+		return true;
 	}
 
+	public enum Type {
+		TEMPLATE(0), // 0: template group (used for new virtual servers)
+		REGULAR(1), // 1: regular group (used for regular clients)
+		SERVERQUERY(2); // 2: global query group (used for ServerQuery clients)
+
+		private final int id;
+
+		private Type(int id) {
+			this.id = id;
+		}
+
+		public int getId() {
+			return id;
+		}
+
+	};
 }

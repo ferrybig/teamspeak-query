@@ -346,4 +346,8 @@ public class TeamspeakConnection implements Closeable {
 		return io.sendPacket(new ComplexRequestBuilder("clientupdate").addData("client_nickname", name).build());
 	}
 
+	public Future<User> getGroupById(int serverGroupId) {
+		throw new UnsupportedOperationException("Not supported yet."); //TODO
+	}
+
 }
