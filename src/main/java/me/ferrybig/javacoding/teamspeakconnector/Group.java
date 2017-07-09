@@ -36,8 +36,9 @@ public class Group extends UnresolvedGroup {
 	private final int memberAddPrivilege;
 	private final int modifyPrivilege;
 	private final int namemode;
+	private final Type type;
 
-	public Group(int icon, boolean savedb, String name, int memberRemovePrivilege, int memberAddPrivilege, int modifyPrivilege, int namemode, TeamspeakConnection con, int serverGroupId) {
+	public Group(int icon, boolean savedb, String name, int memberRemovePrivilege, int memberAddPrivilege, int modifyPrivilege, int namemode, TeamspeakConnection con, int serverGroupId, Type type) {
 		super(con, serverGroupId);
 		this.icon = icon;
 		this.savedb = savedb;
@@ -46,11 +47,49 @@ public class Group extends UnresolvedGroup {
 		this.memberAddPrivilege = memberAddPrivilege;
 		this.modifyPrivilege = modifyPrivilege;
 		this.namemode = namemode;
+		this.type = type;
 	}
 
 	@Override
 	public boolean isResolved() {
 		return true;
+	}
+
+	public int getIcon() {
+		return icon;
+	}
+
+	public boolean isSavedb() {
+		return savedb;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public int getMemberRemovePrivilege() {
+		return memberRemovePrivilege;
+	}
+
+	public int getMemberAddPrivilege() {
+		return memberAddPrivilege;
+	}
+
+	public int getModifyPrivilege() {
+		return modifyPrivilege;
+	}
+
+	public int getNamemode() {
+		return namemode;
+	}
+
+	public Type getType() {
+		return type;
+	}
+
+	@Override
+	public String toString() {
+		return "Group{" + "serverGroupId=" + getServerGroupId() + ", icon=" + icon + ", savedb=" + savedb + ", name=" + name + ", memberRemovePrivilege=" + memberRemovePrivilege + ", memberAddPrivilege=" + memberAddPrivilege + ", modifyPrivilege=" + modifyPrivilege + ", namemode=" + namemode + ", type=" + type + '}';
 	}
 
 	public enum Type {

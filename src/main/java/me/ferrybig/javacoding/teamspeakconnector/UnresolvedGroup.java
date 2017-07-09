@@ -42,7 +42,7 @@ public class UnresolvedGroup implements Resolvable<User> {
 
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + "{" + "con=" + con + ", serverGroupId=" + serverGroupId + '}';
+		return this.getClass().getSimpleName() + "{" + "serverGroupId=" + serverGroupId + '}';
 	}
 
 	@Override
