@@ -38,7 +38,7 @@ public class Group extends UnresolvedGroup {
 	private final int namemode;
 	private final Type type;
 
-	public Group(int icon, boolean savedb, String name, int memberRemovePrivilege, int memberAddPrivilege, int modifyPrivilege, int namemode, TeamspeakConnection con, int serverGroupId, Type type) {
+	public Group(TeamspeakConnection con, int serverGroupId, int icon, boolean savedb, String name, int memberRemovePrivilege, int memberAddPrivilege, int modifyPrivilege, int namemode, Type type) {
 		super(con, serverGroupId);
 		this.icon = icon;
 		this.savedb = savedb;
@@ -93,9 +93,18 @@ public class Group extends UnresolvedGroup {
 	}
 
 	public enum Type {
-		TEMPLATE(0), // 0: template group (used for new virtual servers)
-		REGULAR(1), // 1: regular group (used for regular clients)
-		SERVERQUERY(2); // 2: global query group (used for ServerQuery clients)
+		/**
+		 * 0: template group (used for new virtual servers)
+		 */
+		TEMPLATE(0),
+		/**
+		 * 1: regular group (used for regular clients)
+		 */
+		REGULAR(1),
+		/**
+		 * 2: global query group (used for ServerQuery clients)
+		 */
+		SERVERQUERY(2);
 
 		private final int id;
 
