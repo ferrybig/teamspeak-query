@@ -24,8 +24,10 @@
 package me.ferrybig.javacoding.teamspeakconnector;
 
 /**
- *
- * @author Fernando
+ * This class represents a Teamspeak server group. A server group has a type,
+ * this type says what purpose the the group has. Most implementation should
+ * filter on the first type, as its used by normal clients.
+ * @see Type
  */
 public class Group extends UnresolvedGroup {
 
@@ -38,6 +40,19 @@ public class Group extends UnresolvedGroup {
 	private final int namemode;
 	private final Type type;
 
+	/**
+	 * Creates a new teamspeak group, should only be used by the internal api.
+	 * @param con Teamspeak connection that created this object
+	 * @param serverGroupId The id of this group
+	 * @param icon Icon id of this group, or -1 for no icon
+	 * @param savedb Is this group saved to the database
+	 * @param name Name of the group
+	 * @param memberRemovePrivilege Privilege to remove a member to this group
+	 * @param memberAddPrivilege Privilege to add a member to this group
+	 * @param modifyPrivilege Privilege to modify this group
+	 * @param namemode unknown
+	 * @param type Type of the group
+	 */
 	public Group(TeamspeakConnection con, int serverGroupId, int icon, boolean savedb, String name, int memberRemovePrivilege, int memberAddPrivilege, int modifyPrivilege, int namemode, Type type) {
 		super(con, serverGroupId);
 		this.icon = icon;

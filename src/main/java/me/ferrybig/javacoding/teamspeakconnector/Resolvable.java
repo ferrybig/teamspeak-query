@@ -25,13 +25,31 @@ package me.ferrybig.javacoding.teamspeakconnector;
 
 import io.netty.util.concurrent.Future;
 
+/**
+ * Class designed as marker for things that are resolvable
+ * @author Fernando van Loenhout
+ * @param <T>
+ */
 public interface Resolvable<T> {
 
+	/**
+	 * Tries to resolv this resolvable, this may return itself if it is already
+	 * resolved.
+	 * @return
+	 */
 	public default Future<T> resolve() {
 		return this.forceResolve();
 	}
 
+	/**
+	 * Force resolv this instance, this will always re-resolve the instance
+	 * @return
+	 */
 	public Future<T> forceResolve();
 
+	/**
+	 * Check if this instance is already resolved.
+	 * @return
+	 */
 	public boolean isResolved();
 }
