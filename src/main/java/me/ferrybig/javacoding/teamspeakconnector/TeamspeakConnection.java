@@ -33,9 +33,9 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import me.ferrybig.javacoding.teamspeakconnector.event.ChangeReason;
 import me.ferrybig.javacoding.teamspeakconnector.event.ChannelMessageEvent;
 import me.ferrybig.javacoding.teamspeakconnector.event.ChannelMessageListener;
-import me.ferrybig.javacoding.teamspeakconnector.event.ChangeReason;
 import me.ferrybig.javacoding.teamspeakconnector.event.ClientEnterViewEvent;
 import me.ferrybig.javacoding.teamspeakconnector.event.Handler;
 import me.ferrybig.javacoding.teamspeakconnector.event.PrivateMessageEvent;
@@ -346,7 +346,7 @@ public class TeamspeakConnection implements Closeable {
 		return io.sendPacket(new ComplexRequestBuilder("clientupdate").addData("client_nickname", name).build());
 	}
 
-	public Future<User> getGroupById(int serverGroupId) {
+	public Future<Group> getGroupById(int serverGroupId) {
 		throw new UnsupportedOperationException("Not supported yet."); //TODO
 	}
 

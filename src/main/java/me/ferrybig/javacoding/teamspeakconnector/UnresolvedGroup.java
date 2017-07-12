@@ -25,9 +25,9 @@ package me.ferrybig.javacoding.teamspeakconnector;
 
 import io.netty.util.concurrent.Future;
 
-public class UnresolvedGroup implements Resolvable<User> {
+public class UnresolvedGroup implements Resolvable<Group> {
 
-	private final TeamspeakConnection con;
+	protected final TeamspeakConnection con;
 
 	private final int serverGroupId;
 
@@ -46,7 +46,7 @@ public class UnresolvedGroup implements Resolvable<User> {
 	}
 
 	@Override
-	public Future<User> forceResolve() {
+	public Future<Group> forceResolve() {
 		return con.getGroupById(serverGroupId);
 	}
 

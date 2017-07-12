@@ -35,7 +35,7 @@ public interface Resolvable<T> {
 	/**
 	 * Tries to resolv this resolvable, this may return itself if it is already
 	 * resolved.
-	 * @return
+	 * @return the result of a normal resolv
 	 */
 	public default Future<T> resolve() {
 		return this.forceResolve();
@@ -43,13 +43,13 @@ public interface Resolvable<T> {
 
 	/**
 	 * Force resolv this instance, this will always re-resolve the instance
-	 * @return
+	 * @return the result of the force resolv
 	 */
 	public Future<T> forceResolve();
 
 	/**
 	 * Check if this instance is already resolved.
-	 * @return
+	 * @return if the instance is resolved
 	 */
 	public boolean isResolved();
 }

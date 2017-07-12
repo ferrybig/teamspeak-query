@@ -23,6 +23,8 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector;
 
+import io.netty.util.concurrent.Future;
+
 /**
  * This class represents a Teamspeak server group. A server group has a type,
  * this type says what purpose the the group has. Most implementation should
@@ -149,6 +151,13 @@ public class Group extends UnresolvedGroup {
 		return "Group{" + "serverGroupId=" + getServerGroupId() + ", icon=" + icon + ", savedb=" + savedb + ", name=" + name + ", memberRemovePrivilege=" + memberRemovePrivilege + ", memberAddPrivilege=" + memberAddPrivilege + ", modifyPrivilege=" + modifyPrivilege + ", namemode=" + namemode + ", type=" + type + '}';
 	}
 
+	@Override
+	public Future<Group> resolve() {
+		return con.io().getCompletedFuture(this);
+	}
+
+
+
 	/**
 	 * Type of server groups observed in Teamspeak
 	 */
@@ -176,20 +185,6 @@ public class Group extends UnresolvedGroup {
 			}
 		}
 
-		/**
-		 * Gets a type y its id
-		 *
-		 * @param id the id to look for
-		 * @return the type that matches the id
-		 * @throws IllegalArgumentException if the id isn't mapped to a type
-		 */
-		public static Type getById(int id) {
-			if(id >= MAP_LENGTH || id < 0 || map[id] == null) {
-				throw new IllegalArgumentException("No type found for id " + id);
-			}
-			return map[id];
-		}
-
 		private final int id;
 
 		private Type(int id) {
@@ -203,6 +198,20 @@ public class Group extends UnresolvedGroup {
 		 */
 		public int getId() {
 			return id;
+		}
+
+		/**
+		 * Gets a type y its id
+		 *
+		 * @param id the id to look for
+		 * @return the type that matches the id
+		 * @throws IllegalArgumentException if the id isn't mapped to a type
+		 */
+		public static Type getById(int id) {
+			if (id >= MAP_LENGTH || id < 0 || map[id] == null) {
+				throw new IllegalArgumentException("No type found for id " + id);
+			}
+			return map[id];
 		}
 
 	};
