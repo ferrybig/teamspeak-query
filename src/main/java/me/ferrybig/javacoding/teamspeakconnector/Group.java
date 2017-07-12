@@ -156,8 +156,6 @@ public class Group extends UnresolvedGroup {
 		return con.io().getCompletedFuture(this);
 	}
 
-
-
 	/**
 	 * Type of server groups observed in Teamspeak
 	 */
