@@ -190,7 +190,7 @@ public class Group extends UnresolvedGroup {
 		}
 
 		/**
-		 * Gets the internal id of the group
+		 * Gets the internal id of the type
 		 *
 		 * @return the id
 		 */
