@@ -27,6 +27,7 @@ package me.ferrybig.javacoding.teamspeakconnector;
  * This class represents a Teamspeak server group. A server group has a type,
  * this type says what purpose the the group has. Most implementation should
  * filter on the first type, as its used by normal clients.
+ *
  * @see Type
  */
 public class Group extends UnresolvedGroup {
@@ -42,6 +43,7 @@ public class Group extends UnresolvedGroup {
 
 	/**
 	 * Creates a new teamspeak group, should only be used by the internal api.
+	 *
 	 * @param con Teamspeak connection that created this object
 	 * @param serverGroupId The id of this group
 	 * @param icon Icon id of this group, or -1 for no icon
@@ -72,6 +74,7 @@ public class Group extends UnresolvedGroup {
 
 	/**
 	 * Returns the id of the icon used
+	 *
 	 * @return the id of the icon
 	 */
 	public int getIcon() {
@@ -80,6 +83,7 @@ public class Group extends UnresolvedGroup {
 
 	/**
 	 * Unknown
+	 *
 	 * @return an unknown value observed to be 0 or 1
 	 */
 	public boolean isSavedb() {
@@ -88,6 +92,7 @@ public class Group extends UnresolvedGroup {
 
 	/**
 	 * Returns the name of the group
+	 *
 	 * @return the name
 	 */
 	public String getName() {
@@ -96,6 +101,7 @@ public class Group extends UnresolvedGroup {
 
 	/**
 	 * Gets the privilege to remove a member of the group
+	 *
 	 * @return the value of privilege needed to remove members
 	 */
 	public int getMemberRemovePrivilege() {
@@ -104,6 +110,7 @@ public class Group extends UnresolvedGroup {
 
 	/**
 	 * Gets the privilege level needed to add a member to the group
+	 *
 	 * @return the value of privilege needed to add a member to the group
 	 */
 	public int getMemberAddPrivilege() {
@@ -112,6 +119,7 @@ public class Group extends UnresolvedGroup {
 
 	/**
 	 * Gets the privilege needed to modify this group
+	 *
 	 * @return the value of privilege needed to modify the group
 	 */
 	public int getModifyPrivilege() {
@@ -120,6 +128,7 @@ public class Group extends UnresolvedGroup {
 
 	/**
 	 * Unknown
+	 *
 	 * @return unknown
 	 */
 	public int getNamemode() {
@@ -128,6 +137,7 @@ public class Group extends UnresolvedGroup {
 
 	/**
 	 * Returns the type of the group
+	 *
 	 * @return the type
 	 */
 	public Type getType() {
@@ -156,6 +166,30 @@ public class Group extends UnresolvedGroup {
 		 */
 		SERVERQUERY(2);
 
+		private static final int MAP_LENGTH = 3;
+		private static final Type[] map;
+
+		static {
+			map = new Type[MAP_LENGTH];
+			for (Type type : values()) {
+				map[type.id] = type;
+			}
+		}
+
+		/**
+		 * Gets a type y its id
+		 *
+		 * @param id the id to look for
+		 * @return the type that matches the id
+		 * @throws IllegalArgumentException if the id isn't mapped to a type
+		 */
+		public static Type getById(int id) {
+			if(id >= MAP_LENGTH || id < 0 || map[id] == null) {
+				throw new IllegalArgumentException("No type found for id " + id);
+			}
+			return map[id];
+		}
+
 		private final int id;
 
 		private Type(int id) {
@@ -164,6 +198,7 @@ public class Group extends UnresolvedGroup {
 
 		/**
 		 * Gets the internal id of the group
+		 *
 		 * @return the id
 		 */
 		public int getId() {
