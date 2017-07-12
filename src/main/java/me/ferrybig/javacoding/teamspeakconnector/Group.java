@@ -34,6 +34,8 @@ import io.netty.util.concurrent.Future;
  */
 public class Group extends UnresolvedGroup {
 
+	private final int sortId;
+
 	private final int icon;
 	private final boolean savedb;
 	private final String name;
@@ -48,6 +50,7 @@ public class Group extends UnresolvedGroup {
 	 *
 	 * @param con Teamspeak connection that created this object
 	 * @param serverGroupId The id of this group
+	 * @param sortId
 	 * @param icon Icon id of this group, or -1 for no icon
 	 * @param savedb unknown
 	 * @param name Name of the group
@@ -57,8 +60,9 @@ public class Group extends UnresolvedGroup {
 	 * @param namemode unknown
 	 * @param type Type of the group
 	 */
-	public Group(TeamspeakConnection con, int serverGroupId, int icon, boolean savedb, String name, int memberRemovePrivilege, int memberAddPrivilege, int modifyPrivilege, int namemode, Type type) {
+	public Group(TeamspeakConnection con, int serverGroupId, int sortId, int icon, boolean savedb, String name, int memberRemovePrivilege, int memberAddPrivilege, int modifyPrivilege, int namemode, Type type) {
 		super(con, serverGroupId);
+		this.sortId = sortId;
 		this.icon = icon;
 		this.savedb = savedb;
 		this.name = name;
@@ -72,6 +76,16 @@ public class Group extends UnresolvedGroup {
 	@Override
 	public boolean isResolved() {
 		return true;
+	}
+
+	/**
+	 * Returns the sort id, if displaying server groups, this should be first
+	 * sorted on, before sorting on the id.
+	 *
+	 * @return the sort id
+	 */
+	public int getSortId() {
+		return sortId;
 	}
 
 	/**
