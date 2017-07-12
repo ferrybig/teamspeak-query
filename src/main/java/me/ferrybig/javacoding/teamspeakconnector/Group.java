@@ -45,7 +45,7 @@ public class Group extends UnresolvedGroup {
 	 * @param con Teamspeak connection that created this object
 	 * @param serverGroupId The id of this group
 	 * @param icon Icon id of this group, or -1 for no icon
-	 * @param savedb Is this group saved to the database
+	 * @param savedb unknown
 	 * @param name Name of the group
 	 * @param memberRemovePrivilege Privilege to remove a member to this group
 	 * @param memberAddPrivilege Privilege to add a member to this group
@@ -70,34 +70,66 @@ public class Group extends UnresolvedGroup {
 		return true;
 	}
 
+	/**
+	 * Returns the id of the icon used
+	 * @return the id of the icon
+	 */
 	public int getIcon() {
 		return icon;
 	}
 
+	/**
+	 * Unknown
+	 * @return an unknown value observed to be 0 or 1
+	 */
 	public boolean isSavedb() {
 		return savedb;
 	}
 
+	/**
+	 * Returns the name of the group
+	 * @return the name
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/**
+	 * Gets the privilege to remove a member of the group
+	 * @return the value of privilege needed to remove members
+	 */
 	public int getMemberRemovePrivilege() {
 		return memberRemovePrivilege;
 	}
 
+	/**
+	 * Gets the privilege level needed to add a member to the group
+	 * @return the value of privilege needed to add a member to the group
+	 */
 	public int getMemberAddPrivilege() {
 		return memberAddPrivilege;
 	}
 
+	/**
+	 * Gets the privilege needed to modify this group
+	 * @return the value of privilege needed to modify the group
+	 */
 	public int getModifyPrivilege() {
 		return modifyPrivilege;
 	}
 
+	/**
+	 * Unknown
+	 * @return unknown
+	 */
 	public int getNamemode() {
 		return namemode;
 	}
 
+	/**
+	 * Returns the type of the group
+	 * @return the type
+	 */
 	public Type getType() {
 		return type;
 	}
@@ -107,6 +139,9 @@ public class Group extends UnresolvedGroup {
 		return "Group{" + "serverGroupId=" + getServerGroupId() + ", icon=" + icon + ", savedb=" + savedb + ", name=" + name + ", memberRemovePrivilege=" + memberRemovePrivilege + ", memberAddPrivilege=" + memberAddPrivilege + ", modifyPrivilege=" + modifyPrivilege + ", namemode=" + namemode + ", type=" + type + '}';
 	}
 
+	/**
+	 * Type of server groups observed in Teamspeak
+	 */
 	public enum Type {
 		/**
 		 * 0: template group (used for new virtual servers)
@@ -127,6 +162,10 @@ public class Group extends UnresolvedGroup {
 			this.id = id;
 		}
 
+		/**
+		 * Gets the internal id of the group
+		 * @return the id
+		 */
 		public int getId() {
 			return id;
 		}
