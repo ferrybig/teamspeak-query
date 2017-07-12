@@ -30,6 +30,7 @@ import java.io.Closeable;
 import static java.lang.Integer.parseInt;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -229,7 +230,7 @@ public class TeamspeakConnection implements Closeable {
 	}
 
 	public UnresolvedGroup getUnresolvedGroupById(int id) {
-		return null; // TODO
+		return new UnresolvedGroup(this, id);
 	}
 
 	public UnresolvedChannelGroup getUnresolvedChannelGroupById(int id) {
@@ -347,7 +348,13 @@ public class TeamspeakConnection implements Closeable {
 	}
 
 	public Future<Group> getGroupById(int serverGroupId) {
-		throw new UnsupportedOperationException("Not supported yet."); //TODO
+		return io.chainFuture(getGroups(), l -> l.stream().filter(g -> g.getServerGroupId() == serverGroupId).findAny().orElseThrow(NoSuchElementException::new)); // TODO: make this more efficient with caching
+	}
+
+	public Future<List<Group>> getGroups() {
+		return io.mapComplexReponseList(io.sendPacket(
+				new ComplexRequestBuilder("servergrouplist").build()),
+				io::mapGroup);
 	}
 
 }

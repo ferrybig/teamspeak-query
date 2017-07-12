@@ -51,6 +51,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import me.ferrybig.javacoding.teamspeakconnector.ClientType;
 import me.ferrybig.javacoding.teamspeakconnector.File;
+import me.ferrybig.javacoding.teamspeakconnector.Group;
 import me.ferrybig.javacoding.teamspeakconnector.Server;
 import me.ferrybig.javacoding.teamspeakconnector.ServerStatus;
 import me.ferrybig.javacoding.teamspeakconnector.ShallowUser;
@@ -348,6 +349,12 @@ public class TeamspeakIO {
 				0,
 				"",
 				((InetSocketAddress) channel.localAddress()).getAddress());
+	}
+
+	public Group mapGroup(Map<String, String> data) {
+		return new Group(con, Integer.parseInt(data.get("sgid")), Integer.parseInt(data.get("sortid")), Integer.parseInt(data.get("iconid")), data.get("savedb").equals("1"), data.get("name"),
+				Integer.parseInt(data.get("n_member_removep")), Integer.parseInt(data.get("n_member_addp")), Integer.parseInt(data.get("n_modifyp")), Integer.parseInt(data.get("namemode")),
+				Group.Type.getById(Integer.parseInt(data.get("type"))));
 	}
 
 	public File mapFile(Map<String, String> data) {
