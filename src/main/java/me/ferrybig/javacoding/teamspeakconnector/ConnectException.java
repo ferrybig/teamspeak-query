@@ -126,9 +126,8 @@ public class ConnectException extends TeamspeakException {
 	}
 
 	public String toString() {
-        String s = getClass().getName();
-        return (message != null) ? (s + ": " + message) : s;
-    }
-
+		String s = getClass().getName();
+		return (message != null) ? (s + ": " + message) : s;
+	}
 
 }
