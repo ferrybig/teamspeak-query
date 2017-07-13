@@ -24,6 +24,7 @@
 package me.ferrybig.javacoding.teamspeakconnector;
 
 import io.netty.util.concurrent.Future;
+import java.util.Objects;
 
 /**
  * This class represents a Teamspeak server group. A server group has a type,
@@ -46,7 +47,7 @@ public class Group extends UnresolvedGroup {
 	private final Type type;
 
 	/**
-	 * Creates a new teamspeak group, should only be used by the internal api.
+	 * Creates a new Teamspeak group, should only be used by the internal api.
 	 *
 	 * @param con Teamspeak connection that created this object
 	 * @param serverGroupId The id of this group
@@ -65,7 +66,7 @@ public class Group extends UnresolvedGroup {
 		this.sortId = sortId;
 		this.icon = icon;
 		this.savedb = savedb;
-		this.name = name;
+		this.name = Objects.requireNonNull(name, "name");
 		this.memberRemovePrivilege = memberRemovePrivilege;
 		this.memberAddPrivilege = memberAddPrivilege;
 		this.modifyPrivilege = modifyPrivilege;
