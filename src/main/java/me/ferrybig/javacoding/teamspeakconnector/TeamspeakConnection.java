@@ -203,7 +203,7 @@ public class TeamspeakConnection implements Closeable {
 			}
 			break;
 			default: {
-				assert false: "Target mode " + options.get("targetmode") + " invalid";
+				assert false : "Target mode " + options.get("targetmode") + " invalid";
 			}
 		}
 
