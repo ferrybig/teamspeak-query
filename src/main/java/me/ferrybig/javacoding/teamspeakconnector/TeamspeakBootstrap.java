@@ -46,7 +46,6 @@ import java.net.SocketAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -55,6 +54,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javafx.util.Pair;
 import javax.annotation.Nonnull;
 import me.ferrybig.javacoding.teamspeakconnector.internal.TeamspeakConnectionInitizer;
 import me.ferrybig.javacoding.teamspeakconnector.internal.handler.PacketQueueBuffer;
@@ -475,7 +475,7 @@ public class TeamspeakBootstrap {
 		private final AtomicInteger tried = new AtomicInteger();
 		private final AtomicInteger failed = new AtomicInteger();
 		private ScheduledFuture<?> task;
-		private final CopyOnWriteArrayList<Throwable> exceptions = new CopyOnWriteArrayList<>();
+		private final CopyOnWriteArrayList<Pair<SocketAddress, Throwable>> exceptions = new CopyOnWriteArrayList<>();
 
 		public ConnectionAttempt(
 				@Nonnull Promise<Channel> result,
@@ -500,14 +500,24 @@ public class TeamspeakBootstrap {
 
 		private @Nonnull
 		Throwable createException() {
-			Iterator<Throwable> itr = exceptions.iterator();
-			assert itr.hasNext();
-			ConnectException ex = new ConnectException("Unable to connect");
-			ex.initCause(itr.next());
-			while (itr.hasNext()) {
-				ex.addSuppressed(itr.next());
+			assert !exceptions.isEmpty();
+			StringBuilder message = new StringBuilder("Unable to connect");
+			for (Pair<SocketAddress, Throwable> ex : exceptions) {
+				String addr = ex.getKey().toString();
+				message.append("\n> ").append(ex.getValue().getMessage());
+				if (!ex.getValue().getMessage().contains(addr)) {
+					message.append(": ").append(addr);
+				}
 			}
-			return ex;
+			ConnectException exception = new ConnectException(message.toString(), "Unable to connect");
+			if (exceptions.size() == 1) {
+				exception.initCause(exceptions.get(0).getValue());
+			} else {
+				for (Pair<SocketAddress, Throwable> ex : exceptions) {
+					exception.addSuppressed(ex.getValue());
+				}
+			}
+			return exception;
 		}
 
 		private void newConnection() {
@@ -532,7 +542,7 @@ public class TeamspeakBootstrap {
 					}
 				} else {
 					final Throwable cause = future.cause();
-					exceptions.add(cause);
+					exceptions.add(new Pair<>(addresses.get(index), cause));
 					int totalFailed = failed.incrementAndGet();
 					LOG.log(Level.FINE, "We failed {0}", new Object[]{cause});
 					if (totalFailed == addresses.size()) {

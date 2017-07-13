@@ -29,6 +29,7 @@ package me.ferrybig.javacoding.teamspeakconnector;
 public class ConnectException extends TeamspeakException {
 
 	private static final long serialVersionUID = -4471004975006446997L;
+	private final String message;
 
 	/**
 	 * Constructs an {@code ConnectException} with {@code null} as its error
@@ -36,22 +37,35 @@ public class ConnectException extends TeamspeakException {
 	 */
 	public ConnectException() {
 		super();
+		message = null;
 	}
 
 	/**
-	 * Constructs an {@code ConnectException} with the specified detail
-	 * message.
+	 * Constructs an {@code ConnectException} with the specified detail message.
 	 *
 	 * @param message The detail message (which is saved for later retrieval by
 	 * the {@link #getMessage()} method)
 	 */
 	public ConnectException(String message) {
-		super(message);
+		this(message, message);
 	}
 
 	/**
-	 * Constructs an {@code ConnectException} with the specified detail
-	 * message and cause.
+	 * Constructs an {@code ConnectException} with the specified detail message.
+	 *
+	 * @param message The detail message (which is saved for later retrieval by
+	 * the {@link #toString()} method)
+	 * @param fullMessage The detail message (which is saved for later retrieval
+	 * by the {@link #getMessage()} method)
+	 */
+	public ConnectException(String message, String fullMessage) {
+		super(fullMessage);
+		this.message = message;
+	}
+
+	/**
+	 * Constructs an {@code ConnectException} with the specified detail message
+	 * and cause.
 	 *
 	 * <p>
 	 * Note that the detail message associated with {@code cause} is
@@ -67,7 +81,31 @@ public class ConnectException extends TeamspeakException {
 	 *
 	 */
 	public ConnectException(String message, Throwable cause) {
-		super(message, cause);
+		this(message, message, cause);
+	}
+
+	/**
+	 * Constructs an {@code ConnectException} with the specified detail message
+	 * and cause.
+	 *
+	 * <p>
+	 * Note that the detail message associated with {@code cause} is
+	 * <i>not</i> automatically incorporated into this exception's detail
+	 * message.
+	 *
+	 * @param message The detail message (which is saved for later retrieval by
+	 * the {@link #toString()} method)
+	 * @param fullMessage The detail message (which is saved for later retrieval
+	 * by the {@link #getMessage()} method)
+	 *
+	 * @param cause The cause (which is saved for later retrieval by the
+	 * {@link #getCause()} method). (A null value is permitted, and indicates
+	 * that the cause is nonexistent or unknown.)
+	 *
+	 */
+	public ConnectException(String message, String fullMessage, Throwable cause) {
+		super(fullMessage, cause);
+		this.message = message;
 	}
 
 	/**
@@ -84,5 +122,13 @@ public class ConnectException extends TeamspeakException {
 	 */
 	public ConnectException(Throwable cause) {
 		super(cause);
+		this.message = null;
 	}
+
+	public String toString() {
+        String s = getClass().getName();
+        return (message != null) ? (s + ": " + message) : s;
+    }
+
+
 }
