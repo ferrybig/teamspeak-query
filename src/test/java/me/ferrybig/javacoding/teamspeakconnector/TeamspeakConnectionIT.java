@@ -27,9 +27,6 @@ public class TeamspeakConnectionIT {
 
 	@Test
 	public void testSomeMethod() throws InterruptedException, ExecutionException {
-		Logger.getGlobal().getParent().setLevel(Level.ALL);
-		Logger.getLogger(TeamspeakConnection.class.getName()).setLevel(Level.ALL);
-		Logger.getLogger(TeamspeakBootstrap.class.getName()).setLevel(Level.ALL);
 		NioEventLoopGroup group = new NioEventLoopGroup();
 		try {
 			System.out.println("Creating!");
