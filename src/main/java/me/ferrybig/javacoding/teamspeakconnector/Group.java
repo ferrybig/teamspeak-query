@@ -98,9 +98,9 @@ public class Group extends UnresolvedGroup {
 	}
 
 	/**
-	 * Unknown
+	 * Unknown (probability related to default group)
 	 *
-	 * @return an unknown value observed to be 0 or 1
+	 * @return an unknown value observed to be 0 or 1, and it seams to be related to default group
 	 */
 	public boolean isSavedb() {
 		return savedb;
