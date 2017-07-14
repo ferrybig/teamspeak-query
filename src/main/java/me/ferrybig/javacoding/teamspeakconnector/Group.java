@@ -36,7 +36,6 @@ import java.util.Objects;
 public class Group extends UnresolvedGroup {
 
 	private final int sortId;
-
 	private final int icon;
 	private final boolean savedb;
 	private final String name;
