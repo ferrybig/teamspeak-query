@@ -8,9 +8,11 @@ package me.ferrybig.javacoding.teamspeakconnector;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.concurrent.Future;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import me.ferrybig.javacoding.teamspeakconnector.event.ClientEnterViewEvent;
 import me.ferrybig.javacoding.teamspeakconnector.event.ClientLeftViewEvent;
 import me.ferrybig.javacoding.teamspeakconnector.event.ServerEditEvent;
@@ -66,7 +68,10 @@ public class TeamspeakConnectionIT {
 //			con.setOwnName("TestingBot").sync().get();
 
 			System.out.println("Group list");
-			con.getGroups().sync().get().forEach(System.out::println);
+			final List<Group> groups = con.getGroups().sync().get();
+			groups.forEach(System.out::println);
+
+			Optional<Group> bottest = groups.stream().filter(g -> (g.getType() == Group.Type.REGULAR) && g.getName().equals("BotTest")).findAny();
 
 			System.out.println("User list!");
 			List<User> users = con.getUsersList().sync().get();
@@ -74,8 +79,14 @@ public class TeamspeakConnectionIT {
 				if (user.getType() == ClientType.QUERY) {
 					continue;
 				}
-				user.poke("Hello: " + user.getNickname() + ", Your ip address: " + user.getIp());
-				user.sendMessage("Hello: " + user.getNickname() + ", Your ip address: " + user.getIp());
+
+				//user.poke("Hello: " + user.getNickname() + ", Your ip address: " + user.getIp());
+				user.sendMessage("Hello: " + user.getNickname()
+						+ ", Your ip address: " + user.getIp()
+						+ ", and your in the following groups: " + user.getServerGroup().stream().map(Object::toString).collect(Collectors.joining()));
+				if (bottest.isPresent()) {
+					user.addToGroup(bottest.get()).get();
+				}
 			}
 
 			System.out.println("Waiting for messages!");
@@ -107,7 +118,12 @@ public class TeamspeakConnectionIT {
 
 			});
 
-			Thread.sleep(100000);
+			Thread.sleep(10000);
+			if(bottest.isPresent()) {
+				for (User user : users) {
+					user.removeFromGroup(bottest.get()).get();
+				}
+			}
 
 			System.out.println("Closing...!");
 			con.quit().sync().get();

@@ -25,11 +25,13 @@ package me.ferrybig.javacoding.teamspeakconnector;
 
 import io.netty.util.concurrent.Future;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequestBuilder;
+import me.ferrybig.javacoding.teamspeakconnector.util.FutureUtil;
 
 public class UnresolvedUser implements Resolvable<User> {
 
 	protected final TeamspeakConnection con;
 	private final int id;
+	protected volatile boolean outdated = false;
 
 	public UnresolvedUser(TeamspeakConnection con, int id) {
 		this.con = con;
@@ -101,6 +103,14 @@ public class UnresolvedUser implements Resolvable<User> {
 	@Override
 	public String toString() {
 		return this.getClass().getSimpleName() + "{" + "id=" + id + '}';
+	}
+
+	public Future<? extends UnresolvedUser> addToGroup(UnresolvedGroup group) {
+		return FutureUtil.chainFutureFlat(con.io().newPromise(), resolve(), user -> user.addToGroup(group));
+	}
+
+	public Future<? extends UnresolvedUser> removeFromGroup(UnresolvedGroup group) {
+		return FutureUtil.chainFutureFlat(con.io().newPromise(), resolve(), user -> user.removeFromGroup(group));
 	}
 
 }

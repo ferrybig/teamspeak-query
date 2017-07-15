@@ -24,10 +24,12 @@
 package me.ferrybig.javacoding.teamspeakconnector;
 
 import io.netty.util.concurrent.Future;
+import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequestBuilder;
 
 public class UnresolvedGroup implements Resolvable<Group> {
 
 	protected final TeamspeakConnection con;
+	protected volatile boolean outdated = false;
 
 	private final int serverGroupId;
 
@@ -53,6 +55,51 @@ public class UnresolvedGroup implements Resolvable<Group> {
 	@Override
 	public boolean isResolved() {
 		return false;
+	}
+
+	public Future<? extends UnresolvedUser> addUser(UnresolvedUser user) {
+		return user.addToGroup(this);
+	}
+
+	public Future<? extends UnresolvedUser> removeUser(UnresolvedUser user) {
+		return user.removeFromGroup(this);
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 5;
+		hash = 89 * hash + this.serverGroupId;
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof UnresolvedGroup)) {
+			return false;
+		}
+		final UnresolvedGroup other = (UnresolvedGroup) obj;
+		if (this.serverGroupId != other.serverGroupId) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Renames this group to a different name
+	 * @param newName Newname of the group
+	 * @return a future for this group
+	 */
+	public Future<? extends UnresolvedGroup> rename(String newName) {
+		return con.io().chainFuture(con.io().sendPacket(new ComplexRequestBuilder("servergrouprename").addData("sgid", this.getServerGroupId()).addData("name", newName).build()), (r) -> {
+			outdated = true;
+			return this;
+		});
 	}
 
 }

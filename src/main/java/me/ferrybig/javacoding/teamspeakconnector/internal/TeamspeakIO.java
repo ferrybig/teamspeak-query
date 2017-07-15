@@ -152,7 +152,7 @@ public class TeamspeakIO {
 	}
 
 	public <T, R> Future<R> chainFuture(Future<T> future, Function<T, R> mapping) {
-		return FutureUtil.chainFuture(this.channel.eventLoop().newPromise(), future, mapping);
+		return FutureUtil.chainFuture(newPromise(), future, mapping);
 	}
 
 	private void channeClosed(Throwable upstream) {
@@ -169,6 +169,10 @@ public class TeamspeakIO {
 				poll.onChannelClose(upstream);
 			}
 		}
+	}
+
+	public <T> Promise<T> newPromise() {
+		return this.channel.eventLoop().newPromise();
 	}
 
 	public void start() {
@@ -189,7 +193,6 @@ public class TeamspeakIO {
 
 			@Override
 			public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-				super.exceptionCaught(ctx, cause);
 				lastException = cause;
 			}
 
