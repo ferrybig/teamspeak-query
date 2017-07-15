@@ -137,13 +137,14 @@ public class TeamspeakIO {
 		if (sendBehaviour == SendBehaviour.CLOSE_CONNECTION || sendBehaviour == SendBehaviour.FORCE_CLOSE_CONNECTION) {
 			prom.addListener(upstream -> {
 				assert upstream == prom;
-				if (prom.isSuccess()) {
-					synchronized (incomingQueue) {
-						this.closed = true;
-					}
-					channel.close();
-					LOG.fine("Closing channel because sendmessage asked it");
+				if (!prom.isSuccess()) {
+					LOG.log(Level.WARNING, "Failed to close channel cleanly: {0}", prom.cause());
 				}
+				synchronized (incomingQueue) {
+					this.closed = true;
+				}
+				channel.close();
+				LOG.fine("Closing channel because sendmessage asked it");
 			});
 		}
 

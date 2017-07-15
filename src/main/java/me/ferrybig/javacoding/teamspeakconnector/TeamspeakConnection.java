@@ -51,6 +51,7 @@ import me.ferrybig.javacoding.teamspeakconnector.internal.SendBehaviour;
 import me.ferrybig.javacoding.teamspeakconnector.internal.SubscriptionHandler;
 import me.ferrybig.javacoding.teamspeakconnector.internal.TeamspeakIO;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequestBuilder;
+import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexResponse;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Response;
 
 public class TeamspeakConnection implements Closeable {
@@ -330,7 +331,10 @@ public class TeamspeakConnection implements Closeable {
 	@Override
 	public void close() throws TeamspeakException {
 		try {
-			io.sendPacket(new ComplexRequestBuilder("quit").build(), SendBehaviour.FORCE_CLOSE_CONNECTION).get();
+			Future<ComplexResponse> sendPacket = io.sendPacket(new ComplexRequestBuilder("quit").build(), SendBehaviour.FORCE_CLOSE_CONNECTION);
+			if (!this.io.getChannel().eventLoop().inEventLoop()) {
+				sendPacket.get();
+			}
 		} catch (InterruptedException | ExecutionException ex) {
 			if (ex instanceof InterruptedException) {
 				Thread.currentThread().interrupt();
