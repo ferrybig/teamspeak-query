@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import static me.ferrybig.javacoding.teamspeakconnector.util.FutureUtil.waitSync;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.fail;
 import org.junit.Test;
 
@@ -118,9 +119,11 @@ public class TeamspeakConnectionIT {
 			System.out.println("User list!");
 			User con1user2 = null;
 			List<User> users = con1.getUsersList().sync().get();
+			assertNotEquals(con1.io().whoAmI().get().getId(), con2.io().whoAmI().get().getId());
 			for (User user : users) {
 				if (user.getType() == ClientType.QUERY) {
-					if (user.getDatabaseId() == con2.io().whoAmI().get().getDatabaseId()) {
+					System.err.println(user.getId() + ":" + con2.io().whoAmI().get().getId());
+					if (user.getId() == con2.io().whoAmI().get().getId()) {
 						con1user2 = user;
 					}
 				}
@@ -131,19 +134,21 @@ public class TeamspeakConnectionIT {
 			}
 
 			AtomicInteger received = new AtomicInteger(0);
+			AtomicInteger bounced = new AtomicInteger(0);
 
 			waitSync(
 					con1.getPrivateMessageHandler().addHandler(event -> {
 						received.getAndIncrement();
 					}),
 					con2.getPrivateMessageHandler().addHandler(event -> {
+						bounced.getAndIncrement();
 						event.getInvoker().sendMessage(event.getMessage());
 					})
 			);
 
 			System.out.println("Sending messages...");
 			List<Future<?>> messages = new ArrayList<>();
-			for (int send = 0; send < 20; send++) {
+			for (int send = 0; send < 5; send++) {
 				messages.add(con1user2.sendMessage("Hello " + send));
 			}
 			waitSync(messages);
@@ -151,6 +156,7 @@ public class TeamspeakConnectionIT {
 
 			Thread.sleep(1000);
 
+			assertEquals(messages.size(), bounced.get());
 			assertEquals(messages.size(), received.get());
 
 			waitSync(con1.quit(), con2.quit());
