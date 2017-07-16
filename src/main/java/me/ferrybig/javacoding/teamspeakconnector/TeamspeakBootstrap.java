@@ -411,16 +411,21 @@ public class TeamspeakBootstrap {
 	 * @throws NullPointerException If channel is null
 	 * @return the created and decorated @code{TeamspeakConnection}
 	 */
-	protected @Nonnull
-	Future<TeamspeakConnection> connect(@Nonnull EventLoop next, @Nonnull Future<Channel> channel) {
+	@SuppressWarnings("UseSpecificCatch")
+	@Nonnull
+	protected Future<TeamspeakConnection> connect(@Nonnull EventLoop next, @Nonnull Future<Channel> channel) {
 		Promise<TeamspeakConnection> connection = next.newPromise();
 		channel.addListener(f -> {
-			if (f.isSuccess()) {
-				Channel ch = channel.get();
-				LOG.log(Level.INFO, "Connecting done! {0}", ch);
-				ch.pipeline().get(PacketQueueBuffer.class).replace(new TeamspeakConnectionInitizer(connection, 20000));
-			} else {
-				connection.setFailure(new TeamspeakException("TSConnect: " + f.cause().getMessage(), f.cause()));
+			try {
+				if (f.isSuccess()) {
+					Channel ch = channel.get();
+					LOG.log(Level.INFO, "Connecting done! {0}", ch);
+					ch.pipeline().get(PacketQueueBuffer.class).replace(new TeamspeakConnectionInitizer(connection, 20000));
+				} else {
+					connection.setFailure(new TeamspeakException("TSConnect: " + f.cause().getMessage(), f.cause()));
+				}
+			} catch (Throwable t) {
+				connection.setFailure(new TeamspeakException("TSConnect: Internal exception: " + t.toString(), t));
 			}
 		});
 		Future<TeamspeakConnection> con = decorateConnection(next, connection);
