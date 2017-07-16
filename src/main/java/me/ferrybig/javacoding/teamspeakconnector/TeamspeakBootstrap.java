@@ -450,6 +450,7 @@ public class TeamspeakBootstrap {
 	@Nonnull
 	protected Future<TeamspeakConnection> decorateConnection(@Nonnull EventLoop next, @Nonnull Future<TeamspeakConnection> connection) {
 		String username = this.username;
+		String password = this.password;
 		if (username != null) {
 			connection = FutureUtil.chainFutureFlat(next.newPromise(), connection, con -> con.login(username, password));
 		}
