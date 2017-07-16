@@ -28,6 +28,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.util.concurrent.Promise;
+import java.util.concurrent.TimeUnit;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakException;
 import me.ferrybig.javacoding.teamspeakconnector.internal.TeamspeakIO;
@@ -42,6 +43,29 @@ public class HandshakeListener extends SimpleChannelInboundHandler<String> {
 
 	public HandshakeListener(Promise<TeamspeakConnection> prom) {
 		this.prom = prom;
+	}
+
+	private void registerTimeout(ChannelHandlerContext ctx) {
+		ctx.executor().schedule(() -> {
+			if (!prom.isDone()) {
+				prom.tryFailure(new TeamspeakException("Timeout waiting for TS headers"));
+				ctx.close();
+			}
+		}, 10, TimeUnit.SECONDS);
+	}
+
+	@Override
+	public void channelActive(ChannelHandlerContext ctx) throws Exception {
+		super.channelActive(ctx);
+		registerTimeout(ctx);
+	}
+
+	@Override
+	public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+		super.handlerAdded(ctx);
+		if (ctx.channel().isActive()) {
+			registerTimeout(ctx);
+		}
 	}
 
 	@Override
