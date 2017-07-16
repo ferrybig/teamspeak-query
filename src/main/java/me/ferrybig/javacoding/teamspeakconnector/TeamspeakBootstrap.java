@@ -446,17 +446,22 @@ public class TeamspeakBootstrap {
 	 * @throws NullPointerException If connection is null
 	 * @return A future for the decorated {@code TeamspeakConnection}
 	 */
-	protected @Nonnull
-	Future<TeamspeakConnection> decorateConnection(@Nonnull EventLoop next, @Nonnull Future<TeamspeakConnection> connection) {
+	@SuppressWarnings("LocalVariableHidesMemberVariable")
+	@Nonnull
+	protected Future<TeamspeakConnection> decorateConnection(@Nonnull EventLoop next, @Nonnull Future<TeamspeakConnection> connection) {
+		String username = this.username;
 		if (username != null) {
 			connection = FutureUtil.chainFutureFlat(next.newPromise(), connection, con -> con.login(username, password));
 		}
+		Integer virtualServerId = this.virtualServerId;
 		if (virtualServerId != null) {
 			connection = FutureUtil.chainFutureFlat(next.newPromise(), connection, con -> con.getUnresolvedServerById(virtualServerId).select());
 		}
+		Integer virtualServerPort = this.virtualServerPort;
 		if (virtualServerPort != null) {
 			connection = FutureUtil.chainFutureFlat(next.newPromise(), connection, con -> con.getUnresolvedServerByPort(virtualServerPort).select());
 		}
+		String clientName = this.clientName;
 		if (clientName != null) {
 			connection = FutureUtil.chainFutureFlat(next.newPromise(), connection, con -> con.setOwnName(clientName), (t, i) -> t);
 		}
