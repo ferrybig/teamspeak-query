@@ -30,8 +30,8 @@ import me.ferrybig.javacoding.teamspeakconnector.util.FutureUtil;
 public class UnresolvedUser implements Resolvable<User> {
 
 	protected final TeamspeakConnection con;
-	private final int id;
 	protected volatile boolean outdated = false;
+	private final int id;
 
 	public UnresolvedUser(TeamspeakConnection con, int id) {
 		this.con = con;
@@ -67,7 +67,7 @@ public class UnresolvedUser implements Resolvable<User> {
 
 	public Future<?> kickFromServer(String message) {
 		return this.con.io().sendPacket(
-				new ComplexRequestBuilder("clientpoke")
+				new ComplexRequestBuilder("clientkick")
 						.addData("clid", String.valueOf(getId()))
 						.addData("reasonid", "5")
 						.addData("msg", message)
