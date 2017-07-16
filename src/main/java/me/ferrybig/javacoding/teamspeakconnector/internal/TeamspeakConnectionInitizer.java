@@ -73,7 +73,7 @@ public class TeamspeakConnectionInitizer implements Consumer<Channel> {
 		pipeline.addLast(new ComplexPacketDecoder());
 		pipeline.addLast(PACKET_ENCODER);
 
-		pipeline.addLast(new LoggingHandler(LogLevel.DEBUG));
+		pipeline.addLast(new LoggingHandler(TeamspeakConnectionInitizer.class, LogLevel.DEBUG));
 
 		pipeline.addLast(new PacketRateLimitingHandler());
 	}
