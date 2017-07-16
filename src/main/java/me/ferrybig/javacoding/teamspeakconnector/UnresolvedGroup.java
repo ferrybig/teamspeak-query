@@ -38,6 +38,10 @@ public class UnresolvedGroup implements Resolvable<Group> {
 		this.serverGroupId = serverGroupId;
 	}
 
+	/**
+	 * Returns the server group id associated with the instance.
+	 * @return the server group id.
+	 */
 	public int getServerGroupId() {
 		return serverGroupId;
 	}
@@ -57,10 +61,20 @@ public class UnresolvedGroup implements Resolvable<Group> {
 		return false;
 	}
 
+	/**
+	 * Adds a user to this group. This internally routes to {@link UnresolvedUser#addToGroup(me.ferrybig.javacoding.teamspeakconnector.UnresolvedGroup) }, but is included here for utility purposes
+	 * @param user user to add to the group
+	 * @return the modified user
+	 */
 	public Future<? extends UnresolvedUser> addUser(UnresolvedUser user) {
 		return user.addToGroup(this);
 	}
 
+	/**
+	 * Removes a user from this group. This internally routes to {@link UnresolvedUser#removeFromGroup(me.ferrybig.javacoding.teamspeakconnector.UnresolvedGroup) }, but is included here for utility purposes
+	 * @param user user to remove from the group
+	 * @return the modified user
+	 */
 	public Future<? extends UnresolvedUser> removeUser(UnresolvedUser user) {
 		return user.removeFromGroup(this);
 	}
