@@ -187,13 +187,13 @@ public class Group extends UnresolvedGroup {
 		 */
 		SERVERQUERY(2);
 
-		private static final int MAP_LENGTH = 3;
-		private static final Type[] map;
+		private static final int BY_ID_LENGTH = 3;
+		private static final Type[] BY_ID;
 
 		static {
-			map = new Type[MAP_LENGTH];
+			BY_ID = new Type[BY_ID_LENGTH];
 			for (Type type : values()) {
-				map[type.id] = type;
+				BY_ID[type.id] = type;
 			}
 		}
 
@@ -220,10 +220,10 @@ public class Group extends UnresolvedGroup {
 		 * @throws IllegalArgumentException if the id isn't mapped to a type
 		 */
 		public static Type getById(int id) {
-			if (id >= MAP_LENGTH || id < 0 || map[id] == null) {
+			if (id >= BY_ID_LENGTH || id < 0 || BY_ID[id] == null) {
 				throw new IllegalArgumentException("No type found for id " + id);
 			}
-			return map[id];
+			return BY_ID[id];
 		}
 
 	};
