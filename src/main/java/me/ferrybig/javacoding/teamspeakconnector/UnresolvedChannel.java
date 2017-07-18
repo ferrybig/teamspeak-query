@@ -65,4 +65,8 @@ public class UnresolvedChannel {
 				con.io()::mapFile);
 	}
 
+	public Future<?> moveInto(UnresolvedUser user) {
+		return con.io().sendPacket(new ComplexRequestBuilder("clientmove").addData("cid", getId()).addData("clid", user.getId()).build());
+	}
+
 }
