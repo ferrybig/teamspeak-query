@@ -23,6 +23,10 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector;
 
-public class File {
+public class File extends UnresolvedFile {
+
+	public File(TeamspeakConnection connection, UnresolvedChannel channel, String name) {
+		super(connection, channel, name);
+	}
 
 }
