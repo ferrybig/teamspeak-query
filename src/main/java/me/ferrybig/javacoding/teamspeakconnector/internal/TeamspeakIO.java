@@ -44,6 +44,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.logging.Level;
@@ -64,7 +65,7 @@ import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRespons
 import me.ferrybig.javacoding.teamspeakconnector.util.FutureUtil;
 
 /**
- * Internal object to the teamspeak connection, contains potentially usafe
+ * Internal object to the Teamspeak connection, contains potentially unsafe
  * methods, and it is not recommended to call methods of this class by yourself.
  *
  */
@@ -74,6 +75,7 @@ public class TeamspeakIO {
 	private static final ByteBuf PING_PACKET = Unpooled.wrappedBuffer("\n".getBytes(StandardCharsets.UTF_8));
 
 	private final Queue<PendingPacket> incomingQueue = new LinkedList<>();
+	private final AtomicLong fileTransferId = new AtomicLong(1);
 	private final Channel channel;
 	private boolean closed = false;
 	private final Promise<ComplexResponse> closeFuture;
@@ -155,7 +157,7 @@ public class TeamspeakIO {
 		return FutureUtil.chainFuture(newPromise(), future, mapping);
 	}
 
-	private void channeClosed(Throwable upstream) {
+	private void channelClosed(Throwable upstream) {
 		synchronized (incomingQueue) {
 			con = null; // Help the garbage collector
 			closed = true;
@@ -194,12 +196,13 @@ public class TeamspeakIO {
 			@Override
 			public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 				lastException = cause;
+				ctx.close();
 			}
 
 			@Override
 			public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 				super.channelInactive(ctx);
-				channeClosed(lastException);
+				channelClosed(lastException);
 			}
 
 		});
@@ -223,7 +226,7 @@ public class TeamspeakIO {
 		return channel;
 	}
 
-	public InetAddress tryConvertAddress(String address) {
+	private InetAddress tryConvertAddress(String address) {
 		try {
 			return InetAddress.getByName(address);
 		} catch (UnknownHostException ex) {
@@ -355,9 +358,22 @@ public class TeamspeakIO {
 				((InetSocketAddress) channel.localAddress()).getAddress());
 	}
 
+	/**
+	 * Map a group received from Teamspeak.
+	 * @param data Map containing received objects
+	 * @return the mapped group
+	 */
 	public Group mapGroup(Map<String, String> data) {
-		return new Group(con, Integer.parseInt(data.get("sgid")), Integer.parseInt(data.get("sortid")), Integer.parseInt(data.get("iconid")), data.get("savedb").equals("1"), data.get("name"),
-				Integer.parseInt(data.get("n_member_removep")), Integer.parseInt(data.get("n_member_addp")), Integer.parseInt(data.get("n_modifyp")), Integer.parseInt(data.get("namemode")),
+		return new Group(con,
+				Integer.parseInt(data.get("sgid")),
+				Integer.parseInt(data.get("sortid")),
+				Integer.parseInt(data.get("iconid")),
+				data.get("savedb").equals("1"),
+				data.get("name"),
+				Integer.parseInt(data.get("n_member_removep")),
+				Integer.parseInt(data.get("n_member_addp")),
+				Integer.parseInt(data.get("n_modifyp")),
+				Integer.parseInt(data.get("namemode")),
 				Group.Type.getById(Integer.parseInt(data.get("type"))));
 	}
 
@@ -410,6 +426,10 @@ public class TeamspeakIO {
 	 */
 	public Future<?> ping() {
 		return channel.writeAndFlush(PING_PACKET.retain());
+	}
+
+	public long generateFileTransferId() {
+		return fileTransferId.getAndIncrement();
 	}
 
 	/**
