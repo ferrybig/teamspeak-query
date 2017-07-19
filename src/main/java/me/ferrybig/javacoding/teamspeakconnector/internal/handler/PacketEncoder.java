@@ -41,7 +41,7 @@ public class PacketEncoder extends MessageToMessageEncoder<ComplexRequest> {
 	private static final ByteBuf EQUALS = Unpooled.wrappedBuffer("=".getBytes(StandardCharsets.UTF_8));
 	private static final ByteBuf LINEFEED = Unpooled.wrappedBuffer("\n".getBytes(StandardCharsets.UTF_8));
 
-	protected String encodeTeamspeakCode(String input) {
+	public static String encodeTeamspeakCode(String input) {
 
 		final char[] chars = input.toCharArray();
 		char[] output = Arrays.copyOf(chars, chars.length + 16);
