@@ -25,6 +25,8 @@ package me.ferrybig.javacoding.teamspeakconnector;
 
 import io.netty.util.concurrent.Future;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequestBuilder;
 
 /**
@@ -182,4 +184,9 @@ public class ShallowUser extends NamedUser {
 		});
 	}
 
+	public Future<Map<String, String>> getCustomInfo() {
+		return con.io().chainFuture(con.io().sendPacket(new ComplexRequestBuilder("custominfo").addData("cldbid", this.databaseId).build()),
+			(r) -> r.getCommands().stream().collect(Collectors.toMap(k-> k.get("ident"), v -> v.get("value")))
+		);
+	}
 }
