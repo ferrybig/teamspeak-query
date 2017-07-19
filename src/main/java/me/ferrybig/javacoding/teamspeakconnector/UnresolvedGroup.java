@@ -33,7 +33,7 @@ import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequest
 public class UnresolvedGroup implements Resolvable<Group> {
 
 	protected final TeamspeakConnection con;
-	protected volatile boolean outdated = false;
+	// protected volatile boolean outdated = false;
 
 	private final int serverGroupId;
 
@@ -121,7 +121,6 @@ public class UnresolvedGroup implements Resolvable<Group> {
 	 */
 	public Future<? extends UnresolvedGroup> rename(String newName) {
 		return con.io().chainFuture(con.io().sendPacket(new ComplexRequestBuilder("servergrouprename").addData("sgid", this.getServerGroupId()).addData("name", newName).build()), (r) -> {
-			outdated = true;
 			return this;
 		});
 	}
