@@ -27,7 +27,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import javax.annotation.concurrent.NotThreadSafe;
 
+@NotThreadSafe
 public class ComplexRequestBuilder {
 
 	private String cmd;

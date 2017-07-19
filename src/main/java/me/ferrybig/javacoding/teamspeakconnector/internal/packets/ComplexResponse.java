@@ -25,7 +25,9 @@ package me.ferrybig.javacoding.teamspeakconnector.internal.packets;
 
 import java.util.ArrayList;
 import java.util.Map;
+import javax.annotation.concurrent.Immutable;
 
+@Immutable
 public class ComplexResponse {
 
 	private final ArrayList<Map<String, String>> commands;

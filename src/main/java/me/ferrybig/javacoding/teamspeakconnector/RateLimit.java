@@ -26,6 +26,7 @@ package me.ferrybig.javacoding.teamspeakconnector;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.Comparator;
+import javax.annotation.Nonnegative;
 
 /**
  * Ratelimit specification for the flood protection.
@@ -91,6 +92,7 @@ public interface RateLimit {
 	 * @param remoteAddress the remote address of the connection
 	 * @return the maximum packets allowed every second.
 	 */
+	@Nonnegative
 	public double maxPacketsPerSecond(SocketAddress remoteAddress);
 
 	/**

@@ -54,4 +54,29 @@ public class UnresolvedFile {
 		return "UnresolvedFile{" + "connection=" + connection + ", channel=" + channel + ", name=" + name + '}';
 	}
 
+//	public ProgressiveFuture<?> uploadFile(java.io.File file) throws FileNotFoundException {
+//		return uploadFile(file, false);
+//	}
+//
+//	public ProgressiveFuture<?> uploadFile(java.io.File file, boolean reportStatus) throws FileNotFoundException {
+//		return uploadFile(new FileInputStream(file), file.length(), reportStatus);
+//	}
+//
+//	public ProgressiveFuture<?> uploadFile(@WillClose InputStream file, long size) {
+//		return uploadFile(file, size, false);
+//	}
+//
+//	public ProgressiveFuture<?> uploadFile(@WillClose InputStream file, long size, boolean reportStatus) {
+//		ProgressivePromise<?> progressive = connection.io().getChannel().eventLoop().newProgressivePromise();
+//		connection.io().sendPacket(new ComplexRequestBuilder("").build()).addListener((Future<ComplexResponse> f) -> {
+//			file.close();
+//			if(f.isSuccess() && !progressive.isCancelled()) {
+//				progressive.setFailure(new UnsupportedOperationException());
+//			} else {
+//				progressive.setFailure(f.cause());
+//			}
+//		});
+//		return progressive;
+//	}
+
 }

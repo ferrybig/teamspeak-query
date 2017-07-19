@@ -34,6 +34,7 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.concurrent.ThreadSafe;
 import me.ferrybig.javacoding.teamspeakconnector.event.ChangeReason;
 import me.ferrybig.javacoding.teamspeakconnector.event.ChannelMessageEvent;
 import me.ferrybig.javacoding.teamspeakconnector.event.ChannelMessageListener;
@@ -54,6 +55,7 @@ import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequest
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexResponse;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Response;
 
+@ThreadSafe
 public class TeamspeakConnection implements Closeable {
 
 	private static final Logger LOG = Logger.getLogger(TeamspeakConnection.class.getName());

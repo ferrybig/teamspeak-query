@@ -50,6 +50,7 @@ import java.util.function.IntFunction;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.annotation.concurrent.GuardedBy;
 import me.ferrybig.javacoding.teamspeakconnector.ClientType;
 import me.ferrybig.javacoding.teamspeakconnector.File;
 import me.ferrybig.javacoding.teamspeakconnector.Group;
@@ -74,6 +75,7 @@ public class TeamspeakIO {
 	private static final Logger LOG = Logger.getLogger(TeamspeakIO.class.getName());
 	private static final ByteBuf PING_PACKET = Unpooled.wrappedBuffer("\n".getBytes(StandardCharsets.UTF_8));
 
+	@GuardedBy(value = "incomingQueue")
 	private final Queue<PendingPacket> incomingQueue = new LinkedList<>();
 	private final AtomicLong fileTransferId = new AtomicLong(1);
 	private final Channel channel;

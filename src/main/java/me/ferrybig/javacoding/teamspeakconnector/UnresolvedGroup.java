@@ -89,14 +89,14 @@ public class UnresolvedGroup implements Resolvable<Group> {
 	}
 
 	@Override
-	public int hashCode() {
+	public final int hashCode() {
 		int hash = 5;
 		hash = 89 * hash + this.serverGroupId;
 		return hash;
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public final boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
