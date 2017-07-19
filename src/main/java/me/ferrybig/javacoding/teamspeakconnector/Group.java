@@ -50,7 +50,7 @@ public class Group extends UnresolvedGroup {
 	 *
 	 * @param con Teamspeak connection that created this object
 	 * @param serverGroupId The id of this group
-	 * @param sortId
+	 * @param sortId The sort id
 	 * @param icon Icon id of this group, or -1 for no icon
 	 * @param savedb unknown
 	 * @param name Name of the group

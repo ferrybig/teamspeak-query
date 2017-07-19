@@ -422,7 +422,7 @@ public class TeamspeakIO {
 	 * Pings the server, and returns a future stating when the ping was
 	 * delivered to the underlying channel
 	 *
-	 * @return
+	 * @return the result of the ping
 	 */
 	public Future<?> ping() {
 		return channel.writeAndFlush(PING_PACKET.retain());

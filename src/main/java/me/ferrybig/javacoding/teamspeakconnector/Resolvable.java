@@ -29,24 +29,24 @@ import io.netty.util.concurrent.Future;
  * Class designed as marker for things that are resolvable
  *
  * @author Fernando van Loenhout
- * @param <T>
+ * @param <T> Type to return after resolving
  */
 public interface Resolvable<T> {
 
 	/**
-	 * Tries to resolv this resolvable, this may return itself if it is already
+	 * Tries to resolve this resolvable, this may return itself if it is already
 	 * resolved.
 	 *
-	 * @return the result of a normal resolv
+	 * @return the result of a normal resolve
 	 */
 	public default Future<T> resolve() {
 		return this.forceResolve();
 	}
 
 	/**
-	 * Force resolv this instance, this will always re-resolve the instance
+	 * Force resolve this instance, this will always re-resolve the instance
 	 *
-	 * @return the result of the force resolv
+	 * @return the result of the force resolve
 	 */
 	public Future<T> forceResolve();
 
