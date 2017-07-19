@@ -63,7 +63,9 @@ import me.ferrybig.javacoding.teamspeakconnector.util.FutureUtil;
 /**
  * Constructor for the Teamspeak api.
  *
- * Example usage:  {@code
+ * Example usage:
+ * <pre>
+ * {@code
  * TeamspeakBootstrap ts = new TeamspeakBootstrap(group);
  * ts.login("root", "toor").selectServerID(1);
  * ts.clientName("TSQuery");
@@ -76,8 +78,9 @@ import me.ferrybig.javacoding.teamspeakconnector.util.FutureUtil;
  *     } else {
  *         System.out.println("Connection failure");
  *         future.cause().printStacktrace();
- * }
+ *     }
  * }); }
+ * </pre>
  *
  * Notice: This class is not safe for concurrent access, if one thread modifies
  * variables, while another thread repeaticly calls {@code connect}, it is
