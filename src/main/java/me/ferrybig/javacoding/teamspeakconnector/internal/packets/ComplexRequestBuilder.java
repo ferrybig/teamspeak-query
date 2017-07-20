@@ -70,7 +70,7 @@ public class ComplexRequestBuilder {
 	}
 
 	public ComplexRequest build() {
-		return new ComplexRequest(cmd, data);
+		return new ComplexRequest(cmd, data, false);
 	}
 
 }

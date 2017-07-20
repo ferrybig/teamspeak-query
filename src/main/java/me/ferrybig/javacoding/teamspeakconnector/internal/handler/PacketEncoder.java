@@ -103,6 +103,14 @@ public class PacketEncoder extends MessageToMessageEncoder<ComplexRequest> {
 
 	@Override
 	protected void encode(ChannelHandlerContext ctx, ComplexRequest msg, List<Object> out) throws Exception {
+		if (msg.isRaw()) {
+			sendPacketRaw(msg, out);
+		} else {
+			sendPacketNormal(msg, out);
+		}
+	}
+
+	private void sendPacketNormal(ComplexRequest msg, List<Object> out) {
 		out.add(msg.getCmd());
 		for (Map.Entry<String, String> data : msg.getData().entrySet()) {
 			out.add(SPACE.retain());
@@ -115,4 +123,16 @@ public class PacketEncoder extends MessageToMessageEncoder<ComplexRequest> {
 		out.add(LINEFEED.retain());
 	}
 
+	private void sendPacketRaw(ComplexRequest msg, List<Object> out) {
+		out.add(msg.getCmd());
+		for (Map.Entry<String, String> data : msg.getData().entrySet()) {
+			out.add(SPACE.retain());
+			out.add(data.getKey());
+			if (!data.getValue().isEmpty()) {
+				out.add(EQUALS.retain());
+				out.add(data.getValue());
+			}
+		}
+		out.add(LINEFEED.retain());
+	}
 }

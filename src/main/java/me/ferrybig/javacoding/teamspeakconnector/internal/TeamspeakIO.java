@@ -96,6 +96,14 @@ public class TeamspeakIO {
 		this.con = con;
 	}
 
+	public Future<ComplexResponse> sendPacket(String raw) {
+		return sendPacket(new ComplexRequest(raw, true), SendBehaviour.NORMAL);
+	}
+
+	public Future<ComplexResponse> sendPacket(String raw, SendBehaviour sendBehaviour) {
+		return sendPacket(new ComplexRequest(raw, true), sendBehaviour);
+	}
+
 	public Future<ComplexResponse> sendPacket(ComplexRequest req) {
 		return sendPacket(req, SendBehaviour.NORMAL);
 	}

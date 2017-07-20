@@ -33,10 +33,20 @@ public class ComplexRequest {
 
 	private final String cmd;
 	private final Map<String, String> data;
+	private final boolean raw;
 
-	public ComplexRequest(String cmd, Map<String, String> data) {
+	public ComplexRequest(String cmd, boolean raw) {
+		this(cmd, Collections.emptyMap(), raw);
+	}
+
+	public ComplexRequest(String cmd, Map<String, String> data, boolean raw) {
 		this.cmd = Objects.requireNonNull(cmd);
-		this.data = Collections.unmodifiableMap(data);
+		this.data = data.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(data);
+		this.raw = raw;
+	}
+
+	public boolean isRaw() {
+		return raw;
 	}
 
 	public String getCmd() {
