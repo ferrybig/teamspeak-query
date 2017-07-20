@@ -52,7 +52,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.annotation.concurrent.GuardedBy;
 import me.ferrybig.javacoding.teamspeakconnector.ClientType;
-import me.ferrybig.javacoding.teamspeakconnector.ServerStatus;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakException;
 import me.ferrybig.javacoding.teamspeakconnector.entities.File;
@@ -241,7 +240,7 @@ public class TeamspeakIO {
 		return new Server(con,
 				Integer.parseInt(data.get("virtualserver_id")),
 				Integer.parseInt(data.get("virtualserver_port")),
-				resolveEnum(ServerStatus.class, data.get("virtualserver_status")),
+				resolveEnum(Server.Status.class, data.get("virtualserver_status")),
 				Integer.parseInt(data.getOrDefault("virtualserver_clientsonline", "0")),
 				Integer.parseInt(data.getOrDefault("virtualserver_queryclientsonline", "0")),
 				Integer.parseInt(data.getOrDefault("virtualserver_maxclients", "0")),

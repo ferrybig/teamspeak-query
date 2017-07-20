@@ -23,13 +23,12 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.entities;
 
-import me.ferrybig.javacoding.teamspeakconnector.ServerStatus;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
 
 public class Server extends UnresolvedServer {
 
 	private final int port;
-	private final ServerStatus status;
+	private final Status status;
 	private final int clientsOnline;
 	private final int queryClientsOnline;
 	private final int maxClients;
@@ -37,7 +36,7 @@ public class Server extends UnresolvedServer {
 	private final String name;
 	private final boolean autostart;
 
-	public Server(TeamspeakConnection con, int sid, int port, ServerStatus status, int clientsOnline, int queryClientsOnline, int maxClients, int uptime, String name, boolean autostart) {
+	public Server(TeamspeakConnection con, int sid, int port, Status status, int clientsOnline, int queryClientsOnline, int maxClients, int uptime, String name, boolean autostart) {
 		super(con, sid);
 		this.port = port;
 		this.status = status;
@@ -53,7 +52,7 @@ public class Server extends UnresolvedServer {
 		return port;
 	}
 
-	public ServerStatus getStatus() {
+	public Status getStatus() {
 		return status;
 	}
 
@@ -79,6 +78,10 @@ public class Server extends UnresolvedServer {
 
 	public boolean isAutostart() {
 		return autostart;
+	}
+
+	public static enum Status {
+		ONLINE, OFFLINE, DEPLOY_RUNNING, BOOTING_UP, SHUTTING_DOWN, ONLINE_VIRTUAL
 	}
 
 }
