@@ -25,13 +25,16 @@ package me.ferrybig.javacoding.teamspeakconnector.internal.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.traffic.ChannelTrafficShapingHandler;
-import java.net.InetSocketAddress;
+import me.ferrybig.javacoding.teamspeakconnector.RateLimit;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequest;
 
 public class PacketRateLimitingHandler extends ChannelTrafficShapingHandler {
 
-	public PacketRateLimitingHandler() {
+	private final RateLimit rateLimit;
+
+	public PacketRateLimitingHandler(RateLimit rateLimit) {
 		super(0, 0, 1000);
+		this.rateLimit = rateLimit;
 	}
 
 	@Override
@@ -40,12 +43,7 @@ public class PacketRateLimitingHandler extends ChannelTrafficShapingHandler {
 	}
 
 	private void adjustRateLimits(ChannelHandlerContext ctx) {
-		InetSocketAddress addr = (InetSocketAddress) ctx.channel().remoteAddress();
-		if (!addr.getAddress().isLinkLocalAddress()) {
-			this.setPacketsPerSeconds(10d / 4);
-		} else {
-			this.setPacketsPerSeconds(0);
-		}
+		this.setPacketsPerSeconds(rateLimit.maxPacketsPerSecond(ctx.channel().remoteAddress()));
 	}
 
 	@Override

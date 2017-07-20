@@ -25,6 +25,7 @@ package me.ferrybig.javacoding.teamspeakconnector.internal.handler;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageEncoder;
 import java.nio.charset.StandardCharsets;
@@ -33,13 +34,14 @@ import java.util.List;
 import java.util.Map;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequest;
 
+@ChannelHandler.Sharable
 public class PacketEncoder extends MessageToMessageEncoder<ComplexRequest> {
 
 	private static final ByteBuf SPACE = Unpooled.wrappedBuffer(" ".getBytes(StandardCharsets.UTF_8));
 	private static final ByteBuf EQUALS = Unpooled.wrappedBuffer("=".getBytes(StandardCharsets.UTF_8));
 	private static final ByteBuf LINEFEED = Unpooled.wrappedBuffer("\n".getBytes(StandardCharsets.UTF_8));
 
-	protected String encodeTeamspeakCode(String input) {
+	public static String encodeTeamspeakCode(String input) {
 
 		final char[] chars = input.toCharArray();
 		char[] output = Arrays.copyOf(chars, chars.length + 16);

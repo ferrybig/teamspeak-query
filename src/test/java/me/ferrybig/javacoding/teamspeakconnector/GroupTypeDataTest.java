@@ -23,10 +23,32 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector;
 
-public class File extends UnresolvedFile {
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.stream.Collectors;
+import static org.junit.Assert.assertSame;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
-	public File(TeamspeakConnection connection, UnresolvedChannel channel, String name) {
-		super(connection, channel, name);
+/**
+ *
+ * @author Fernando van Loenhout
+ */
+@RunWith(Parameterized.class)
+public class GroupTypeDataTest {
+
+	@Parameterized.Parameters
+	public static Collection<Object[]> data() {
+		return Arrays.stream(Group.Type.values()).map(o -> new Object[]{o}).collect(Collectors.toList());
+	}
+
+	@Parameterized.Parameter
+	public Group.Type type;
+
+	@Test
+	public void getByIdWorksTest() {
+		assertSame(type, Group.Type.getById(type.getId()));
 	}
 
 }

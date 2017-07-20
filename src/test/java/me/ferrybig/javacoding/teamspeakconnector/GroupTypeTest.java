@@ -23,10 +23,22 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector;
 
-public class File extends UnresolvedFile {
+import org.junit.Test;
 
-	public File(TeamspeakConnection connection, UnresolvedChannel channel, String name) {
-		super(connection, channel, name);
+/**
+ *
+ * @author Fernando van Loenhout
+ */
+public class GroupTypeTest {
+
+	@Test(expected = IllegalArgumentException.class)
+	public void negativeIndexThrows() {
+		Group.Type.getById(-1);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void tooHighIndexThrows() {
+		Group.Type.getById(Group.Type.values().length);
 	}
 
 }

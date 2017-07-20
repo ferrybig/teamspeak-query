@@ -30,12 +30,14 @@ import java.io.Closeable;
 import static java.lang.Integer.parseInt;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.concurrent.ThreadSafe;
+import me.ferrybig.javacoding.teamspeakconnector.event.ChangeReason;
 import me.ferrybig.javacoding.teamspeakconnector.event.ChannelMessageEvent;
 import me.ferrybig.javacoding.teamspeakconnector.event.ChannelMessageListener;
-import me.ferrybig.javacoding.teamspeakconnector.event.ChangeReason;
 import me.ferrybig.javacoding.teamspeakconnector.event.ClientEnterViewEvent;
 import me.ferrybig.javacoding.teamspeakconnector.event.Handler;
 import me.ferrybig.javacoding.teamspeakconnector.event.PrivateMessageEvent;
@@ -50,8 +52,10 @@ import me.ferrybig.javacoding.teamspeakconnector.internal.SendBehaviour;
 import me.ferrybig.javacoding.teamspeakconnector.internal.SubscriptionHandler;
 import me.ferrybig.javacoding.teamspeakconnector.internal.TeamspeakIO;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequestBuilder;
+import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexResponse;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Response;
 
+@ThreadSafe
 public class TeamspeakConnection implements Closeable {
 
 	private static final Logger LOG = Logger.getLogger(TeamspeakConnection.class.getName());
@@ -202,7 +206,7 @@ public class TeamspeakConnection implements Closeable {
 			}
 			break;
 			default: {
-				assert false: "Target mode " + options.get("targetmode") + " invalid";
+				assert false : "Target mode " + options.get("targetmode") + " invalid";
 			}
 		}
 
@@ -229,7 +233,7 @@ public class TeamspeakConnection implements Closeable {
 	}
 
 	public UnresolvedGroup getUnresolvedGroupById(int id) {
-		return null; // TODO
+		return new UnresolvedGroup(this, id);
 	}
 
 	public UnresolvedChannelGroup getUnresolvedChannelGroupById(int id) {
@@ -329,7 +333,10 @@ public class TeamspeakConnection implements Closeable {
 	@Override
 	public void close() throws TeamspeakException {
 		try {
-			io.sendPacket(new ComplexRequestBuilder("quit").build(), SendBehaviour.FORCE_CLOSE_CONNECTION).get();
+			Future<ComplexResponse> sendPacket = io.sendPacket(new ComplexRequestBuilder("quit").build(), SendBehaviour.FORCE_CLOSE_CONNECTION);
+			if (!this.io.getChannel().eventLoop().inEventLoop()) {
+				sendPacket.get();
+			}
 		} catch (InterruptedException | ExecutionException ex) {
 			if (ex instanceof InterruptedException) {
 				Thread.currentThread().interrupt();
@@ -344,6 +351,16 @@ public class TeamspeakConnection implements Closeable {
 
 	public Future<?> setOwnName(String name) {
 		return io.sendPacket(new ComplexRequestBuilder("clientupdate").addData("client_nickname", name).build());
+	}
+
+	public Future<Group> getGroupById(int serverGroupId) {
+		return io.chainFuture(getGroups(), l -> l.stream().filter(g -> g.getServerGroupId() == serverGroupId).findAny().orElseThrow(NoSuchElementException::new)); // TODO: make this more efficient with caching
+	}
+
+	public Future<List<Group>> getGroups() {
+		return io.mapComplexReponseList(io.sendPacket(
+				new ComplexRequestBuilder("servergrouplist").build()),
+				io::mapGroup);
 	}
 
 }

@@ -40,16 +40,25 @@ public class PacketQueueBuffer extends ChannelHandlerAdapter {
 
 	private final List<ByteBuf> queue = new ArrayList<>(); // TODO optimalize using a single bytebuf
 	private boolean readComplete;
+	private boolean replaced = false;
 	private ChannelHandlerContext ctx;
 
 	@Override
 	public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-		readComplete = true;
+		if (replaced) {
+			ctx.fireChannelReadComplete();
+		} else {
+			readComplete = true;
+		}
 	}
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-		queue.add((ByteBuf) msg);
+		if (replaced) {
+			ctx.fireChannelRead(msg);
+		} else {
+			queue.add((ByteBuf) msg);
+		}
 	}
 
 	@Override
@@ -85,6 +94,7 @@ public class PacketQueueBuffer extends ChannelHandlerAdapter {
 	}
 
 	private void flushBuffers() {
+		this.ctx.pipeline().remove(this);
 		for (ByteBuf b : queue) {
 			this.ctx.fireChannelRead(b);
 		}
@@ -92,7 +102,7 @@ public class PacketQueueBuffer extends ChannelHandlerAdapter {
 		if (readComplete) {
 			this.ctx.fireChannelReadComplete();
 		}
-		this.ctx.pipeline().remove(this);
+		replaced = true;
 	}
 
 }

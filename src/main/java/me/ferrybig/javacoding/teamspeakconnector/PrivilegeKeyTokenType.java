@@ -23,10 +23,62 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector;
 
-public class File extends UnresolvedFile {
+/**
+ *
+ * @author Fernando van Loenhout
+ */
+public enum PrivilegeKeyTokenType {
+	/**
+	 * server group token (id1={groupID} id2=0)
+	 */
+	SERVER_GROUP(0),
+	/**
+	 * channel group token (id1={groupID} id2={channelID})
+	 */
+	CHANNEL_GROUP(1);
 
-	public File(TeamspeakConnection connection, UnresolvedChannel channel, String name) {
-		super(connection, channel, name);
+	private static final int BY_ID_LENGTH = 2;
+	private static final PrivilegeKeyTokenType[] BY_ID;
+
+	static {
+		BY_ID = new PrivilegeKeyTokenType[BY_ID_LENGTH];
+		for (PrivilegeKeyTokenType type : values()) {
+			BY_ID[type.id] = type;
+		}
+	}
+
+	private final int id;
+
+	private PrivilegeKeyTokenType(int id) {
+		this.id = id;
+	}
+
+	/**
+	 * Gets the internal id of the type
+	 *
+	 * @return the id
+	 */
+	public int getId() {
+		return id;
+	}
+
+	@Override
+	public String toString() {
+		return String.valueOf(id);
+	}
+
+	/**
+	 * Gets a type y its id
+	 *
+	 * @param id the id to look for
+	 * @return the type that matches the id
+	 * @throws IllegalArgumentException if the id isn't mapped to a type
+	 */
+	public static PrivilegeKeyTokenType getById(int id) {
+		if (id >= BY_ID_LENGTH || id < 0 || BY_ID[id] == null) {
+			throw new IllegalArgumentException("No type found for id " + id);
+		}
+		return BY_ID[id];
 	}
 
 }

@@ -23,6 +23,7 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.internal.handler;
 
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.MessageToMessageDecoder;
@@ -31,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Response;
 
+@ChannelHandler.Sharable
 public class PacketDecoder extends MessageToMessageDecoder<String> {
 
 	private String decodeTeamspeakCode(String input) {

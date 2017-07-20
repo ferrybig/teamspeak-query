@@ -35,6 +35,7 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.util.concurrent.Promise;
 import java.util.function.Consumer;
+import me.ferrybig.javacoding.teamspeakconnector.RateLimit;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
 import me.ferrybig.javacoding.teamspeakconnector.internal.handler.ComplexPacketDecoder;
 import me.ferrybig.javacoding.teamspeakconnector.internal.handler.HandshakeListener;
@@ -53,10 +54,12 @@ public class TeamspeakConnectionInitizer implements Consumer<Channel> {
 		Unpooled.wrappedBuffer(new byte[]{'\n', '\r'}),
 		Unpooled.wrappedBuffer(new byte[]{'\n'}),};
 	private final Promise<TeamspeakConnection> prom;
+	private final RateLimit rateLimit;
 	private final int timeout;
 
-	public TeamspeakConnectionInitizer(Promise<TeamspeakConnection> prom, int timeout) {
+	public TeamspeakConnectionInitizer(Promise<TeamspeakConnection> prom, RateLimit rateLimit, int timeout) {
 		this.prom = prom;
+		this.rateLimit = rateLimit;
 		this.timeout = timeout;
 	}
 
@@ -73,9 +76,9 @@ public class TeamspeakConnectionInitizer implements Consumer<Channel> {
 		pipeline.addLast(new ComplexPacketDecoder());
 		pipeline.addLast(PACKET_ENCODER);
 
-		pipeline.addLast(new LoggingHandler(LogLevel.INFO));
+		pipeline.addLast(new LoggingHandler(TeamspeakConnectionInitizer.class, LogLevel.DEBUG));
 
-		pipeline.addLast(new PacketRateLimitingHandler());
+		pipeline.addLast(new PacketRateLimitingHandler(rateLimit));
 	}
 
 }

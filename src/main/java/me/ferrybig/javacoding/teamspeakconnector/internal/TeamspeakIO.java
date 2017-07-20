@@ -44,13 +44,16 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.annotation.concurrent.GuardedBy;
 import me.ferrybig.javacoding.teamspeakconnector.ClientType;
 import me.ferrybig.javacoding.teamspeakconnector.File;
+import me.ferrybig.javacoding.teamspeakconnector.Group;
 import me.ferrybig.javacoding.teamspeakconnector.Server;
 import me.ferrybig.javacoding.teamspeakconnector.ServerStatus;
 import me.ferrybig.javacoding.teamspeakconnector.ShallowUser;
@@ -63,7 +66,7 @@ import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRespons
 import me.ferrybig.javacoding.teamspeakconnector.util.FutureUtil;
 
 /**
- * Internal object to the teamspeak connection, contains potentially usafe
+ * Internal object to the Teamspeak connection, contains potentially unsafe
  * methods, and it is not recommended to call methods of this class by yourself.
  *
  */
@@ -72,7 +75,9 @@ public class TeamspeakIO {
 	private static final Logger LOG = Logger.getLogger(TeamspeakIO.class.getName());
 	private static final ByteBuf PING_PACKET = Unpooled.wrappedBuffer("\n".getBytes(StandardCharsets.UTF_8));
 
+	@GuardedBy(value = "incomingQueue")
 	private final Queue<PendingPacket> incomingQueue = new LinkedList<>();
+	private final AtomicLong fileTransferId = new AtomicLong(1);
 	private final Channel channel;
 	private boolean closed = false;
 	private final Promise<ComplexResponse> closeFuture;
@@ -136,13 +141,14 @@ public class TeamspeakIO {
 		if (sendBehaviour == SendBehaviour.CLOSE_CONNECTION || sendBehaviour == SendBehaviour.FORCE_CLOSE_CONNECTION) {
 			prom.addListener(upstream -> {
 				assert upstream == prom;
-				if (prom.isSuccess()) {
-					synchronized (incomingQueue) {
-						this.closed = true;
-					}
-					channel.close();
-					LOG.fine("Closing channel because sendmessage asked it");
+				if (!prom.isSuccess()) {
+					LOG.log(Level.WARNING, "Failed to close channel cleanly: {0}", prom.cause());
 				}
+				synchronized (incomingQueue) {
+					this.closed = true;
+				}
+				channel.close();
+				LOG.fine("Closing channel because sendmessage asked it");
 			});
 		}
 
@@ -150,10 +156,10 @@ public class TeamspeakIO {
 	}
 
 	public <T, R> Future<R> chainFuture(Future<T> future, Function<T, R> mapping) {
-		return FutureUtil.chainFuture(this.channel.eventLoop().newPromise(), future, mapping);
+		return FutureUtil.chainFuture(newPromise(), future, mapping);
 	}
 
-	private void channeClosed(Throwable upstream) {
+	private void channelClosed(Throwable upstream) {
 		synchronized (incomingQueue) {
 			con = null; // Help the garbage collector
 			closed = true;
@@ -167,6 +173,10 @@ public class TeamspeakIO {
 				poll.onChannelClose(upstream);
 			}
 		}
+	}
+
+	public <T> Promise<T> newPromise() {
+		return this.channel.eventLoop().newPromise();
 	}
 
 	public void start() {
@@ -187,14 +197,14 @@ public class TeamspeakIO {
 
 			@Override
 			public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-				super.exceptionCaught(ctx, cause);
 				lastException = cause;
+				ctx.close();
 			}
 
 			@Override
 			public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 				super.channelInactive(ctx);
-				channeClosed(lastException);
+				channelClosed(lastException);
 			}
 
 		});
@@ -218,7 +228,7 @@ public class TeamspeakIO {
 		return channel;
 	}
 
-	public InetAddress tryConvertAddress(String address) {
+	private InetAddress tryConvertAddress(String address) {
 		try {
 			return InetAddress.getByName(address);
 		} catch (UnknownHostException ex) {
@@ -350,6 +360,25 @@ public class TeamspeakIO {
 				((InetSocketAddress) channel.localAddress()).getAddress());
 	}
 
+	/**
+	 * Map a group received from Teamspeak.
+	 * @param data Map containing received objects
+	 * @return the mapped group
+	 */
+	public Group mapGroup(Map<String, String> data) {
+		return new Group(con,
+				Integer.parseInt(data.get("sgid")),
+				Integer.parseInt(data.get("sortid")),
+				Integer.parseInt(data.get("iconid")),
+				data.get("savedb").equals("1"),
+				data.get("name"),
+				Integer.parseInt(data.get("n_member_removep")),
+				Integer.parseInt(data.get("n_member_addp")),
+				Integer.parseInt(data.get("n_modifyp")),
+				Integer.parseInt(data.get("namemode")),
+				Group.Type.getById(Integer.parseInt(data.get("type"))));
+	}
+
 	public File mapFile(Map<String, String> data) {
 		return null; // TODO
 	}
@@ -395,10 +424,14 @@ public class TeamspeakIO {
 	 * Pings the server, and returns a future stating when the ping was
 	 * delivered to the underlying channel
 	 *
-	 * @return
+	 * @return the result of the ping
 	 */
 	public Future<?> ping() {
 		return channel.writeAndFlush(PING_PACKET.retain());
+	}
+
+	public long generateFileTransferId() {
+		return fileTransferId.getAndIncrement();
 	}
 
 	/**

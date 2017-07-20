@@ -1,0 +1,14 @@
+INFO: [id: 0x0ccc17b3, /127.0.0.1:52972 => localhost/127.0.0.1:10011] RECEIVED: ComplexResponse{commands=[
+{iconid=0, savedb=0, sortid=0, name=Guest Server Query, n_member_removep=0, sgid=1, type=2, n_member_addp=0, namemode=0, n_modifyp=100},
+{iconid=500, savedb=1, sortid=0, name=Admin Server Query, n_member_removep=100, sgid=2, type=2, n_member_addp=100, namemode=0, n_modifyp=100},
+
+{iconid=300, savedb=1, sortid=0, name=Server Admin, n_member_removep=75, sgid=3, type=0, n_member_addp=75, namemode=0, n_modifyp=75},
+{iconid=0, savedb=1, sortid=0, name=Normal, n_member_removep=60, sgid=4, type=0, n_member_addp=60, namemode=0, n_modifyp=75},
+{iconid=0, savedb=0, sortid=0, name=Guest, n_member_removep=0, sgid=5, type=0, n_member_addp=0, namemode=0, n_modifyp=75},
+
+{iconid=-1460336151, savedb=1, sortid=0, name=Server Admin, n_member_removep=75, sgid=6, type=1, n_member_addp=75, namemode=0, n_modifyp=75},
+{iconid=-1869176255, savedb=1, sortid=0, name=Normal, n_member_removep=60, sgid=7, type=1, n_member_addp=60, namemode=0, n_modifyp=75},
+{iconid=0, savedb=0, sortid=0, name=Guest, n_member_removep=0, sgid=8, type=1, n_member_addp=0, namemode=0, n_modifyp=75},
+{iconid=903400703, savedb=1, sortid=0, name=Moderator, n_member_removep=60, sgid=9, type=1, n_member_addp=60, namemode=0, n_modifyp=75},
+{iconid=1468865112, savedb=1, sortid=0, name=Admin, n_member_removep=75, sgid=10, type=1, n_member_addp=75, namemode=0, n_modifyp=75}],
+id=0, msg=ok}

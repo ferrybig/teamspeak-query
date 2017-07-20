@@ -25,6 +25,11 @@ package me.ferrybig.javacoding.teamspeakconnector.util;
 
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.Promise;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -73,4 +78,54 @@ public class FutureUtil {
 		});
 		return result;
 	}
+
+	public static <T> List<T> waitSync(Future<? extends T> future) throws InterruptedException, ExecutionException {
+		return Collections.singletonList(future.get());
+	}
+
+	public static <T> List<T> waitSync(Future<? extends T> future1, Future<? extends T> future2) throws InterruptedException, ExecutionException {
+		List<T> result = new ArrayList<>(2);
+		result.add(future1.get());
+		result.add(future2.get());
+		return result;
+	}
+
+	public static <T> List<T> waitSync(Future<? extends T> future1, Future<? extends T> future2, Future<? extends T> future3) throws InterruptedException, ExecutionException {
+		List<T> result = new ArrayList<>(3);
+		result.add(future1.get());
+		result.add(future2.get());
+		result.add(future3.get());
+		return result;
+	}
+
+	public static <T> List<T> waitSync(Future<? extends T> future1, Future<? extends T> future2, Future<? extends T> future3, Future<? extends T> future4) throws InterruptedException, ExecutionException {
+		List<T> result = new ArrayList<>(4);
+		result.add(future1.get());
+		result.add(future2.get());
+		result.add(future3.get());
+		result.add(future4.get());
+		return result;
+	}
+
+	public static <T> List<T> waitSync(Future<? extends T>... list) throws InterruptedException, ExecutionException {
+		List<T> result = new ArrayList<>(list.length);
+		for (Future<? extends T> future : list) {
+			result.add(future.get());
+		}
+		return result;
+	}
+
+	public static <T> List<T> waitSync(Iterable<Future<? extends T>> iterable) throws InterruptedException, ExecutionException {
+		List<T> result;
+		if (iterable instanceof Collection<?>) {
+			result = new ArrayList<>(((Collection<?>) iterable).size());
+		} else {
+			result = new ArrayList<>();
+		}
+		for (Future<? extends T> future : iterable) {
+			result.add(future.get());
+		}
+		return result;
+	}
+
 }

@@ -26,7 +26,9 @@ package me.ferrybig.javacoding.teamspeakconnector.internal.packets;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
+import javax.annotation.concurrent.Immutable;
 
+@Immutable
 public class ComplexRequest {
 
 	private final String cmd;

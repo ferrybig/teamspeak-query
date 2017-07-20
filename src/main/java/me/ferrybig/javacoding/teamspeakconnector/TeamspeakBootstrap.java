@@ -46,7 +46,6 @@ import java.net.SocketAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -55,7 +54,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javafx.util.Pair;
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.NotThreadSafe;
 import me.ferrybig.javacoding.teamspeakconnector.internal.TeamspeakConnectionInitizer;
 import me.ferrybig.javacoding.teamspeakconnector.internal.handler.PacketQueueBuffer;
 import me.ferrybig.javacoding.teamspeakconnector.util.FutureUtil;
@@ -79,10 +80,19 @@ import me.ferrybig.javacoding.teamspeakconnector.util.FutureUtil;
  *         System.out.println("Connection failure");
  *         future.cause().printStacktrace();
  *     }
- * });
- * }
+ * }); }
  * </pre>
+ *
+ * Notice: This class is not safe for concurrent access, if one thread modifies
+ * variables, while another thread repeaticly calls {@code connect}, it is
+ * unspecified what the other thread will see. It is however safe to repeatable
+ * call connect and call modify methods, or to call connect from multiple
+ * threads without modifing the base object. If concurrent modification is
+ * required, you should {@link TeamspeakBootstrap#clone} the object from your
+ * main thread, before calling connect from your auxilery threads.
+ *
  */
+@NotThreadSafe
 public class TeamspeakBootstrap {
 
 	/**
@@ -97,6 +107,7 @@ public class TeamspeakBootstrap {
 	private Integer virtualServerPort;
 	private String clientName;
 	private EventLoopGroup group;
+	private RateLimit ratelimit = RateLimit.AUTODETECT;
 
 	/**
 	 * Creates a @code{TeamspeakBootstrap}
@@ -160,6 +171,26 @@ public class TeamspeakBootstrap {
 	}
 
 	/**
+	 * Returns the configured rate limit implementation.
+	 * @return the configured ratelimit
+	 */
+	@Nonnull
+	public RateLimit rateLimit() {
+		return ratelimit;
+	}
+
+	/**
+	 * Sets the used rate limit. The default ratelimit is {@link RateLimit#AUTODETECT}, use this if you need to reset this property.
+	 * @param rateLimit rateLimit implementation to set
+	 * @return this
+	 */
+	@Nonnull
+	public TeamspeakBootstrap rateLimit(@Nonnull RateLimit rateLimit) {
+		this.ratelimit = Objects.requireNonNull(rateLimit, "rateLimit");
+		return this;
+	}
+
+	/**
 	 * Returns the selected server id, or null if none is selected
 	 *
 	 * @see UnresolvedServer#select()
@@ -176,8 +207,8 @@ public class TeamspeakBootstrap {
 	 * @see UnresolvedServer#select()
 	 * @return the selected server id
 	 */
-	public @Nonnull
-	TeamspeakBootstrap selectServerID(int serverId) {
+	@Nonnull
+	public TeamspeakBootstrap selectServerID(int serverId) {
 		this.virtualServerId = serverId;
 		return this;
 	}
@@ -189,8 +220,8 @@ public class TeamspeakBootstrap {
 	 * @see TeamspeakBootstrap#selectServerID(int)
 	 * @return this
 	 */
-	public @Nonnull
-	TeamspeakBootstrap noSelectServerID() {
+	@Nonnull
+	public TeamspeakBootstrap noSelectServerID() {
 		this.virtualServerId = null;
 		return this;
 	}
@@ -212,8 +243,8 @@ public class TeamspeakBootstrap {
 	 * @param port port number of the virtual server
 	 * @return this
 	 */
-	public @Nonnull
-	TeamspeakBootstrap selectServerPort(int port) {
+	@Nonnull
+	public TeamspeakBootstrap selectServerPort(int port) {
 		this.virtualServerPort = port;
 		return this;
 	}
@@ -225,14 +256,14 @@ public class TeamspeakBootstrap {
 	 * @see TeamspeakBootstrap#selectServerPort(int)
 	 * @return this
 	 */
-	public @Nonnull
-	TeamspeakBootstrap noSelectServerPort() {
+	@Nonnull
+	public TeamspeakBootstrap noSelectServerPort() {
 		this.virtualServerPort = null;
 		return this;
 	}
 
 	/**
-	 * Returns the selected clientname
+	 * Returns the selected clientname, or null if no clientname is configured
 	 *
 	 * @see TeamspeakConnection#setOwnName(java.lang.String)
 	 * @return the clientname
@@ -249,8 +280,8 @@ public class TeamspeakBootstrap {
 	 * @see TeamspeakConnection#setOwnName(java.lang.String)
 	 * @return this
 	 */
-	public @Nonnull
-	TeamspeakBootstrap clientName(@Nonnull String clientName) {
+	@Nonnull
+	public TeamspeakBootstrap clientName(@Nonnull String clientName) {
 		this.clientName = clientName;
 		return this;
 	}
@@ -262,8 +293,8 @@ public class TeamspeakBootstrap {
 	 * @see TeamspeakBootstrap#clientName(java.lang.String)
 	 * @return this
 	 */
-	public @Nonnull
-	TeamspeakBootstrap noClientName() {
+	@Nonnull
+	public TeamspeakBootstrap noClientName() {
 		this.clientName = null;
 		return this;
 	}
@@ -273,10 +304,11 @@ public class TeamspeakBootstrap {
 	 * isn't called since the group is provided by the constructor.
 	 *
 	 * @param group the group
+	 * @throws NullPointerException If group is null
 	 * @return this
 	 */
-	public @Nonnull
-	TeamspeakBootstrap group(@Nonnull EventLoopGroup group) {
+	@Nonnull
+	public TeamspeakBootstrap group(@Nonnull EventLoopGroup group) {
 		this.group = Objects.requireNonNull(group, "group");
 		return this;
 	}
@@ -286,8 +318,8 @@ public class TeamspeakBootstrap {
 	 *
 	 * @return the configured group
 	 */
-	public @Nonnull
-	EventLoopGroup group() {
+	@Nonnull
+	public EventLoopGroup group() {
 		return group;
 	}
 
@@ -358,6 +390,7 @@ public class TeamspeakBootstrap {
 		try {
 			return connect(Arrays.stream(InetAddress.getAllByName(endpoint))
 					.map(ip -> new InetSocketAddress(ip, port))
+					.sorted(ratelimit.socketAddressComparator())
 					.collect(Collectors.toList()));
 		} catch (UnknownHostException ex) {
 			return this.group.next().newFailedFuture(ex);
@@ -406,34 +439,42 @@ public class TeamspeakBootstrap {
 	 * Decorates the {@code SocketChannel} to a {@code TeamspeakConnection}
 	 *
 	 * @param next The {@code EventLoop} that generates the promises
-	 * @param channel The future channel to decorate
+	 * @param channelFuture The future channel to decorate
 	 * @throws NullPointerException If next is null
 	 * @throws NullPointerException If channel is null
 	 * @return the created and decorated @code{TeamspeakConnection}
 	 */
-	protected @Nonnull
-	Future<TeamspeakConnection> connect(@Nonnull EventLoop next, @Nonnull Future<Channel> channel) {
-		Promise<TeamspeakConnection> connection = next.newPromise();
-		channel.addListener(f -> {
-			if (f.isSuccess()) {
-				Channel ch = channel.get();
-				LOG.log(Level.INFO, "Connecting done! {0}", ch);
-				ch.pipeline().get(PacketQueueBuffer.class).replace(new TeamspeakConnectionInitizer(connection, 20000));
-			} else {
-				connection.setFailure(new TeamspeakException("TSConnect: " + f.cause().getMessage(), f.cause()));
+	@SuppressWarnings("UseSpecificCatch")
+	@Nonnull
+	protected Future<TeamspeakConnection> connect(@Nonnull EventLoop next, @Nonnull Future<Channel> channelFuture) {
+		Promise<TeamspeakConnection> inmidiateFuture = next.newPromise();
+		RateLimit rateLimit = this.ratelimit;
+		channelFuture.addListener(f -> {
+			assert f == channelFuture;
+			try {
+				if (channelFuture.isSuccess()) {
+					Channel ch = channelFuture.get();
+					LOG.log(Level.INFO, "Connecting done! {0}", ch);
+					ch.pipeline().get(PacketQueueBuffer.class).replace(new TeamspeakConnectionInitizer(inmidiateFuture, rateLimit, 20000));
+				} else {
+					inmidiateFuture.tryFailure(new TeamspeakException("TSConnect: " + channelFuture.cause().getMessage(), channelFuture.cause()));
+				}
+			} catch (Throwable t) {
+				inmidiateFuture.tryFailure(new TeamspeakException("TSConnect: Internal exception: " + t.toString(), t));
 			}
 		});
-		Future<TeamspeakConnection> con = decorateConnection(next, connection);
-		con.addListener(f -> {
-			if (!f.isSuccess()) {
-				if (connection.isSuccess()) {
-					connection.get().quit();
-				} else if (channel.isSuccess()) {
-					channel.get().close();
+		Future<TeamspeakConnection> finalFuture = decorateConnection(next, inmidiateFuture);
+		finalFuture.addListener(f -> {
+			assert f == finalFuture;
+			if (!finalFuture.isSuccess() || finalFuture.isCancelled()) {
+				if (inmidiateFuture.isSuccess()) {
+					inmidiateFuture.get().quit();
+				} else if (channelFuture.isSuccess()) {
+					channelFuture.get().close();
 				}
 			}
 		});
-		return con;
+		return finalFuture;
 	}
 
 	/**
@@ -446,17 +487,23 @@ public class TeamspeakBootstrap {
 	 * @throws NullPointerException If connection is null
 	 * @return A future for the decorated {@code TeamspeakConnection}
 	 */
-	protected @Nonnull
-	Future<TeamspeakConnection> decorateConnection(@Nonnull EventLoop next, @Nonnull Future<TeamspeakConnection> connection) {
+	@SuppressWarnings("LocalVariableHidesMemberVariable")
+	@Nonnull
+	protected Future<TeamspeakConnection> decorateConnection(@Nonnull EventLoop next, @Nonnull Future<TeamspeakConnection> connection) {
+		String username = this.username;
+		String password = this.password;
 		if (username != null) {
 			connection = FutureUtil.chainFutureFlat(next.newPromise(), connection, con -> con.login(username, password));
 		}
+		Integer virtualServerId = this.virtualServerId;
 		if (virtualServerId != null) {
 			connection = FutureUtil.chainFutureFlat(next.newPromise(), connection, con -> con.getUnresolvedServerById(virtualServerId).select());
 		}
+		Integer virtualServerPort = this.virtualServerPort;
 		if (virtualServerPort != null) {
 			connection = FutureUtil.chainFutureFlat(next.newPromise(), connection, con -> con.getUnresolvedServerByPort(virtualServerPort).select());
 		}
+		String clientName = this.clientName;
 		if (clientName != null) {
 			connection = FutureUtil.chainFutureFlat(next.newPromise(), connection, con -> con.setOwnName(clientName), (t, i) -> t);
 		}
@@ -475,7 +522,7 @@ public class TeamspeakBootstrap {
 		private final AtomicInteger tried = new AtomicInteger();
 		private final AtomicInteger failed = new AtomicInteger();
 		private ScheduledFuture<?> task;
-		private final CopyOnWriteArrayList<Throwable> exceptions = new CopyOnWriteArrayList<>();
+		private final CopyOnWriteArrayList<Pair<SocketAddress, Throwable>> exceptions = new CopyOnWriteArrayList<>();
 
 		public ConnectionAttempt(
 				@Nonnull Promise<Channel> result,
@@ -500,14 +547,24 @@ public class TeamspeakBootstrap {
 
 		private @Nonnull
 		Throwable createException() {
-			Iterator<Throwable> itr = exceptions.iterator();
-			assert itr.hasNext();
-			ConnectException ex = new ConnectException("Unable to connect");
-			ex.initCause(itr.next());
-			while (itr.hasNext()) {
-				ex.addSuppressed(itr.next());
+			assert !exceptions.isEmpty();
+			StringBuilder message = new StringBuilder("Unable to connect");
+			for (Pair<SocketAddress, Throwable> ex : exceptions) {
+				String addr = ex.getKey().toString();
+				message.append("\n> ").append(ex.getValue().getMessage());
+				if (!ex.getValue().getMessage().contains(addr)) {
+					message.append(": ").append(addr);
+				}
 			}
-			return ex;
+			ConnectException exception = new ConnectException(message.toString(), "Unable to connect");
+			if (exceptions.size() == 1) {
+				exception.initCause(exceptions.get(0).getValue());
+			} else {
+				for (Pair<SocketAddress, Throwable> ex : exceptions) {
+					exception.addSuppressed(ex.getValue());
+				}
+			}
+			return exception;
 		}
 
 		private void newConnection() {
@@ -532,7 +589,7 @@ public class TeamspeakBootstrap {
 					}
 				} else {
 					final Throwable cause = future.cause();
-					exceptions.add(cause);
+					exceptions.add(new Pair<>(addresses.get(index), cause));
 					int totalFailed = failed.incrementAndGet();
 					LOG.log(Level.FINE, "We failed {0}", new Object[]{cause});
 					if (totalFailed == addresses.size()) {
