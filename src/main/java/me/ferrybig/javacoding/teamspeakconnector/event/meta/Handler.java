@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package me.ferrybig.javacoding.teamspeakconnector.event;
+package me.ferrybig.javacoding.teamspeakconnector.event.meta;
 
 import io.netty.util.concurrent.Future;
 

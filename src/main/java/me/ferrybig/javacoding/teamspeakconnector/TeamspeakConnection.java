@@ -23,19 +23,6 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector;
 
-import me.ferrybig.javacoding.teamspeakconnector.entities.File;
-import me.ferrybig.javacoding.teamspeakconnector.entities.NamedUser;
-import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedUser;
-import me.ferrybig.javacoding.teamspeakconnector.entities.ShallowUser;
-import me.ferrybig.javacoding.teamspeakconnector.entities.Channel;
-import me.ferrybig.javacoding.teamspeakconnector.entities.Group;
-import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedChannel;
-import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedServer;
-import me.ferrybig.javacoding.teamspeakconnector.entities.Server;
-import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedFile;
-import me.ferrybig.javacoding.teamspeakconnector.entities.User;
-import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedGroup;
-import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedChannelGroup;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.concurrent.Future;
@@ -48,11 +35,23 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.concurrent.ThreadSafe;
-import me.ferrybig.javacoding.teamspeakconnector.event.ChangeReason;
+import me.ferrybig.javacoding.teamspeakconnector.entities.Channel;
+import me.ferrybig.javacoding.teamspeakconnector.entities.File;
+import me.ferrybig.javacoding.teamspeakconnector.entities.Group;
+import me.ferrybig.javacoding.teamspeakconnector.entities.NamedUser;
+import me.ferrybig.javacoding.teamspeakconnector.entities.Server;
+import me.ferrybig.javacoding.teamspeakconnector.entities.ShallowUser;
+import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedChannel;
+import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedChannelGroup;
+import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedFile;
+import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedGroup;
+import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedServer;
+import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedUser;
+import me.ferrybig.javacoding.teamspeakconnector.entities.User;
 import me.ferrybig.javacoding.teamspeakconnector.event.ChannelMessageEvent;
 import me.ferrybig.javacoding.teamspeakconnector.event.ChannelMessageListener;
 import me.ferrybig.javacoding.teamspeakconnector.event.ClientEnterViewEvent;
-import me.ferrybig.javacoding.teamspeakconnector.event.Handler;
+import me.ferrybig.javacoding.teamspeakconnector.event.meta.Handler;
 import me.ferrybig.javacoding.teamspeakconnector.event.PrivateMessageEvent;
 import me.ferrybig.javacoding.teamspeakconnector.event.PrivateMessageListener;
 import me.ferrybig.javacoding.teamspeakconnector.event.ServerEditEvent;
@@ -62,7 +61,7 @@ import me.ferrybig.javacoding.teamspeakconnector.event.ServerMessageListener;
 import me.ferrybig.javacoding.teamspeakconnector.event.TokenListener;
 import me.ferrybig.javacoding.teamspeakconnector.event.TokenUsedEvent;
 import me.ferrybig.javacoding.teamspeakconnector.internal.SendBehaviour;
-import me.ferrybig.javacoding.teamspeakconnector.internal.SubscriptionHandler;
+import me.ferrybig.javacoding.teamspeakconnector.event.meta.SubscriptionHandler;
 import me.ferrybig.javacoding.teamspeakconnector.internal.TeamspeakIO;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequestBuilder;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexResponse;
@@ -349,10 +348,13 @@ public class TeamspeakConnection implements Closeable {
 			Future<ComplexResponse> sendPacket = io.sendPacket(new ComplexRequestBuilder("quit").build(), SendBehaviour.FORCE_CLOSE_CONNECTION);
 			if (!this.io.getChannel().eventLoop().inEventLoop()) {
 				sendPacket.get();
+			} else if(sendPacket.isDone() && !sendPacket.isSuccess()) {
+				throw new TeamspeakException(sendPacket.cause());
 			}
 		} catch (InterruptedException | ExecutionException ex) {
 			if (ex instanceof InterruptedException) {
 				Thread.currentThread().interrupt();
+				return;
 			}
 			throw new TeamspeakException(ex);
 		}
