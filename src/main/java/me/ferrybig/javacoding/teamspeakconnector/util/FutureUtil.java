@@ -44,12 +44,18 @@ public class FutureUtil {
 			assert ignored == future;
 			try {
 				if (future.isSuccess()) {
-					prom.setSuccess(map.apply(future.getNow()));
+					prom.trySuccess(map.apply(future.getNow()));
 				} else {
-					prom.setFailure(future.cause());
+					prom.tryFailure(future.cause());
 				}
 			} catch (Throwable e) {
-				prom.setFailure(e);
+				prom.tryFailure(e);
+			}
+		});
+		prom.addListener((f) -> {
+			assert f == prom;
+			if(prom.isCancelled() && !future.isDone()) {
+				future.cancel(true);
 			}
 		});
 		return prom;
@@ -70,10 +76,16 @@ public class FutureUtil {
 				if (future.isSuccess()) {
 					delegateFutureResult(mapping.apply(future.getNow()), result, i -> secondary.apply(future.getNow(), i));
 				} else {
-					result.setFailure(future.cause());
+					result.tryFailure(future.cause());
 				}
 			} catch (Throwable e) {
-				result.setFailure(e);
+				result.tryFailure(e);
+			}
+		});
+		result.addListener((f) -> {
+			assert f == result;
+			if(result.isCancelled() && !future.isDone()) {
+				future.cancel(true);
 			}
 		});
 		return result;
