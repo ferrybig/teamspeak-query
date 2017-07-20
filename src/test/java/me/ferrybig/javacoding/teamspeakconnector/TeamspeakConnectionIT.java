@@ -14,6 +14,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import me.ferrybig.javacoding.teamspeakconnector.entities.Channel;
 import me.ferrybig.javacoding.teamspeakconnector.entities.Group;
 import me.ferrybig.javacoding.teamspeakconnector.entities.User;
 import static me.ferrybig.javacoding.teamspeakconnector.util.FutureUtil.waitSync;
@@ -45,6 +46,10 @@ public class TeamspeakConnectionIT {
 			TeamspeakConnection con = connect.sync().get();
 
 			System.out.println("Connected!");
+
+			System.out.println("Channel list");
+			final List<Channel> channel = con.getChannelList().sync().get();
+			channel.forEach(System.out::println);
 
 			System.out.println("Group list");
 			final List<Group> groups = con.getGroups().sync().get();

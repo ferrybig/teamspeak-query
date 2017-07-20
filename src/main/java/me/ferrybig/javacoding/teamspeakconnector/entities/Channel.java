@@ -24,8 +24,18 @@
 package me.ferrybig.javacoding.teamspeakconnector.entities;
 
 import io.netty.util.concurrent.Future;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
 
+/**
+ * A Teamspeak channel, a channel has an optional parent channel, and a required
+ * name.
+ */
+@Nonnull
+@ParametersAreNonnullByDefault
 public class Channel extends NamedChannel {
 
 	private final int order;
@@ -42,15 +52,42 @@ public class Channel extends NamedChannel {
 	private final int maxClients;
 	private final int totalClients;
 	private final boolean semiPermanent;
-	private final int codec;
+	private final Codec codec;
 	private final int codecQuality;
 
+	/**
+	 * Creates a Teamspeak channel object
+	 *
+	 * @param con connection that created this object
+	 * @param cid id of this channel
+	 * @param order Sorting order of this channel
+	 * @param parent Parent channel, may be null
+	 * @param name Name of this channel
+	 * @param topic Channel topic
+	 * @param password has this channel a password
+	 * @param neededSubscribePower Needed power to see the clients inside the
+	 * channel
+	 * @param neededTalkPower Needed power to let your voice be heard in this
+	 * channel
+	 * @param defaultChannel Is this channel the default channel on the server
+	 * @param permanent If this channel survives a restart
+	 * @param iconId The id of the icon of this channel
+	 * @param totalClientsFamily total people joined in this channel group
+	 * family
+	 * @param maxFamilyClients Maximum people allowed in this channel group
+	 * family
+	 * @param maxClients Maximum people allowed in this channel
+	 * @param totalClients total clients joined in this channel
+	 * @param semiPermanent If this channel survives being left empty
+	 * @param codec Codec used in this channel
+	 * @param codecQuality Codec quality
+	 */
 	public Channel(TeamspeakConnection con, int cid, int order,
-			UnresolvedChannel parent, String name, String topic,
+			@Nullable UnresolvedChannel parent, String name, String topic,
 			boolean password, int neededSubscribePower, int neededTalkPower,
 			boolean defaultChannel, boolean permanent, int iconId,
 			int totalClientsFamily, int maxFamilyClients, int maxClients,
-			int totalClients, boolean semiPermanent, int codec,
+			int totalClients, boolean semiPermanent, Codec codec,
 			int codecQuality) {
 		super(con, cid, name);
 		this.order = order;
@@ -76,6 +113,7 @@ public class Channel extends NamedChannel {
 		return order;
 	}
 
+	@CheckForNull
 	public UnresolvedChannel getParent() {
 		return parent;
 	}
@@ -128,7 +166,7 @@ public class Channel extends NamedChannel {
 		return semiPermanent;
 	}
 
-	public int getCodec() {
+	public Codec getCodec() {
 		return codec;
 	}
 
@@ -136,7 +174,7 @@ public class Channel extends NamedChannel {
 		return codecQuality;
 	}
 
-	public void setParent(UnresolvedChannel parent) {
+	public void setParent(@Nullable UnresolvedChannel parent) {
 		this.parent = parent; // TODO: make package private
 	}
 
@@ -150,4 +188,105 @@ public class Channel extends NamedChannel {
 		return "Channel{" + "id=" + getId() + ", order=" + order + ", parent=" + parent + ", name=" + getName() + ", topic=" + topic + ", password=" + password + ", neededSubscribePower=" + neededSubscribePower + ", neededTalkPower=" + neededTalkPower + ", defaultChannel=" + defaultChannel + ", permanent=" + permanent + ", iconId=" + iconId + ", totalClientsFamily=" + totalClientsFamily + ", maxFamilyClients=" + maxFamilyClients + ", maxClients=" + maxClients + ", totalClients=" + totalClients + ", semiPermanent=" + semiPermanent + ", codec=" + codec + ", codecQuality=" + codecQuality + '}';
 	}
 
+	public boolean isSpacer() {
+		return getName().startsWith("[spacer") && getName().indexOf(']') > 0;
+	}
+
+	public enum Codec {
+		/**
+		 * speex narrowband (mono, 16bit, 8kHz)
+		 */
+		SPEEX_NARROWBAND(0, false, 16, 8),
+		/**
+		 * speex wideband (mono, 16bit, 16kHz)
+		 */
+		SPEEX_WIDEBAND(1, false, 16, 16),
+		/**
+		 * speex ultra-wideband (mono, 16bit, 32kHz)
+		 */
+		SPEEX_ULTRAWIDEBAND(2, false, 16, 32),
+		/**
+		 * celt mono (mono, 16bit, 48kHz)
+		 */
+		CELT_MONO(3, false, 16, 48),
+		OPUS_VOICE(4, false, 0, 0),
+		OPUS_MUSIC(5, false, 0, 0);
+
+		private static final Codec[] BY_ID;
+
+		static {
+			Codec[] values = values();
+			BY_ID = new Codec[values.length];
+			for (Codec type : values()) {
+				BY_ID[type.id] = type;
+			}
+		}
+		private final int id;
+		private final boolean sterio;
+		private final int bits;
+		private final int bitrate;
+
+		private Codec(int id, boolean sterio, int bits, int bitrate) {
+			this.id = id;
+			this.sterio = sterio;
+			this.bits = bits;
+			this.bitrate = bitrate;
+		}
+
+		/**
+		 * Gets the internal id of the type
+		 *
+		 * @return the id
+		 */
+		public int getId() {
+			return id;
+		}
+
+		/**
+		 * Does this codec provide sterio output
+		 *
+		 * @return Does this codec provide sterio output
+		 */
+		public boolean isSterio() {
+			return sterio;
+		}
+
+		/**
+		 * Gets the sampling bit depth when recording
+		 *
+		 * @return The sampling bit depth when recording
+		 */
+		public int getBits() {
+			return bits;
+		}
+
+		/**
+		 * Gets the bitrate in kHz this codec provides
+		 *
+		 * @return the bitrate in kHz this codec provides
+		 */
+		public int getBitrate() {
+			return bitrate;
+		}
+
+		@Override
+		public String toString() {
+			return String.valueOf(id);
+		}
+
+		/**
+		 * Gets a type y its id
+		 *
+		 * @param id the id to look for
+		 * @return the type that matches the id
+		 * @throws IllegalArgumentException if the id isn't mapped to a type
+		 */
+		public static Codec getById(int id) {
+			if (id >= BY_ID.length || id < 0 || BY_ID[id] == null) {
+				throw new IllegalArgumentException("No type found for id " + id);
+			}
+			return BY_ID[id];
+		}
+
+	}
 }

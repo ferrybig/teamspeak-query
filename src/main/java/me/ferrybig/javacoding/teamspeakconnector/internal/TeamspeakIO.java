@@ -274,7 +274,7 @@ public class TeamspeakIO {
 				Integer.parseInt(data.get("channel_maxclients")),
 				Integer.parseInt(data.getOrDefault("total_clients", "0")),
 				data.get("channel_flag_semi_permanent").equals("1"),
-				Integer.parseInt(data.get("channel_codec")),
+				me.ferrybig.javacoding.teamspeakconnector.entities.Channel.Codec.getById(Integer.parseInt(data.get("channel_codec"))),
 				Integer.parseInt(data.get("channel_codec_quality")));
 	}
 
