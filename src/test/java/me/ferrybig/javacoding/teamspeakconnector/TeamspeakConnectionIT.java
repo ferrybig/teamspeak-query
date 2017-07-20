@@ -5,8 +5,6 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector;
 
-import me.ferrybig.javacoding.teamspeakconnector.entities.Group;
-import me.ferrybig.javacoding.teamspeakconnector.entities.User;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.concurrent.Future;
 import java.util.ArrayList;
@@ -16,6 +14,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import me.ferrybig.javacoding.teamspeakconnector.entities.Group;
+import me.ferrybig.javacoding.teamspeakconnector.entities.User;
 import static me.ferrybig.javacoding.teamspeakconnector.util.FutureUtil.waitSync;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;

@@ -23,10 +23,10 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector;
 
-import me.ferrybig.javacoding.teamspeakconnector.entities.Group;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
+import me.ferrybig.javacoding.teamspeakconnector.entities.Group;
 import static org.junit.Assert.assertSame;
 import org.junit.Test;
 import org.junit.runner.RunWith;

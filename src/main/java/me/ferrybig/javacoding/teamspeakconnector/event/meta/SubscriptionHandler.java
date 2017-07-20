@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.BiConsumer;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
-import me.ferrybig.javacoding.teamspeakconnector.event.meta.Handler;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequest;
 
 public class SubscriptionHandler<L> implements Handler<L> {
