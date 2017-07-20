@@ -69,7 +69,7 @@ public class UnresolvedGroup implements Resolvable<Group> {
 	}
 
 	/**
-	 * Adds a user to this group. This internally routes to {@link UnresolvedUser#addToGroup(me.ferrybig.javacoding.teamspeakconnector.UnresolvedGroup)
+	 * Adds a user to this group. This internally routes to {@link UnresolvedUser#addToGroup(UnresolvedGroup)
 	 * }, but is included here for utility purposes
 	 *
 	 * @param user user to add to the group
@@ -80,7 +80,7 @@ public class UnresolvedGroup implements Resolvable<Group> {
 	}
 
 	/**
-	 * Removes a user from this group. This internally routes to {@link UnresolvedUser#removeFromGroup(me.ferrybig.javacoding.teamspeakconnector.UnresolvedGroup)
+	 * Removes a user from this group. This internally routes to {@link UnresolvedUser#removeFromGroup(UnresolvedGroup)
 	 * }, but is included here for utility purposes
 	 *
 	 * @param user user to remove from the group

@@ -87,7 +87,7 @@ import me.ferrybig.javacoding.teamspeakconnector.util.FutureUtil;
  * variables, while another thread repeaticly calls {@code connect}, it is
  * unspecified what the other thread will see. It is however safe to repeatable
  * call connect and call modify methods, or to call connect from multiple
- * threads without modifing the base object. If concurrent modification is
+ * threads without modifying the base object. If concurrent modification is
  * required, you should {@link TeamspeakBootstrap#clone} the object from your
  * main thread, before calling connect from your auxilery threads.
  *
@@ -193,7 +193,7 @@ public class TeamspeakBootstrap {
 	/**
 	 * Returns the selected server id, or null if none is selected
 	 *
-	 * @see UnresolvedServer#select()
+	 * @see me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedServer#select()
 	 * @return server id
 	 */
 	public Integer selectServerID() {
@@ -204,7 +204,7 @@ public class TeamspeakBootstrap {
 	 * Configure a server id to select after connecting
 	 *
 	 * @param serverId server id to connect to
-	 * @see UnresolvedServer#select()
+	 * @see me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedServer#select()
 	 * @return the selected server id
 	 */
 	@Nonnull
@@ -216,7 +216,7 @@ public class TeamspeakBootstrap {
 	/**
 	 * Removes the selection of the server
 	 *
-	 * @see UnresolvedServer#select()
+	 * @see me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedServer#select()
 	 * @see TeamspeakBootstrap#selectServerID(int)
 	 * @return this
 	 */
@@ -229,7 +229,7 @@ public class TeamspeakBootstrap {
 	/**
 	 * Returns the selected server by port, or null if not defined
 	 *
-	 * @see UnresolvedServer#select()
+	 * @see me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedServer#select()
 	 * @return port selected server
 	 */
 	public Integer selectServerPort() {
@@ -239,7 +239,7 @@ public class TeamspeakBootstrap {
 	/**
 	 * Select the final server by port
 	 *
-	 * @see UnresolvedServer#select()
+	 * @see me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedServer#select()
 	 * @param port port number of the virtual server
 	 * @return this
 	 */
@@ -252,7 +252,7 @@ public class TeamspeakBootstrap {
 	/**
 	 * Clears the selection of selected virtual server by port
 	 *
-	 * @see UnresolvedServer#select()
+	 * @see me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedServer#select()
 	 * @see TeamspeakBootstrap#selectServerPort(int)
 	 * @return this
 	 */
