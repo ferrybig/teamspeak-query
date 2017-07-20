@@ -21,8 +21,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package me.ferrybig.javacoding.teamspeakconnector;
+package me.ferrybig.javacoding.teamspeakconnector.entities;
 
-public class UnresolvedChannelGroup {
+import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
+
+public class NamedChannel extends UnresolvedChannel {
+
+	private final String name;
+
+	public NamedChannel(TeamspeakConnection con, int id, String name) {
+		super(con, id);
+		this.name = name;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public String toString() {
+		return "NamedChannel{" + "id=" + getId() + ",name=" + getName() + '}';
+	}
 
 }

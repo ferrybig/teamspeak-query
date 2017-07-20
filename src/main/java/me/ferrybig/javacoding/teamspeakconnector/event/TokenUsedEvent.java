@@ -24,7 +24,7 @@
 package me.ferrybig.javacoding.teamspeakconnector.event;
 
 import java.util.Objects;
-import me.ferrybig.javacoding.teamspeakconnector.UnresolvedUser;
+import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedUser;
 
 public class TokenUsedEvent {
 

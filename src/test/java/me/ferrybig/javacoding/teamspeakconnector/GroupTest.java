@@ -23,6 +23,7 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector;
 
+import me.ferrybig.javacoding.teamspeakconnector.entities.Group;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;

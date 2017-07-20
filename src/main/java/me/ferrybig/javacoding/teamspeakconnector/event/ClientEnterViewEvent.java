@@ -23,9 +23,9 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.event;
 
-import me.ferrybig.javacoding.teamspeakconnector.NamedUser;
-import me.ferrybig.javacoding.teamspeakconnector.UnresolvedChannel;
-import me.ferrybig.javacoding.teamspeakconnector.ShallowUser;
+import me.ferrybig.javacoding.teamspeakconnector.entities.NamedUser;
+import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedChannel;
+import me.ferrybig.javacoding.teamspeakconnector.entities.ShallowUser;
 
 public class ClientEnterViewEvent extends ClientResolvedEvent {
 

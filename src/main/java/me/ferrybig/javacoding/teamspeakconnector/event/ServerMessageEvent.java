@@ -23,7 +23,7 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.event;
 
-import me.ferrybig.javacoding.teamspeakconnector.NamedUser;
+import me.ferrybig.javacoding.teamspeakconnector.entities.NamedUser;
 
 public class ServerMessageEvent extends MessageEvent {
 

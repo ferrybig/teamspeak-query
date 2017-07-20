@@ -5,6 +5,8 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector;
 
+import me.ferrybig.javacoding.teamspeakconnector.entities.Group;
+import me.ferrybig.javacoding.teamspeakconnector.entities.User;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.concurrent.Future;
 import java.util.ArrayList;

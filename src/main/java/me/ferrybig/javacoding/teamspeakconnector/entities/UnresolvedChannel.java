@@ -21,40 +21,53 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package me.ferrybig.javacoding.teamspeakconnector;
+package me.ferrybig.javacoding.teamspeakconnector.entities;
 
 import io.netty.util.concurrent.Future;
+import java.util.List;
+import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequestBuilder;
 
-public class UnresolvedServer {
+public class UnresolvedChannel {
 
 	protected final TeamspeakConnection con;
-	private final int sid;
 
-	public UnresolvedServer(TeamspeakConnection con, int sid) {
+	private final int id;
+
+	public UnresolvedChannel(TeamspeakConnection con, int id) {
 		this.con = con;
-		this.sid = sid;
+		this.id = id;
 	}
 
-	public Future<TeamspeakConnection> select() {
-		return con.io().chainFuture(
-				con.io().sendPacket(new ComplexRequestBuilder("use").addData("sid", String.valueOf(sid)).addOption("virtual").build()),
-				ignored -> con).addListener(future -> {
-					if (future.isSuccess()) {
-						con.io().notifyServerChanged();
-					}
-				});
+	public Future<Channel> resolv() {
+		return forceResolv();
 	}
 
-	public Future<TeamspeakConnection> stop() {
-		return con.io().chainFuture(
-				con.io().sendPacket(new ComplexRequestBuilder("serverstop").addData("sid", String.valueOf(sid)).build()),
-				ignored -> con);
+	public Future<Channel> forceResolv() {
+		return con.getChannelById(id);
 	}
 
-	public Future<TeamspeakConnection> start() {
-		return con.io().chainFuture(
-				con.io().sendPacket(new ComplexRequestBuilder("serverstart").addData("sid", String.valueOf(sid)).build()),
-				ignored -> con);
+	public int getId() {
+		return id;
 	}
+
+	@Override
+	public String toString() {
+		return "UnresolvedChannel{" + "id=" + id + '}';
+	}
+
+	public Future<List<File>> getFileTransferList() {
+		return getFileTransferList("/");
+	}
+
+	public Future<List<File>> getFileTransferList(String path) {
+		return con.io().mapComplexReponseList(con.io().sendPacket(
+				new ComplexRequestBuilder("ftgetfilelist").addData("cid", getId()).addData("path", path).build()),
+				con.io()::mapFile);
+	}
+
+	public Future<?> moveInto(UnresolvedUser user) {
+		return con.io().sendPacket(new ComplexRequestBuilder("clientmove").addData("cid", getId()).addData("clid", user.getId()).build());
+	}
+
 }

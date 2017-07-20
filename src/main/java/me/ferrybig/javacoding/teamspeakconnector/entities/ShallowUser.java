@@ -21,12 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package me.ferrybig.javacoding.teamspeakconnector;
+package me.ferrybig.javacoding.teamspeakconnector.entities;
 
 import io.netty.util.concurrent.Future;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import me.ferrybig.javacoding.teamspeakconnector.ClientType;
+import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequestBuilder;
 
 /**

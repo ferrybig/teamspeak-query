@@ -21,10 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package me.ferrybig.javacoding.teamspeakconnector;
+package me.ferrybig.javacoding.teamspeakconnector.entities;
 
 import io.netty.util.concurrent.Future;
 import java.util.Objects;
+import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
 
 /**
  * This class represents a Teamspeak server group. A server group has a type,

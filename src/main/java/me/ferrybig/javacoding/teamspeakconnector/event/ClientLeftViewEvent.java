@@ -23,8 +23,8 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.event;
 
-import me.ferrybig.javacoding.teamspeakconnector.UnresolvedChannel;
-import me.ferrybig.javacoding.teamspeakconnector.UnresolvedUser;
+import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedChannel;
+import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedUser;
 
 public class ClientLeftViewEvent extends ClientEvent {
 

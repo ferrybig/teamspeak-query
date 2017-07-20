@@ -21,34 +21,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package me.ferrybig.javacoding.teamspeakconnector;
+package me.ferrybig.javacoding.teamspeakconnector.entities;
 
-/**
- *
- * @author Fernando van Loenhout
- */
-public class NamedUser extends UnresolvedUser {
+import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
 
-	protected final String uniqueid;
-	protected final String nickname;
+public class File extends UnresolvedFile {
 
-	public NamedUser(TeamspeakConnection con, int id, String uniqueid, String nickname) {
-		super(con, id);
-		this.uniqueid = uniqueid;
-		this.nickname = nickname;
-	}
-
-	public String getUniqueId() {
-		return uniqueid;
-	}
-
-	public String getNickname() {
-		return nickname;
-	}
-
-	@Override
-	public String toString() {
-		return getClass().getSimpleName() + "{" + "id=" + getId() + ", uniqueid=" + uniqueid + ", nickname=" + nickname + '}';
+	public File(TeamspeakConnection connection, UnresolvedChannel channel, String name) {
+		super(connection, channel, name);
 	}
 
 }

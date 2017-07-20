@@ -52,14 +52,14 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.annotation.concurrent.GuardedBy;
 import me.ferrybig.javacoding.teamspeakconnector.ClientType;
-import me.ferrybig.javacoding.teamspeakconnector.File;
-import me.ferrybig.javacoding.teamspeakconnector.Group;
-import me.ferrybig.javacoding.teamspeakconnector.Server;
+import me.ferrybig.javacoding.teamspeakconnector.entities.File;
+import me.ferrybig.javacoding.teamspeakconnector.entities.Group;
+import me.ferrybig.javacoding.teamspeakconnector.entities.Server;
 import me.ferrybig.javacoding.teamspeakconnector.ServerStatus;
-import me.ferrybig.javacoding.teamspeakconnector.ShallowUser;
+import me.ferrybig.javacoding.teamspeakconnector.entities.ShallowUser;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakException;
-import me.ferrybig.javacoding.teamspeakconnector.User;
+import me.ferrybig.javacoding.teamspeakconnector.entities.User;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequest;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequestBuilder;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexResponse;
@@ -250,8 +250,8 @@ public class TeamspeakIO {
 				data.get("virtualserver_autostart").equals("1"));
 	}
 
-	public me.ferrybig.javacoding.teamspeakconnector.Channel mapChannel(Map<String, String> data) {
-		return new me.ferrybig.javacoding.teamspeakconnector.Channel(con,
+	public me.ferrybig.javacoding.teamspeakconnector.entities.Channel mapChannel(Map<String, String> data) {
+		return new me.ferrybig.javacoding.teamspeakconnector.entities.Channel(con,
 				Integer.parseInt(data.get("cid")),
 				Integer.parseInt(data.get("channel_order")),
 				con.getUnresolvedChannelById(Integer.parseInt(data.get("pid"))),
@@ -410,9 +410,9 @@ public class TeamspeakIO {
 		return Enum.valueOf(enu, var.toUpperCase().replace(' ', '_'));
 	}
 
-	private Map<Integer, me.ferrybig.javacoding.teamspeakconnector.Channel> mapChannelParents(Map<Integer, me.ferrybig.javacoding.teamspeakconnector.Channel> list) {
-		for (me.ferrybig.javacoding.teamspeakconnector.Channel c : list.values()) {
-			me.ferrybig.javacoding.teamspeakconnector.Channel parent = list.get(c.getParent().getId());
+	private Map<Integer, me.ferrybig.javacoding.teamspeakconnector.entities.Channel> mapChannelParents(Map<Integer, me.ferrybig.javacoding.teamspeakconnector.entities.Channel> list) {
+		for (me.ferrybig.javacoding.teamspeakconnector.entities.Channel c : list.values()) {
+			me.ferrybig.javacoding.teamspeakconnector.entities.Channel parent = list.get(c.getParent().getId());
 			if (parent != null) {
 				c.setParent(parent);
 			}

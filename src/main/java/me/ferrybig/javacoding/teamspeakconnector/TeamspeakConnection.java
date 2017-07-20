@@ -23,6 +23,19 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector;
 
+import me.ferrybig.javacoding.teamspeakconnector.entities.File;
+import me.ferrybig.javacoding.teamspeakconnector.entities.NamedUser;
+import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedUser;
+import me.ferrybig.javacoding.teamspeakconnector.entities.ShallowUser;
+import me.ferrybig.javacoding.teamspeakconnector.entities.Channel;
+import me.ferrybig.javacoding.teamspeakconnector.entities.Group;
+import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedChannel;
+import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedServer;
+import me.ferrybig.javacoding.teamspeakconnector.entities.Server;
+import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedFile;
+import me.ferrybig.javacoding.teamspeakconnector.entities.User;
+import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedGroup;
+import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedChannelGroup;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.concurrent.Future;
