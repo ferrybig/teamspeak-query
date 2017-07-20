@@ -264,8 +264,10 @@ public class TeamspeakConnection implements Closeable {
 		return new UnresolvedServer(this, id);
 	}
 
-	public UnresolvedServer getUnresolvedServerByPort(int id) {
-		throw new UnsupportedOperationException(); // TODO;
+	public Future<UnresolvedServer> getUnresolvedServerByPort(int port) {
+		return this.io.chainFuture(
+				this.io.sendPacket(new ComplexRequestBuilder("serveridgetbyport").addData("virtualserver_port", port).build()),
+				p -> getUnresolvedServerById(Integer.parseInt(p.getCommands().get(0).get("server_id"))));
 	}
 
 	public Future<User> getUserById(int id) {

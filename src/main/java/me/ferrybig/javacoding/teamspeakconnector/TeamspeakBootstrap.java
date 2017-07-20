@@ -501,7 +501,9 @@ public class TeamspeakBootstrap {
 		}
 		Integer virtualServerPort = this.virtualServerPort;
 		if (virtualServerPort != null) {
-			connection = FutureUtil.chainFutureFlat(next.newPromise(), connection, con -> con.getUnresolvedServerByPort(virtualServerPort).select());
+			connection = FutureUtil.chainFutureFlat(next.newPromise(), connection,
+					con -> FutureUtil.chainFutureFlat(next.newPromise(), con.getUnresolvedServerByPort(virtualServerPort),
+							server -> server.select()));
 		}
 		String clientName = this.clientName;
 		if (clientName != null) {
