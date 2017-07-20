@@ -56,6 +56,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.util.Pair;
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.NotThreadSafe;
 import me.ferrybig.javacoding.teamspeakconnector.internal.TeamspeakConnectionInitizer;
 import me.ferrybig.javacoding.teamspeakconnector.internal.handler.PacketQueueBuffer;
 import me.ferrybig.javacoding.teamspeakconnector.util.FutureUtil;
@@ -91,6 +92,7 @@ import me.ferrybig.javacoding.teamspeakconnector.util.FutureUtil;
  * main thread, before calling connect from your auxilery threads.
  *
  */
+@NotThreadSafe
 public class TeamspeakBootstrap {
 
 	/**
