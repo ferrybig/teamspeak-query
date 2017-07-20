@@ -27,7 +27,6 @@ import io.netty.util.concurrent.Future;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
-import me.ferrybig.javacoding.teamspeakconnector.PrivilegeKeyTokenType;
 import me.ferrybig.javacoding.teamspeakconnector.Resolvable;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
 import me.ferrybig.javacoding.teamspeakconnector.internal.handler.PacketEncoder;
@@ -155,7 +154,7 @@ public class UnresolvedGroup implements Resolvable<Group> {
 			} while (itr.hasNext());
 			builder.addData("tokencustomset", customStr.substring(1));
 		}
-		builder.addData("tokentype", PrivilegeKeyTokenType.SERVER_GROUP);
+		builder.addData("tokentype", PrivilegeKey.Type.SERVER_GROUP);
 		builder.addData("tokenid1", getServerGroupId());
 		builder.addData("tokenid2", "0");
 		builder.addData("tokendescription", description);

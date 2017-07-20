@@ -21,64 +21,69 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package me.ferrybig.javacoding.teamspeakconnector;
+package me.ferrybig.javacoding.teamspeakconnector.entities;
 
 /**
  *
  * @author Fernando van Loenhout
  */
-public enum PrivilegeKeyTokenType {
-	/**
-	 * server group token (id1={groupID} id2=0)
-	 */
-	SERVER_GROUP(0),
-	/**
-	 * channel group token (id1={groupID} id2={channelID})
-	 */
-	CHANNEL_GROUP(1);
-
-	private static final int BY_ID_LENGTH = 2;
-	private static final PrivilegeKeyTokenType[] BY_ID;
-
-	static {
-		BY_ID = new PrivilegeKeyTokenType[BY_ID_LENGTH];
-		for (PrivilegeKeyTokenType type : values()) {
-			BY_ID[type.id] = type;
-		}
-	}
-
-	private final int id;
-
-	private PrivilegeKeyTokenType(int id) {
-		this.id = id;
-	}
+public class PrivilegeKey {
 
 	/**
-	 * Gets the internal id of the type
 	 *
-	 * @return the id
+	 * @author Fernando van Loenhout
 	 */
-	public int getId() {
-		return id;
-	}
+	public enum Type {
+		/**
+		 * server group token (id1={groupID} id2=0)
+		 */
+		SERVER_GROUP(0),
+		/**
+		 * channel group token (id1={groupID} id2={channelID})
+		 */
+		CHANNEL_GROUP(1);
 
-	@Override
-	public String toString() {
-		return String.valueOf(id);
-	}
-
-	/**
-	 * Gets a type y its id
-	 *
-	 * @param id the id to look for
-	 * @return the type that matches the id
-	 * @throws IllegalArgumentException if the id isn't mapped to a type
-	 */
-	public static PrivilegeKeyTokenType getById(int id) {
-		if (id >= BY_ID_LENGTH || id < 0 || BY_ID[id] == null) {
-			throw new IllegalArgumentException("No type found for id " + id);
+		private static final Type[] BY_ID;
+		static {
+			Type[] values = values();
+			BY_ID = new Type[values.length];
+			for (Type type : values()) {
+				BY_ID[type.id] = type;
+			}
 		}
-		return BY_ID[id];
+		private final int id;
+
+		private Type(int id) {
+			this.id = id;
+		}
+
+		/**
+		 * Gets the internal id of the type
+		 *
+		 * @return the id
+		 */
+		public int getId() {
+			return id;
+		}
+
+		@Override
+		public String toString() {
+			return String.valueOf(id);
+		}
+
+		/**
+		 * Gets a type y its id
+		 *
+		 * @param id the id to look for
+		 * @return the type that matches the id
+		 * @throws IllegalArgumentException if the id isn't mapped to a type
+		 */
+		public static Type getById(int id) {
+			if (id >= BY_ID.length || id < 0 || BY_ID[id] == null) {
+				throw new IllegalArgumentException("No type found for id " + id);
+			}
+			return BY_ID[id];
+		}
 	}
 
 }
