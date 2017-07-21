@@ -24,13 +24,16 @@
 package me.ferrybig.javacoding.teamspeakconnector.util;
 
 import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.Promise;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class FutureUtil {
@@ -54,7 +57,7 @@ public class FutureUtil {
 		});
 		prom.addListener((f) -> {
 			assert f == prom;
-			if(prom.isCancelled() && !future.isDone()) {
+			if (prom.isCancelled() && !future.isDone()) {
 				future.cancel(true);
 			}
 		});
@@ -84,7 +87,7 @@ public class FutureUtil {
 		});
 		result.addListener((f) -> {
 			assert f == result;
-			if(result.isCancelled() && !future.isDone()) {
+			if (result.isCancelled() && !future.isDone()) {
 				future.cancel(true);
 			}
 		});
@@ -138,6 +141,41 @@ public class FutureUtil {
 			result.add(future.get());
 		}
 		return result;
+	}
+
+	public static <T> GenericFutureListener<? extends Future<T>> generateListener(BiConsumer<? super T, Throwable> toCall) {
+		return f -> toCall.accept(f.isSuccess() ? f.getNow() : null, f.cause());
+	}
+
+	public static <T> GenericFutureListener<? extends Future<T>> generateListener(Consumer<? super T> success, Consumer<Throwable> error) {
+		return f -> {
+			if (f.isSuccess()) {
+				success.accept(f.getNow());
+			} else {
+				error.accept(f.cause());
+			}
+		};
+	}
+
+	public static <T> GenericFutureListener<? extends Future<T>> generateListener(Consumer<Runnable> executor, BiConsumer<? super T, Throwable> toCall) {
+		if(executor == null)
+			return generateListener(toCall);
+		return f
+				-> executor.accept(()
+						-> toCall.accept(f.isSuccess() ? f.getNow() : null, f.cause()));
+	}
+
+	public static <T> GenericFutureListener<? extends Future<T>> generateListener(Consumer<Runnable> executor, Consumer<? super T> success, Consumer<Throwable> error) {
+		if(executor == null) {
+			return generateListener(success, error);
+		}
+		return f -> executor.accept(() -> {
+			if (f.isSuccess()) {
+				success.accept(f.getNow());
+			} else {
+				error.accept(f.cause());
+			}
+		});
 	}
 
 }
