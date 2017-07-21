@@ -60,7 +60,7 @@ public class TeamspeakConnectionIT {
 			System.out.println("User list!");
 			List<User> users = con.getUsersList().sync().get();
 			for (User user : users) {
-				if (user.getType() == ClientType.QUERY) {
+				if (user.getType() == me.ferrybig.javacoding.teamspeakconnector.entities.User.Type.QUERY) {
 					continue;
 				}
 				if (bottest.isPresent()) {
@@ -128,7 +128,7 @@ public class TeamspeakConnectionIT {
 			List<User> users = con1.getUsersList().sync().get();
 			assertNotEquals(con1.io().whoAmI().get().getId(), con2.io().whoAmI().get().getId());
 			for (User user : users) {
-				if (user.getType() == ClientType.QUERY) {
+				if (user.getType() == me.ferrybig.javacoding.teamspeakconnector.entities.User.Type.QUERY) {
 					System.err.println(user.getId() + ":" + con2.io().whoAmI().get().getId());
 					if (user.getId() == con2.io().whoAmI().get().getId()) {
 						con1user2 = user;

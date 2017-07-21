@@ -27,7 +27,6 @@ import io.netty.util.concurrent.Future;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import me.ferrybig.javacoding.teamspeakconnector.ClientType;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequestBuilder;
 
@@ -40,7 +39,7 @@ public class ShallowUser extends NamedUser {
 	protected final int databaseId;
 	protected final UnresolvedChannel channel;
 	protected final UnresolvedChannel channelGroupInherited;
-	protected final ClientType type;
+	protected final User.Type type;
 	protected final String awayMessage;
 	protected final boolean inputMuted;
 	protected final boolean outputMuted;
@@ -58,7 +57,7 @@ public class ShallowUser extends NamedUser {
 
 	public ShallowUser(TeamspeakConnection con, int id, String uniqueid,
 			int databaseId, UnresolvedChannel channel, String nickname,
-			ClientType type, String awayMessage, boolean inputMuted,
+			User.Type type, String awayMessage, boolean inputMuted,
 			boolean outputMuted, boolean inputHardware, boolean outputHardware,
 			int talkPower, boolean talker, boolean prioritySpeaker,
 			boolean recording, boolean channelCommander,
@@ -95,7 +94,7 @@ public class ShallowUser extends NamedUser {
 		return channel;
 	}
 
-	public ClientType getType() {
+	public User.Type getType() {
 		return type;
 	}
 

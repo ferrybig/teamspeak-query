@@ -51,7 +51,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.annotation.concurrent.GuardedBy;
-import me.ferrybig.javacoding.teamspeakconnector.ClientType;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakException;
 import me.ferrybig.javacoding.teamspeakconnector.entities.File;
@@ -284,7 +283,7 @@ public class TeamspeakIO {
 				con.getUnresolvedChannelById(Integer.parseInt(data.get("cid"))),
 				Integer.parseInt(data.get("client_database_id")),
 				data.get("client_nickname"),
-				ClientType.getById(Integer.parseInt(data.get("client_type"))),
+				User.Type.getById(Integer.parseInt(data.get("client_type"))),
 				data.get("client_away").equals("1") ? data.get("client_away_message") : null,
 				data.get("client_flag_talking").equals("1"),
 				data.get("client_input_muted").equals("1"),
@@ -317,7 +316,7 @@ public class TeamspeakIO {
 				Integer.parseInt(data.get("client_database_id")),
 				con.getUnresolvedChannelById(Integer.parseInt(data.get("cid"))),
 				data.get("client_nickname"),
-				ClientType.getById(Integer.parseInt(data.get("client_type"))),
+				User.Type.getById(Integer.parseInt(data.get("client_type"))),
 				data.get("client_away").equals("1") ? data.get("client_away_message") : null,
 				data.get("client_input_muted").equals("1"),
 				data.get("client_output_muted").equals("1"),
@@ -341,7 +340,7 @@ public class TeamspeakIO {
 				con.getUnresolvedChannelById(Integer.parseInt(data.get("client_channel_id"))),
 				Integer.parseInt(data.get("client_database_id")),
 				data.get("client_nickname"),
-				ClientType.QUERY,
+				User.Type.QUERY,
 				null,
 				false,
 				true,

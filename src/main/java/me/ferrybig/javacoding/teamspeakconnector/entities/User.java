@@ -26,7 +26,6 @@ package me.ferrybig.javacoding.teamspeakconnector.entities;
 import io.netty.util.concurrent.Future;
 import java.net.InetAddress;
 import java.util.List;
-import me.ferrybig.javacoding.teamspeakconnector.ClientType;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
 
 public class User extends ShallowUser {
@@ -40,7 +39,7 @@ public class User extends ShallowUser {
 	protected final InetAddress ip;
 
 	public User(TeamspeakConnection con, int id, UnresolvedChannel channel, int databaseId, String nickname,
-			ClientType type, String awayMessage,
+			Type type, String awayMessage,
 			boolean talking, boolean inputMuted, boolean outputMuted, boolean inputHardware, boolean outputHardware,
 			int talkPower, boolean talker, boolean prioritySpeaker, boolean recording, boolean channelCommander,
 			String uniqueIdentifier, List<UnresolvedGroup> serverGroup, List<UnresolvedChannelGroup> channelGroup,
@@ -129,6 +128,21 @@ public class User extends ShallowUser {
 	@Override
 	public String toString() {
 		return "User{" + "id=" + getId() + ",channel=" + channel + ", databaseId=" + databaseId + ", nickname=" + getNickname() + ", type=" + type + ", awayMessage=" + awayMessage + ", talking=" + talking + ", inputMuted=" + inputMuted + ", outputMuted=" + outputMuted + ", inputHardware=" + inputHardware + ", outputHardware=" + outputHardware + ", talkPower=" + talkPower + ", talker=" + talker + ", prioritySpeaker=" + prioritySpeaker + ", recording=" + recording + ", channelCommander=" + channelCommander + ", uniqueIdentifier=" + getUniqueId() + ", serverGroup=" + serverGroup + ", channelGroup=" + channelGroup + ", channelGroupInherited=" + channelGroupInherited + ", version=" + version + ", platform=" + platform + ", idleTime=" + idleTime + ", created=" + created + ", lastConnected=" + lastConnected + ", iconId=" + iconId + ", country=" + country + ", ip=" + ip + '}';
+	}
+
+	public static enum Type {
+		NORMAL, QUERY;
+
+		public static Type getById(int id) {
+			switch (id) {
+				case 0:
+					return NORMAL;
+				case 1:
+					return QUERY;
+				default:
+					throw new IllegalArgumentException("ClientType " + id + " not known");
+			}
+		}
 	}
 
 }
