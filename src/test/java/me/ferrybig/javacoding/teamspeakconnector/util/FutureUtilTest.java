@@ -34,9 +34,12 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.same;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
  *
@@ -157,6 +160,160 @@ public class FutureUtilTest {
 			executor.newFailedFuture(dummyException).addListener(FutureUtil.generateListener(success, error));
 			verify(success, times(0)).accept(any());
 			verify(error).accept(same(dummyException));
+		}).await();
+		if (f.cause() != null) {
+			throw f.cause();
+		}
+	}
+
+	@Test
+	public void generateListenerExecutorSingleMethodSuccessString() throws Throwable {
+		Future<?> f = executor.submit(() -> {
+			Consumer<Runnable> futureExecutor = mock(Consumer.class);
+			doAnswer((Answer<Object>) (InvocationOnMock invocation) -> {
+				invocation.getArgumentAt(0, Runnable.class).run();
+				return null;
+			}).when(futureExecutor).accept(any());;
+			BiConsumer<Object, Throwable> mock = mock(BiConsumer.class);
+			executor.newSucceededFuture("bar").addListener(FutureUtil.generateListener(futureExecutor, mock));
+			verify(mock).accept("bar", null);
+			verify(futureExecutor).accept(any());
+		}).await();
+		if (f.cause() != null) {
+			throw f.cause();
+		}
+	}
+
+	@Test
+	public void generateListenerExecutorSingleMethodSuccessInteger() throws Throwable {
+		Future<?> f = executor.submit(() -> {
+			Consumer<Runnable> futureExecutor = mock(Consumer.class);
+			doAnswer((Answer<Object>) (InvocationOnMock invocation) -> {
+				invocation.getArgumentAt(0, Runnable.class).run();
+				return null;
+			}).when(futureExecutor).accept(any());;
+			BiConsumer<Object, Throwable> mock = mock(BiConsumer.class);
+			executor.newSucceededFuture(22).addListener(FutureUtil.generateListener(futureExecutor, mock));
+			verify(mock).accept(22, null);
+			verify(futureExecutor).accept(any());
+		}).await();
+		if (f.cause() != null) {
+			throw f.cause();
+		}
+	}
+
+	@Test(expected = AssertionError.class)
+	public void generateListenerExecutorSingleMethodSuccessIntegerFalsePositive() throws Throwable {
+		Future<?> f = executor.submit(() -> {
+			Consumer<Runnable> futureExecutor = mock(Consumer.class);
+			doAnswer((Answer<Object>) (InvocationOnMock invocation) -> {
+				invocation.getArgumentAt(0, Runnable.class).run();
+				return null;
+			}).when(futureExecutor).accept(any());;
+			BiConsumer<Object, Throwable> mock = mock(BiConsumer.class);
+			executor.newSucceededFuture(22).addListener(FutureUtil.generateListener(futureExecutor, mock));
+			verify(mock).accept(23, null);
+			verify(futureExecutor).accept(any());
+		}).await();
+		if (f.cause() != null) {
+			throw f.cause();
+		}
+	}
+
+	@Test
+	public void generateListenerExecutorSingleMethodFailed() throws Throwable {
+		Future<?> f = executor.submit(() -> {
+			Consumer<Runnable> futureExecutor = mock(Consumer.class);
+			doAnswer((Answer<Object>) (InvocationOnMock invocation) -> {
+				invocation.getArgumentAt(0, Runnable.class).run();
+				return null;
+			}).when(futureExecutor).accept(any());;
+			BiConsumer<Object, Throwable> mock = mock(BiConsumer.class);
+			Throwable dummyException = new IOException();
+			executor.newFailedFuture(dummyException).addListener(FutureUtil.generateListener(futureExecutor, mock));
+			verify(mock).accept(null, dummyException);
+			verify(futureExecutor).accept(any());
+		}).await();
+		if (f.cause() != null) {
+			throw f.cause();
+		}
+	}
+
+	@Test
+	public void generateListenerExecutorDoubleMethodSuccessString() throws Throwable {
+		Future<?> f = executor.submit(() -> {
+			Consumer<Runnable> futureExecutor = mock(Consumer.class);
+			doAnswer((Answer<Object>) (InvocationOnMock invocation) -> {
+				invocation.getArgumentAt(0, Runnable.class).run();
+				return null;
+			}).when(futureExecutor).accept(any());;
+			Consumer<Object> success = mock(Consumer.class);
+			Consumer<Throwable> error = mock(Consumer.class);
+			executor.newSucceededFuture("bar").addListener(FutureUtil.generateListener(futureExecutor, success, error));
+			verify(success).accept("bar");
+			verify(error, times(0)).accept(any());
+			verify(futureExecutor).accept(any());
+		}).await();
+		if (f.cause() != null) {
+			throw f.cause();
+		}
+	}
+
+	@Test
+	public void generateListenerExecutorDoubleMethodSuccessInteger() throws Throwable {
+		Future<?> f = executor.submit(() -> {
+			Consumer<Runnable> futureExecutor = mock(Consumer.class);
+			doAnswer((Answer<Object>) (InvocationOnMock invocation) -> {
+				invocation.getArgumentAt(0, Runnable.class).run();
+				return null;
+			}).when(futureExecutor).accept(any());;
+			Consumer<Object> success = mock(Consumer.class);
+			Consumer<Throwable> error = mock(Consumer.class);
+			executor.newSucceededFuture(42).addListener(FutureUtil.generateListener(futureExecutor, success, error));
+			verify(success).accept(42);
+			verify(error, times(0)).accept(any());
+			verify(futureExecutor).accept(any());
+		}).await();
+		if (f.cause() != null) {
+			throw f.cause();
+		}
+	}
+
+	@Test(expected = AssertionError.class)
+	public void generateListenerExecutorDoubleMethodSuccessIntegerFalsePositive() throws Throwable {
+		Future<?> f = executor.submit(() -> {
+			Consumer<Runnable> futureExecutor = mock(Consumer.class);
+			doAnswer((Answer<Object>) (InvocationOnMock invocation) -> {
+				invocation.getArgumentAt(0, Runnable.class).run();
+				return null;
+			}).when(futureExecutor).accept(any());;
+			Consumer<Object> success = mock(Consumer.class);
+			Consumer<Throwable> error = mock(Consumer.class);
+			executor.newSucceededFuture(42).addListener(FutureUtil.generateListener(futureExecutor, success, error));
+			verify(success).accept(24);
+			verify(error, times(0)).accept(any());
+			verify(futureExecutor).accept(any());
+		}).await();
+		if (f.cause() != null) {
+			throw f.cause();
+		}
+	}
+
+	@Test
+	public void generateListenerExecutorDoubleMethodFailed() throws Throwable {
+		Future<?> f = executor.submit(() -> {
+			Consumer<Runnable> futureExecutor = mock(Consumer.class);
+			doAnswer((Answer<Object>) (InvocationOnMock invocation) -> {
+				invocation.getArgumentAt(0, Runnable.class).run();
+				return null;
+			}).when(futureExecutor).accept(any());
+			Consumer<Object> success = mock(Consumer.class);
+			Consumer<Throwable> error = mock(Consumer.class);
+			Throwable dummyException = new IOException();
+			executor.newFailedFuture(dummyException).addListener(FutureUtil.generateListener(futureExecutor, success, error));
+			verify(success, times(0)).accept(any());
+			verify(error).accept(same(dummyException));
+			verify(futureExecutor).accept(any());
 		}).await();
 		if (f.cause() != null) {
 			throw f.cause();
