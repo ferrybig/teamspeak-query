@@ -30,6 +30,7 @@ import io.netty.util.concurrent.Promise;
 import java.io.IOException;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -85,6 +86,46 @@ public class FutureUtilTest {
 			delayed.setSuccess("baz");
 			assertTrue(chainFuture.toString(), chainFuture.isSuccess());
 			assertEquals("bazfoo", chainFuture.getNow());
+		}).await();
+		if (f.cause() != null) {
+			throw f.cause();
+		}
+	}
+
+	@Test
+	public void chainFutureDelayedCancelledTest() throws Throwable {
+		Future<?> f = executor.submit(() -> {
+			Promise<String> delayed = executor.newPromise();
+			Future<String> chainFuture = FutureUtil.chainFuture(executor.newPromise(), delayed, s -> s + "foo");
+			assertFalse(chainFuture.isDone());
+			chainFuture.cancel(true);
+			assertTrue(chainFuture.isDone());
+			assertTrue(delayed.isDone());
+			assertTrue(delayed.isCancelled());
+		}).await();
+		if (f.cause() != null) {
+			throw f.cause();
+		}
+	}
+
+	@Test
+	public void chainFutureDelayedUncancelableCancelledTest() throws Throwable {
+		Future<?> f = executor.submit(() -> {
+			Promise<String> delayed = executor.newPromise();
+			delayed.setUncancellable();
+			Function<String, String> mapping = mock(Function.class);
+			Future<String> chainFuture = FutureUtil.chainFuture(executor.newPromise(), delayed, mapping);
+			assertFalse(chainFuture.isDone());
+
+			chainFuture.cancel(true);
+			assertTrue(chainFuture.isDone());
+			assertFalse(delayed.isDone());
+			assertFalse(delayed.isCancelled());
+
+			delayed.setSuccess("ok");
+			assertTrue(delayed.isDone());
+			assertFalse(delayed.isCancelled());
+			verify(mapping, times(0)).apply("ok");
 		}).await();
 		if (f.cause() != null) {
 			throw f.cause();
