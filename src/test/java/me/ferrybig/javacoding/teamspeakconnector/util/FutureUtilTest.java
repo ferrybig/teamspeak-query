@@ -26,10 +26,14 @@ package me.ferrybig.javacoding.teamspeakconnector.util;
 import io.netty.channel.EventLoop;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.Promise;
 import java.io.IOException;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import org.junit.AfterClass;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 import static org.mockito.Matchers.any;
@@ -58,6 +62,62 @@ public class FutureUtilTest {
 	@AfterClass
 	public static void afterClass() {
 		group.shutdownGracefully();
+	}
+
+	@Test
+	public void chainFutureDirectSuccessTest() throws Throwable {
+		Future<?> f = executor.submit(() -> {
+			Future<String> chainFuture = FutureUtil.chainFuture(executor.newPromise(), executor.newSucceededFuture("bar"), s -> s + "foo");
+			assertTrue(chainFuture.toString(), chainFuture.isSuccess());
+			assertEquals("barfoo", chainFuture.getNow());
+		}).await();
+		if (f.cause() != null) {
+			throw f.cause();
+		}
+	}
+
+	@Test
+	public void chainFutureDelayedSuccessTest() throws Throwable {
+		Future<?> f = executor.submit(() -> {
+			Promise<String> delayed = executor.newPromise();
+			Future<String> chainFuture = FutureUtil.chainFuture(executor.newPromise(), delayed, s -> s + "foo");
+			assertFalse(chainFuture.isDone());
+			delayed.setSuccess("baz");
+			assertTrue(chainFuture.toString(), chainFuture.isSuccess());
+			assertEquals("bazfoo", chainFuture.getNow());
+		}).await();
+		if (f.cause() != null) {
+			throw f.cause();
+		}
+	}
+
+	@Test
+	public void chainFutureDirectExceptionTest() throws Throwable {
+		Future<?> f = executor.submit(() -> {
+			IOException ex = new IOException();
+			Future<String> chainFuture = FutureUtil.chainFuture(executor.newPromise(), executor.newFailedFuture(ex), s -> s + "foo");
+			assertFalse(chainFuture.toString(), chainFuture.isSuccess());
+			assertEquals(ex, chainFuture.cause());
+		}).await();
+		if (f.cause() != null) {
+			throw f.cause();
+		}
+	}
+
+	@Test
+	public void chainFutureDelayedExceptionTest() throws Throwable {
+		Future<?> f = executor.submit(() -> {
+			IOException ex = new IOException();
+			Promise<String> delayed = executor.newPromise();
+			Future<String> chainFuture = FutureUtil.chainFuture(executor.newPromise(), delayed, s -> s + "foo");
+			assertFalse(chainFuture.isDone());
+			delayed.setFailure(ex);
+			assertFalse(chainFuture.toString(), chainFuture.isSuccess());
+			assertEquals(ex, chainFuture.cause());
+		}).await();
+		if (f.cause() != null) {
+			throw f.cause();
+		}
 	}
 
 	@Test
