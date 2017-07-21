@@ -86,10 +86,11 @@ public class TeamspeakIO {
 	public TeamspeakIO(Channel channel) {
 		this.channel = Objects.requireNonNull(channel);
 		this.closeFuture = channel.eventLoop().newPromise();
+		this.closeFuture.setUncancellable();
 	}
 
 	public void registerConnection(TeamspeakConnection con) {
-		if (this.started) {
+		if (this.started || this.con != null) {
 			throw new IllegalStateException("Already started");
 		}
 		this.con = con;
@@ -153,6 +154,7 @@ public class TeamspeakIO {
 				synchronized (incomingQueue) {
 					this.closed = true;
 				}
+				this.closeFuture.trySuccess(prom.isSuccess() ? prom.get() : null);
 				channel.close();
 				LOG.fine("Closing channel because sendmessage asked it");
 			});
@@ -173,6 +175,9 @@ public class TeamspeakIO {
 			TeamspeakException ex = new TeamspeakException("Channel closed");
 			if (upstream != null) {
 				ex.initCause(upstream);
+				this.closeFuture.tryFailure(upstream);
+			} else {
+				this.closeFuture.trySuccess(null);
 			}
 			LOG.log(Level.FINE, "Marking {0} PendingPackets as closed", incomingQueue.size());
 			while ((poll = incomingQueue.poll()) != null) {
