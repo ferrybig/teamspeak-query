@@ -23,6 +23,7 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.util;
 
+import io.netty.util.ReferenceCountUtil;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.Promise;
@@ -47,7 +48,9 @@ public class FutureUtil {
 			assert ignored == future;
 			try {
 				if (future.isSuccess()) {
-					prom.trySuccess(map.apply(future.getNow()));
+					if (!prom.isDone() && !prom.trySuccess(map.apply(future.getNow()))) {
+						ReferenceCountUtil.release(future.getNow());
+					}
 				} else {
 					prom.tryFailure(future.cause());
 				}
