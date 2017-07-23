@@ -41,7 +41,11 @@ public enum Command {
 	 * Adds a new ban rule on the selected virtual server. All parameters are
 	 * optional but at least one of the following must be set: ip, name, or uid.
 	 *
-	 * Example: banadd ip=1.2.3.4 banreason=just\s4\sfun banid=1
+	 * Example:
+	 * <pre>{@code
+	 * banadd ip=1.2.3.4 banreason=just\s4\sfun
+	 * banid=1
+	 * }</pre>
 	 *
 	 * Usage: banadd [ip={regexp}] [name={regexp}] [uid={clientUID}]
 	 * [time={timeInSeconds}] [banreason={text}]
@@ -54,7 +58,11 @@ public enum Command {
 	 * this will create two separate ban rules for the targeted clients IP
 	 * address and his unique identifier.
 	 *
-	 * Example: banclient clid=4 time=3600 banid=2
+	 * Example:
+	 * <pre>{@code
+	 * banclient clid=4 time=3600
+	 * banid=2
+	 * }</pre>
 	 *
 	 * Usage: banclient clid={clientID} [time={timeInSeconds}]
 	 * [banreason={text}]
@@ -65,7 +73,11 @@ public enum Command {
 	/**
 	 * Deletes the ban rule with ID banid from the server.
 	 *
-	 * Example: bandel banid=3 error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * bandel banid=3
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: bandel banid={banID}
 	 */
@@ -75,7 +87,11 @@ public enum Command {
 	/**
 	 * Deletes all active ban rules from the server.
 	 *
-	 * Example: bandelall error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * bandelall
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: bandelall
 	 */
@@ -83,8 +99,11 @@ public enum Command {
 	/**
 	 * Displays a list of active bans on the selected virtual server.
 	 *
-	 * Example: banlist banid=7 ip=1.2.3.4 created=1259444002242
-	 * invokername=Sven invokercldbid=56
+	 * Example:
+	 * <pre>{@code
+	 * banlist
+	 * banid=7 ip=1.2.3.4 created=1259444002242 invokername=Sven invokercldbid=56
+	 * }</pre>
 	 *
 	 * Usage: banlist
 	 */
@@ -93,7 +112,11 @@ public enum Command {
 	 * Displays a list of IP addresses used by the server instance on
 	 * multi-homed machines.
 	 *
-	 * Example: bindinglist ip=0.0.0.0
+	 * Example:
+	 * <pre>{@code
+	 * bindinglist
+	 * ip=0.0.0.0
+	 * }</pre>
 	 *
 	 * Usage: bindinglist
 	 */
@@ -103,36 +126,45 @@ public enum Command {
 	 * can be added by providing the two parameters of each permission. A
 	 * permission can be specified by permid or permsid.
 	 *
-	 * Example: channeladdperm cid=16 permsid=i_client_needed_join_power
-	 * permvalue=50 error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * channeladdperm cid=16 permsid=i_client_needed_join_power permvalue=50
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: channeladdperm cid={channelID} (
 	 * permid={permID}|permsid={permName} permvalue={permValue} )...
 	 */
 	CHANNEL_ADD_PERM("channeladdperm",
-			new HashSet<>(Arrays.asList("cid", "permsid", "permvalue", "(", "permid", ")..."))
+			new HashSet<>(Arrays.asList("cid", "permsid", "permvalue", "(", "permid", ")"))
 	),
 	/**
 	 * Adds a set of specified permissions to a client in a specific channel.
 	 * Multiple permissions can be added by providing the two parameters of each
 	 * permission. A permission can be specified by permid or permsid.
 	 *
-	 * Example: channelclientaddperm cid=12 cldbid=3 permsid=i_icon_id
-	 * permvalue=100 error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * channelclientaddperm cid=12 cldbid=3 permsid=i_icon_id permvalue=100
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: channelclientaddperm cid={channelID} cldbid={clientDBID} (
 	 * permid={permID}|permsid={permName} permvalue={permValue} )...
 	 */
 	CHANNEL_CLIENT_ADD_PERM("channelclientaddperm",
-			new HashSet<>(Arrays.asList("cid", "cldbid", "permsid", "permvalue", "(", "permid", ")..."))
+			new HashSet<>(Arrays.asList("cid", "cldbid", "permsid", "permvalue", "(", "permid", ")"))
 	),
 	/**
 	 * Removes a set of specified permissions from a client in a specific
 	 * channel. Multiple permissions can be removed at once. A permission can be
 	 * specified by permid or permsid.
 	 *
-	 * Example: channelclientdelperm cid=12 cldbid=3
-	 * permsid=i_icon_id|permsid=b_icon_manage error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * channelclientdelperm cid=12 cldbid=3 permsid=i_icon_id|permsid=b_icon_manage
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: channelclientdelperm cid={channelID} cldbid={clientDBID}
 	 * permid={permID}|permsid={permName}...
@@ -144,8 +176,11 @@ public enum Command {
 	 * Displays a list of permissions defined for a client in a specific
 	 * channel.
 	 *
-	 * Example: channelclientpermlist cid=12 cldbid=3 cid=12 cldbid=3
-	 * permid=4353 permvalue=1 permnegated=0 permskip=0|permid=17276
+	 * Example:
+	 * <pre>{@code
+	 * channelclientpermlist cid=12 cldbid=3
+	 * cid=12 cldbid=3 permid=4353 permvalue=1 permnegated=0 permskip=0|permid=17276
+	 * }</pre>
 	 *
 	 * Usage: channelclientpermlist cid={channelID} cldbid={clientDBID}
 	 * [-permsid]
@@ -157,19 +192,26 @@ public enum Command {
 	/**
 	 * Creates a new channel using the given properties and displays its ID.
 	 *
-	 * Example: channelcreate channel_name=My\sChannel channel_topic=My\sTopic
+	 * Example:
+	 * <pre>{@code
+	 * channelcreate channel_name=My\sChannel channel_topic=My\sTopic
 	 * cid=16
+	 * }</pre>
 	 *
 	 * Usage: channelcreate channel_name={channelName} [channel_properties...]
 	 */
 	CHANNEL_CREATE("channelcreate",
-			new HashSet<>(Arrays.asList("channel_name", "channel_topic", "channel_properties..."))
+			new HashSet<>(Arrays.asList("channel_name", "channel_topic", "channel_properties"))
 	),
 	/**
 	 * Deletes an existing channel by ID. If force is set to 1, the channel will
 	 * be deleted even if there are clients within.
 	 *
-	 * Example: channeldelete cid=16 force=1 error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * channeldelete cid=16 force=1
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: channeldelete cid={channelID} force={1|0}
 	 */
@@ -181,8 +223,11 @@ public enum Command {
 	 * permissions can be removed at once. A permission can be specified by
 	 * permid or permsid.
 	 *
-	 * Example: channeldelperm cid=16
-	 * permsid=i_icon_id|permsid=i_client_needed_talk_power error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * channeldelperm cid=16 permsid=i_icon_id|permsid=i_client_needed_talk_power
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: channeldelperm cid=123 permid={permID}|permsid={permName}...
 	 */
@@ -192,18 +237,25 @@ public enum Command {
 	/**
 	 * Changes a channels configuration using given properties.
 	 *
-	 * Example: channeledit cid=15 channel_codec_quality=3
-	 * channel_description=My\stext error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * channeledit cid=15 channel_codec_quality=3 channel_description=My\stext
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: channeledit cid={channelID} [channel_properties...]
 	 */
 	CHANNEL_EDIT("channeledit",
-			new HashSet<>(Arrays.asList("cid", "channel_codec_quality", "channel_description", "channel_properties..."))
+			new HashSet<>(Arrays.asList("cid", "channel_codec_quality", "channel_description", "channel_properties"))
 	),
 	/**
 	 * Displays a list of channels matching a given name pattern.
 	 *
-	 * Example: channelfind pattern=default cid=15 channel_name=Default\sChannel
+	 * Example:
+	 * <pre>{@code
+	 * channelfind pattern=default
+	 * cid=15 channel_name=Default\sChannel
+	 * }</pre>
 	 *
 	 * Usage: channelfind [pattern={channelName}]
 	 */
@@ -215,7 +267,11 @@ public enum Command {
 	 * optional type parameter can be used to create ServerQuery groups and
 	 * template groups.
 	 *
-	 * Example: channelgroupadd name=Channel\sAdmin cgid=13
+	 * Example:
+	 * <pre>{@code
+	 * channelgroupadd name=Channel\sAdmin
+	 * cgid=13
+	 * }</pre>
 	 *
 	 * Usage: channelgroupadd name={groupName} [type={groupDbType}]
 	 */
@@ -227,23 +283,29 @@ public enum Command {
 	 * permissions can be added by providing the two parameters of each
 	 * permission. A permission can be specified by permid or permsid.
 	 *
-	 * Example: channelgroupaddperm cgid=78 permsid=b_icon_manage permvalue=1
+	 * Example:
+	 * <pre>{@code
+	 * channelgroupaddperm cgid=78 permsid=b_icon_manage permvalue=1
 	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: channelgroupaddperm cgid={groupID} permid={permID}
 	 * permvalue={permValue} channelgroupaddperm cgid={groupID}
 	 * permsid={permName} permvalue={permValue}
 	 */
 	CHANNEL_GROUP_ADD_PERM("channelgroupaddperm",
-			new HashSet<>(Arrays.asList("cgid", "permsid", "permvalue", "permid", "	"))
+			new HashSet<>(Arrays.asList("cgid", "permsid", "permvalue", "permid"))
 	),
 	/**
 	 * Displays all the client and/or channel IDs currently assigned to channel
 	 * groups. All three parameters are optional so you're free to choose the
 	 * most suitable combination for your requirements.
 	 *
-	 * Example: channelgroupclientlist cid=2 cgid=9 cid=2 cldbid=9 cgid=9|cid=2
-	 * cldbid=24 cgid=9|cid=2 cldbid=47 cgid=9
+	 * Example:
+	 * <pre>{@code
+	 * channelgroupclientlist cid=2 cgid=9
+	 * cid=2 cldbid=9 cgid=9|cid=2 cldbid=24 cgid=9|cid=2 cldbid=47 cgid=9
+	 * }</pre>
 	 *
 	 * Usage: channelgroupclientlist [cid={channelID}] [cldbid={clientDBID}]
 	 * [cgid={groupID}]
@@ -259,8 +321,11 @@ public enum Command {
 	 *
 	 * The type parameter can be used to create ServerQuery and template groups.
 	 *
-	 * Example: channelgroupcopy scgid=4 tcgid=0 name=My\sGroup\s(Copy) type=1
+	 * Example:
+	 * <pre>{@code
+	 * channelgroupcopy scgid=4 tcgid=0 name=My\sGroup\s(Copy) type=1
 	 * cgid=13
+	 * }</pre>
 	 *
 	 * Usage: channelgroupcopy scgid={sourceGroupID} tcgid={targetGroupID}
 	 * name={groupName} type={groupDbType}
@@ -272,7 +337,11 @@ public enum Command {
 	 * Deletes a channel group by ID. If force is set to 1, the channel group
 	 * will be deleted even if there are clients within.
 	 *
-	 * Example: channelgroupdel cgid=13 error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * channelgroupdel cgid=13
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: channelgroupdel cgid={groupID} force={1|0}
 	 */
@@ -284,8 +353,11 @@ public enum Command {
 	 * permissions can be removed at once. A permission can be specified by
 	 * permid or permsid.
 	 *
-	 * Example: channelgroupdelperm cgid=16 permid=17276|permid=21415 error id=0
-	 * msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * channelgroupdelperm cgid=16 permid=17276|permid=21415
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: channelgroupdelperm cgid={groupID} permid={permID}|...
 	 * channelgroupdelperm cgid={groupID} permsid={permName}|...
@@ -297,8 +369,11 @@ public enum Command {
 	 * Displays a list of channel groups available on the selected virtual
 	 * server.
 	 *
-	 * Example: channelgrouplist cgid=1 name=Channel\sAdmin type=2 iconid=100
-	 * savedb=1|cgid=2 ...
+	 * Example:
+	 * <pre>{@code
+	 * channelgrouplist
+	 * cgid=1 name=Channel\sAdmin type=2 iconid=100 savedb=1|cgid=2 ...
+	 * }</pre>
 	 *
 	 * Usage: channelgrouplist
 	 */
@@ -307,8 +382,11 @@ public enum Command {
 	 * Displays a list of permissions assigned to the channel group specified
 	 * with cgid.
 	 *
-	 * Example: channelgrouppermlist cgid=13 permid=8470 permvalue=1
-	 * permnegated=0 permskip=0|permid=8475 ...
+	 * Example:
+	 * <pre>{@code
+	 * channelgrouppermlist cgid=13
+	 * permid=8470 permvalue=1 permnegated=0 permskip=0|permid=8475 ...
+	 * }</pre>
 	 *
 	 * Usage: channelgrouppermlist cgid={groupID} [-permsid]
 	 */
@@ -319,7 +397,11 @@ public enum Command {
 	/**
 	 * Changes the name of a specified channel group.
 	 *
-	 * Example: channelgrouprename cgid=13 name=New\sName error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * channelgrouprename cgid=13 name=New\sName
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: channelgrouprename cgid={groupID} name={groupName}
 	 */
@@ -330,8 +412,11 @@ public enum Command {
 	 * Displays detailed configuration information about a channel including ID,
 	 * topic, description, etc.
 	 *
-	 * Example: channelinfo cid=1 channel_name=Default\sChannel
-	 * channel_topic=No\s[b]topic[\/b]\shere
+	 * Example:
+	 * <pre>{@code
+	 * channelinfo cid=1
+	 * channel_name=Default\sChannel channel_topic=No\s[b]topic[\/b]\shere
+	 * }</pre>
 	 *
 	 * Usage: channelinfo cid={channelID}
 	 */
@@ -343,8 +428,11 @@ public enum Command {
 	 * ID, order, name, etc. The output can be modified using several command
 	 * options.
 	 *
-	 * Example: channellist -topic cid=15 pid=0 channel_order=0
-	 * channel_name=Default\sChannel
+	 * Example:
+	 * <pre>{@code
+	 * channellist -topic
+	 * cid=15 pid=0 channel_order=0 channel_name=Default\sChannel
+	 * }</pre>
 	 *
 	 * Usage: channellist [-topic] [-flags] [-voice] [-limits] [-icon]
 	 * [-secondsempty]
@@ -359,7 +447,11 @@ public enum Command {
 	 * specified ID. If order is set to 0, the channel will be sorted right
 	 * below the new parent.
 	 *
-	 * Example: channelmove cid=16 cpid=1 order=0 error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * channelmove cid=16 cpid=1 order=0
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: channelmove cid={channelID} cpid={channelParentID}
 	 * [order={channelSortOrder}]
@@ -370,8 +462,11 @@ public enum Command {
 	/**
 	 * Displays a list of permissions defined for a channel.
 	 *
-	 * Example: channelpermlist cid=2 cid=2 permid=4353 permvalue=1
-	 * permnegated=0 permskip=0|permid=17276...
+	 * Example:
+	 * <pre>{@code
+	 * channelpermlist cid=2
+	 * cid=2 permid=4353 permvalue=1 permnegated=0 permskip=0|permid=17276...
+	 * }</pre>
 	 *
 	 * Usage: channelpermlist cid={channelID} [-permsid]
 	 */
@@ -384,8 +479,11 @@ public enum Command {
 	 * be added by providing the three parameters of each permission. A
 	 * permission can be specified by permid or permsid.
 	 *
-	 * Example: clientaddperm cldbid=16 permsid=i_client_talk_power permvalue=5
-	 * permskip=1 error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * clientaddperm cldbid=16 permsid=i_client_talk_power permvalue=5 permskip=1
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: clientaddperm cldbid={clientDBID} permid={permID}
 	 * permvalue={permValue} permskip={1|0}|... clientaddperm
@@ -393,12 +491,16 @@ public enum Command {
 	 * permskip={1|0}|...
 	 */
 	CLIENT_ADD_PERM("clientaddperm",
-			new HashSet<>(Arrays.asList("cldbid", "permsid", "permvalue", "permskip", "permid", "	"))
+			new HashSet<>(Arrays.asList("cldbid", "permsid", "permvalue", "permskip", "permid"))
 	),
 	/**
 	 * Deletes a clients properties from the database.
 	 *
-	 * Example: clientdbdelete cldbid=56 error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * clientdbdelete cldbid=56
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: clientdbdelete cldbid={clientDBID}
 	 */
@@ -408,20 +510,27 @@ public enum Command {
 	/**
 	 * Changes a clients settings using given properties.
 	 *
-	 * Example: clientdbedit cldbid=56 client_description=Best\sguy\sever! error
-	 * id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * clientdbedit cldbid=56 client_description=Best\sguy\sever!
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: clientdbedit cldbid={clientDBID} [client_properties...]
 	 */
 	CLIENTDB_EDIT("clientdbedit",
-			new HashSet<>(Arrays.asList("cldbid", "client_description", "client_properties..."))
+			new HashSet<>(Arrays.asList("cldbid", "client_description", "client_properties"))
 	),
 	/**
 	 * Displays a list of client database IDs matching a given pattern. You can
 	 * either search for a clients last known nickname or his unique identity by
 	 * using the -uid option.
 	 *
-	 * Example: clientdbfind pattern=sven cldbid=56
+	 * Example:
+	 * <pre>{@code
+	 * clientdbfind pattern=sven
+	 * cldbid=56
+	 * }</pre>
 	 *
 	 * Usage: clientdbfind pattern={clientName|clientUID} [-uid]
 	 */
@@ -430,9 +539,11 @@ public enum Command {
 			new HashSet<>(Arrays.asList("uid"))
 	),
 	/**
-	 * Example: clientdbinfo cldbid=2
-	 * client_unique_identifier=5rRxyxEjd+Kk/MvPRfqZdSI0teA=
-	 * client_nickname=dante696
+	 * Example:
+	 * <pre>{@code
+	 * clientdbinfo cldbid=2
+	 * client_unique_identifier=5rRxyxEjd+Kk/MvPRfqZdSI0teA= client_nickname=dante696
+	 * }</pre>
 	 *
 	 * Usage: clientdbinfo cldbid={clientDBID}
 	 *
@@ -446,8 +557,11 @@ public enum Command {
 	 * Displays a list of client identities known by the server including their
 	 * database ID, last nickname, etc.
 	 *
-	 * Example: clientdblist cldbid=7
-	 * client_unique_identifier=DZhdQU58qyooEK4Fr8Ly738hEmc=
+	 * Example:
+	 * <pre>{@code
+	 * clientdblist
+	 * cldbid=7 client_unique_identifier=DZhdQU58qyooEK4Fr8Ly738hEmc=
+	 * }</pre>
 	 *
 	 * Usage: clientdblist [start={offset}] [duration={limit}] [-count]
 	 */
@@ -460,8 +574,11 @@ public enum Command {
 	 * permissions can be removed at once. A permission can be specified by
 	 * permid or permsid.
 	 *
-	 * Example: clientdelperm cldbid=16 permsid=i_icon_id|permsid=b_icon_manage
+	 * Example:
+	 * <pre>{@code
+	 * clientdelperm cldbid=16 permsid=i_icon_id|permsid=b_icon_manage
 	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: channeldelperm cldbid={clientDBID}
 	 * permid={permID}|permsid={permName}...
@@ -472,18 +589,25 @@ public enum Command {
 	/**
 	 * Changes a clients settings using given properties.
 	 *
-	 * Example: clientedit clid=10 client_description=Best\sguy\sever! error
-	 * id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * clientedit clid=10 client_description=Best\sguy\sever!
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: clientedit clid={clientID} [client_properties...]
 	 */
 	CLIENT_EDIT("clientedit",
-			new HashSet<>(Arrays.asList("clid", "client_description", "client_properties..."))
+			new HashSet<>(Arrays.asList("clid", "client_description", "client_properties"))
 	),
 	/**
 	 * Displays a list of clients matching a given name pattern.
 	 *
-	 * Example: clientfind pattern=sven clid=7 client_nickname=Sven
+	 * Example:
+	 * <pre>{@code
+	 * clientfind pattern=sven
+	 * clid=7 client_nickname=Sven
+	 * }</pre>
 	 *
 	 * Usage: clientfind pattern={clientName}
 	 */
@@ -494,8 +618,11 @@ public enum Command {
 	 * Displays the database ID matching the unique identifier specified by
 	 * cluid.
 	 *
-	 * Example: clientgetdbidfromuid cluid=dyjxkshZP6bz0n3bnwFQ1CkwZOM=
+	 * Example:
+	 * <pre>{@code
+	 * clientgetdbidfromuid cluid=dyjxkshZP6bz0n3bnwFQ1CkwZOM=
 	 * cluid=dyjxkshZP6bz0n3bnwFQ1CkwZOM= cldbid=32
+	 * }</pre>
 	 *
 	 * Usage: clientgetdbidfromuid cluid={clientUID}
 	 */
@@ -506,8 +633,11 @@ public enum Command {
 	 * Displays all client IDs matching the unique identifier specified by
 	 * cluid.
 	 *
-	 * Example: clientgetids cluid=dyjxkshZP6bz0n3bnwFQ1CkwZOM=
+	 * Example:
+	 * <pre>{@code
+	 * clientgetids cluid=dyjxkshZP6bz0n3bnwFQ1CkwZOM=
 	 * cluid=dyjxkshZP6bz0n3bnwFQ1CkwZOM= clid=1 name=Janko
+	 * }</pre>
 	 *
 	 * Usage: clientgetids cluid={clientUID}
 	 */
@@ -518,8 +648,11 @@ public enum Command {
 	 * Displays the unique identifier and nickname matching the database ID
 	 * specified by cldbid.
 	 *
-	 * Example: clientgetnamefromdbid cldbid=32
+	 * Example:
+	 * <pre>{@code
+	 * clientgetnamefromdbid cldbid=32
 	 * cluid=dyjxkshZP6bz0n3bnwFQ1CkwZOM= cldbid=32 name=Janko
+	 * }</pre>
 	 *
 	 * Usage: clientgetnamefromdbid cldbid={clientDBID}
 	 */
@@ -530,8 +663,11 @@ public enum Command {
 	 * Displays the database ID and nickname matching the unique identifier
 	 * specified by cluid.
 	 *
-	 * Example: clientgetnamefromuid cluid=dyjxkshZP6bz0n3bnwFQ1CkwZOM=
+	 * Example:
+	 * <pre>{@code
+	 * clientgetnamefromuid cluid=dyjxkshZP6bz0n3bnwFQ1CkwZOM=
 	 * cluid=dyjxkshZP6bz0n3bnwFQ1CkwZOM= cldbid=32 name=Janko
+	 * }</pre>
 	 *
 	 * Usage: clientgetnamefromuid cluid={clientUID}
 	 */
@@ -541,8 +677,11 @@ public enum Command {
 	/**
 	 * Displays the unique identifier matching the clientID specified by clid.
 	 *
-	 * Example: clientgetuidfromclid clid=8 clid=8
-	 * cluid=yXM6PUfbCcPU+joxIFek1xOQwwQ= nickname=MuhChy1
+	 * Example:
+	 * <pre>{@code
+	 * clientgetuidfromclid clid=8
+	 * clid=8 cluid=yXM6PUfbCcPU+joxIFek1xOQwwQ= nickname=MuhChy1
+	 * }</pre>
 	 *
 	 * Usage: clientgetuidfromclid clid={clientID}
 	 */
@@ -553,9 +692,11 @@ public enum Command {
 	 * Displays detailed configuration information about a client including
 	 * unique ID, nickname, client version, etc.
 	 *
-	 * Example: clientinfo clid=6
-	 * client_unique_identifier=P5H2hrN6+gpQI4n\/dXp3p17vtY0=
-	 * client_nickname=Rabe
+	 * Example:
+	 * <pre>{@code
+	 * clientinfo clid=6
+	 * client_unique_identifier=P5H2hrN6+gpQI4n\/dXp3p17vtY0= client_nickname=Rabe
+	 * }</pre>
 	 *
 	 * Usage: clientinfo clid={clientID}
 	 */
@@ -573,8 +714,11 @@ public enum Command {
 	 * 4: Kick the client from his current channel into the default channel 5:
 	 * Kick the client from the server
 	 *
-	 * Example: clientkick reasonid=4 reasonmsg=Go\saway! clid=5|clid=6 error
-	 * id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * clientkick reasonid=4 reasonmsg=Go\saway! clid=5|clid=6
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: clientkick reasonid={4|5} [reasonmsg={text}] clid={clientID}...
 	 */
@@ -587,8 +731,11 @@ public enum Command {
 	 * command options. Please note that the output will only contain clients
 	 * which are currently in channels you're able to subscribe to.
 	 *
-	 * Example: clientlist -away clid=5 cid=7 client_database_id=40
-	 * client_nickname=ScP client_type=0
+	 * Example:
+	 * <pre>{@code
+	 * clientlist -away
+	 * clid=5 cid=7 client_database_id=40 client_nickname=ScP client_type=0
+	 * }</pre>
 	 *
 	 * Usage: clientlist [-uid] [-away] [-voice] [-times] [-groups] [-info]
 	 * [-country] [-ip]
@@ -602,7 +749,11 @@ public enum Command {
 	 * If the target channel has a password, it needs to be specified with cpw.
 	 * If the channel has no password, the parameter can be omitted.
 	 *
-	 * Example: clientmove cid=3 clid=5|clid=6 error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * clientmove cid=3 clid=5|clid=6
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: clientmove cid={channelID} [cpw={channelPassword}]
 	 * clid={clientID}...
@@ -613,8 +764,11 @@ public enum Command {
 	/**
 	 * Displays a list of permissions defined for a client.
 	 *
-	 * Example: clientpermlist cldbid=2 cldbid=2 permid=4353 permvalue=1
-	 * permnegated=0 permskip=0|permid=17276...
+	 * Example:
+	 * <pre>{@code
+	 * clientpermlist cldbid=2
+	 * cldbid=2 permid=4353 permvalue=1 permnegated=0 permskip=0|permid=17276...
+	 * }</pre>
 	 *
 	 * Usage: clientpermlist cldbid={clientDBID} [-permsid]
 	 */
@@ -625,7 +779,11 @@ public enum Command {
 	/**
 	 * Sends a poke message to the client specified with clid.
 	 *
-	 * Example: clientpoke msg=Wake\sup! clid=5 error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * clientpoke msg=Wake\sup! clid=5
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: clientpoke msg={txt} clid={clientID}
 	 */
@@ -636,8 +794,11 @@ public enum Command {
 	 * Updates your own ServerQuery login credentials using a specified
 	 * username. The password will be auto-generated.
 	 *
-	 * Example: clientsetserverquerylogin client_login_name=admin
+	 * Example:
+	 * <pre>{@code
+	 * clientsetserverquerylogin client_login_name=admin
 	 * client_login_password=+r\/TQqvR
+	 * }</pre>
 	 *
 	 * Usage: clientsetserverquerylogin client_login_name={username}
 	 */
@@ -647,18 +808,26 @@ public enum Command {
 	/**
 	 * Change your ServerQuery clients settings using given properties.
 	 *
-	 * Example: clientupdate client_nickname=ScP\s(query) error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * clientupdate client_nickname=ScP\s(query)
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: clientupdate [client_properties...]
 	 */
 	CLIENT_UPDATE("clientupdate",
-			new HashSet<>(Arrays.asList("client_nickname", "client_properties..."))
+			new HashSet<>(Arrays.asList("client_nickname", "client_properties"))
 	),
 	/**
 	 * Submits a complaint about the client with database ID tcldbid to the
 	 * server.
 	 *
-	 * Example: complainadd tcldbid=3 message=Bad\sguy! error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * complainadd tcldbid=3 message=Bad\sguy!
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: complainadd tcldbid={targetClientDBID} message={text}
 	 */
@@ -669,7 +838,11 @@ public enum Command {
 	 * Deletes the complaint about the client with database ID tcldbid submitted
 	 * by the client with database ID fcldbid from the server.
 	 *
-	 * Example: complaindel tcldbid=3 fcldbid=4 error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * complaindel tcldbid=3 fcldbid=4
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: complaindel tcldbid={targetClientDBID} fcldbid={fromClientDBID}
 	 */
@@ -680,7 +853,11 @@ public enum Command {
 	 * Deletes all complaints about the client with database ID tcldbid from the
 	 * server.
 	 *
-	 * Example: complaindelall tcldbid=3 error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * complaindelall tcldbid=3
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: complaindelall tcldbid={targetClientDBID}
 	 */
@@ -691,8 +868,11 @@ public enum Command {
 	 * Displays a list of complaints on the selected virtual server. If tcldbid
 	 * is specified, only complaints about the targeted client will be shown.
 	 *
-	 * Example: complainlist tcldbid=3 tcldbid=3 tname=Julian fcldbid=56
-	 * fname=Sven message=Bad\sguy!...
+	 * Example:
+	 * <pre>{@code
+	 * complainlist tcldbid=3
+	 * tcldbid=3 tname=Julian fcldbid=56 fname=Sven message=Bad\sguy!...
+	 * }</pre>
 	 *
 	 * Usage: complainlist [tcldbid={targetClientDBID}]
 	 */
@@ -703,8 +883,11 @@ public enum Command {
 	 * Displays a list of custom properties for the client specified with
 	 * cldbid.
 	 *
-	 * Example: custominfo cldbid=3 cldbid=3 ident=forum_account
-	 * value=ScP|ident=forum_id value=123
+	 * Example:
+	 * <pre>{@code
+	 * custominfo cldbid=3
+	 * cldbid=3 ident=forum_account value=ScP|ident=forum_id value=123
+	 * }</pre>
 	 *
 	 * Usage: custominfo cldbid={clientDBID}
 	 */
@@ -716,8 +899,11 @@ public enum Command {
 	 * value parameter can include regular characters and SQL wildcard
 	 * characters (e.g. %).
 	 *
-	 * Example: customsearch ident=forum_account pattern=%ScP% cldbid=2
-	 * ident=forum_account value=ScP
+	 * Example:
+	 * <pre>{@code
+	 * customsearch ident=forum_account pattern=%ScP%
+	 * cldbid=2 ident=forum_account value=ScP
+	 * }</pre>
 	 *
 	 * Usage: customsearch ident={ident} pattern={pattern}
 	 */
@@ -727,7 +913,11 @@ public enum Command {
 	/**
 	 * Creates new directory in a channels file repository.
 	 *
-	 * Example: ftcreatedir cid=2 cpw= dirname=\/My\sDirectory error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * ftcreatedir cid=2 cpw= dirname=\/My\sDirectory
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: ftcreatedir cid={channelID} cpw={channelPassword}
 	 * dirname={dirPath}
@@ -738,23 +928,27 @@ public enum Command {
 	/**
 	 * Deletes one or more files stored in a channels file repository.
 	 *
-	 * Example: ftdeletefile cid=2 cpw= name=\/Pic1.PNG|name=\/Pic2.PNG error
-	 * id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * ftdeletefile cid=2 cpw= name=\/Pic1.PNG|name=\/Pic2.PNG
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: ftdeletefile cid={channelID} cpw={channelPassword}
 	 * name={filePath}...
 	 */
 	FTDELETE_FILE("ftdeletefile",
-			// Skipped C:\Users\fernando\Documents\teamspeak3-server_win64\serverquerydocs\help.txt
 			new HashSet<>(Arrays.asList("cid", "cpw", "name"))
 	),
 	/**
 	 * Displays detailed information about one or more specified files stored in
 	 * a channels file repository.
 	 *
-	 * Example: ftgetfileinfo cid=2 cpw= name=\/Pic1.PNG|cid=2 cpw=
-	 * name=\/Pic2.PNG cid=2 path=\/ name=Stuff size=0 datetime=1259415210
-	 * type=0|name=Pic1.PNG
+	 * Example:
+	 * <pre>{@code
+	 * ftgetfileinfo cid=2 cpw= name=\/Pic1.PNG|cid=2 cpw= name=\/Pic2.PNG
+	 * cid=2 path=\/ name=Stuff size=0 datetime=1259415210 type=0|name=Pic1.PNG
+	 * }</pre>
 	 *
 	 * Usage: ftgetfileinfo cid={channelID} cpw={channelPassword}
 	 * name={filePath}...
@@ -766,8 +960,11 @@ public enum Command {
 	 * Displays a list of files and directories stored in the specified channels
 	 * file repository.
 	 *
-	 * Example: ftgetfilelist cid=2 cpw= path=\/ cid=2 path=\/ name=Stuff size=0
-	 * datetime=1259415210 type=0|name=Pic1.PNG
+	 * Example:
+	 * <pre>{@code
+	 * ftgetfilelist cid=2 cpw= path=\/
+	 * cid=2 path=\/ name=Stuff size=0 datetime=1259415210 type=0|name=Pic1.PNG
+	 * }</pre>
 	 *
 	 * Usage: ftgetfilelist cid={channelID} cpw={channelPassword}
 	 * path={filePath}
@@ -781,9 +978,11 @@ public enum Command {
 	 * generates a new ftkey which is required to start downloading the file
 	 * through TeamSpeak 3's file transfer interface.
 	 *
-	 * Example: ftinitdownload clientftfid=1 name=\/image.iso cid=5 cpw=
-	 * seekpos=0 clientftfid=1 serverftfid=7
-	 * ftkey=NrOga\/4d2GpYC5oKgxuclTO37X83ca\/1 port=...
+	 * Example:
+	 * <pre>{@code
+	 * ftinitdownload clientftfid=1 name=\/image.iso cid=5 cpw= seekpos=0
+	 * clientftfid=1 serverftfid=7 ftkey=NrOga\/4d2GpYC5oKgxuclTO37X83ca\/1 port=...
+	 * }</pre>
 	 *
 	 * Usage: ftinitdownload clientftfid={clientFileTransferID} name={filePath}
 	 * cid={channelID} cpw={channelPassword} seekpos={seekPosition}
@@ -797,24 +996,30 @@ public enum Command {
 	 * generates a new ftkey which is required to start uploading the file
 	 * through TeamSpeak 3's file transfer interface.
 	 *
-	 * Example: ftinitupload clientftfid=1 name=\/image.iso cid=5 cpw=
-	 * size=673460224 overwrite=1 resume=0 clientftfid=1 serverftfid=6
-	 * ftkey=itRNdsIOvcBiBg\/Xj4Ge51ZSrsShHuid port=...
+	 * Example:
+	 * <pre>{@code
+	 * ftinitupload clientftfid=1 name=\/image.iso cid=5 cpw= size=673460224
+	 *  overwrite=1 resume=0
+	 * clientftfid=1 serverftfid=6 ftkey=itRNdsIOvcBiBg\/Xj4Ge51ZSrsShHuid port=...
+	 * }</pre>
 	 *
 	 * Usage: ftinitupload clientftfid={clientFileTransferID} name={filePath}
 	 * cid={channelID} cpw={channelPassword} size={fileSize} overwrite={1|0}
 	 * resume={1|0}
 	 */
 	FT_INIT_UPLOAD("ftinitupload",
-			new HashSet<>(Arrays.asList("clientftfid", "name", "cid", "cpw", "size", "overwrite", "resume", "	"))
+			new HashSet<>(Arrays.asList("clientftfid", "name", "cid", "cpw", "size", "overwrite", "resume"))
 	),
 	/**
 	 * Displays a list of running file transfers on the selected virtual server.
 	 * The output contains the path to which a file is uploaded to, the current
 	 * transfer rate in bytes per second, etc.
 	 *
-	 * Example: ftlist clid=2 path=files\/virtualserver_1\/channel_5
-	 * name=image.iso size=673460224
+	 * Example:
+	 * <pre>{@code
+	 * ftlist
+	 * clid=2 path=files\/virtualserver_1\/channel_5 name=image.iso size=673460224
+	 * }</pre>
 	 *
 	 * Usage: ftlist
 	 */
@@ -824,20 +1029,27 @@ public enum Command {
 	 * and tcpw are specified, the file will be moved into another channels file
 	 * repository.
 	 *
-	 * Example: ftrenamefile cid=2 cpw= tcid=3 tcpw= oldname=\/Pic3.PNG
-	 * newname=\/Pic3.PNG error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * ftrenamefile cid=2 cpw= tcid=3 tcpw= oldname=\/Pic3.PNG newname=\/Pic3.PNG
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: ftrenamefile cid={channelID} cpw={channelPassword}
 	 * [tcid={targetChannelID}] [tcpw={targetChannelPassword}]
 	 * oldname={oldFilePath} newname={newFilePath}
 	 */
 	FT_RENAME_FILE("ftrenamefile",
-			new HashSet<>(Arrays.asList("cid", "cpw", "tcid", "tcpw", "oldname", "newname", "	"))
+			new HashSet<>(Arrays.asList("cid", "cpw", "tcid", "tcpw", "oldname", "newname"))
 	),
 	/**
 	 * Stops the running file transfer with server-side ID serverftfid.
 	 *
-	 * Example: ftstop serverftfid=2 delete=1 error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * ftstop serverftfid=2 delete=1
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: ftstop serverftfid={serverFileTransferID} delete={1|0}
 	 */
@@ -848,20 +1060,28 @@ public enum Command {
 	 * Sends a text message to all clients on all virtual servers in the
 	 * TeamSpeak 3 Server instance.
 	 *
-	 * Example: gm msg=Hello\sWorld! error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * gm msg=Hello\sWorld!
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: gm msg={text}
 	 */
 	GM("gm",
 			new HashSet<>(Arrays.asList("msg"))
 	),
+	// Skipped C:\Users\fernando\Documents\teamspeak3-server_win64\serverquerydocs\help.txt
 	/**
 	 * Displays detailed configuration information about the server instance
 	 * including uptime, number of virtual servers online, traffic information,
 	 * etc.
 	 *
-	 * Example: hostinfo virtualservers_running_total=3
-	 * virtualservers_total_maxclients=384 ...
+	 * Example:
+	 * <pre>{@code
+	 * hostinfo
+	 * virtualservers_running_total=3 virtualservers_total_maxclients=384 ...
+	 * }</pre>
 	 *
 	 * Usage: hostinfo
 	 */
@@ -869,20 +1089,26 @@ public enum Command {
 	/**
 	 * Changes the server instance configuration using given properties.
 	 *
-	 * Example: instanceedit serverinstance_filetransfer_port=1337 error id=0
-	 * msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * instanceedit serverinstance_filetransfer_port=1337
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: instanceedit [instance_properties...]
 	 */
 	INSTANCEEDIT("instanceedit",
-			new HashSet<>(Arrays.asList("serverinstance_filetransfer_port", "instance_properties..."))
+			new HashSet<>(Arrays.asList("serverinstance_filetransfer_port", "instance_properties"))
 	),
 	/**
 	 * Displays the server instance configuration including database revision
 	 * number, the file transfer port, default group IDs, etc.
 	 *
-	 * Example: instanceinfo serverinstance_database_version=12
-	 * serverinstance_filetransfer_port=30033
+	 * Example:
+	 * <pre>{@code
+	 * instanceinfo
+	 * serverinstance_database_version=12 serverinstance_filetransfer_port=30033
+	 * }</pre>
 	 *
 	 * Usage: instanceinfo
 	 */
@@ -893,8 +1119,11 @@ public enum Command {
 	 * and/or your virtual servers log. The loglevel parameter specifies the
 	 * type of the entry.
 	 *
-	 * Example: logadd loglevel=4 logmsg=Informational\smessage! error id=0
-	 * msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * logadd loglevel=4 logmsg=Informational\smessage!
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: logadd loglevel={1-4} logmsg={text}
 	 */
@@ -905,8 +1134,11 @@ public enum Command {
 	 * Authenticates with the TeamSpeak 3 Server instance using given
 	 * ServerQuery login credentials.
 	 *
-	 * Example: login client_login_name=xyz client_login_password=xyz error id=0
-	 * msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * login client_login_name=xyz client_login_password=xyz
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: login client_login_name={username}
 	 * client_login_password={password} login {username} {password}
@@ -918,7 +1150,11 @@ public enum Command {
 	 * Deselects the active virtual server and logs out from the server
 	 * instance.
 	 *
-	 * Example: logout error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * logout
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: logout
 	 */
@@ -928,8 +1164,11 @@ public enum Command {
 	 * instance is set to 1, the server will return lines from the master
 	 * logfile (ts3server_0) instead of the selected virtual server logfile.
 	 *
-	 * Example: logview last_pos=403788 file_size=411980
-	 * l=\p\slistening\son\s0.0.0.0:9987 ...
+	 * Example:
+	 * <pre>{@code
+	 * logview
+	 * last_pos=403788 file_size=411980 l=\p\slistening\son\s0.0.0.0:9987 ...
+	 * }</pre>
 	 *
 	 * Usage: logview [lines={1-100}] [reverse={1|0}] [instance={1|0}]
 	 * [begin_pos={n}]
@@ -940,8 +1179,11 @@ public enum Command {
 	/**
 	 * Sends an offline message to the client specified by cluid.
 	 *
-	 * Example: messageadd cluid=oHhi9WzXLNEFQOwAu4JYKGU+C+c= subject=Hi!
-	 * message=Hello?!? error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * messageadd cluid=oHhi9WzXLNEFQOwAu4JYKGU+C+c= subject=Hi! message=Hello?!?
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: messageadd cluid={clientUID} subject={subject} message={text}
 	 */
@@ -951,7 +1193,11 @@ public enum Command {
 	/**
 	 * Deletes an existing offline message with ID msgid from your inbox.
 	 *
-	 * Example: messagedel msgid=4 error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * messagedel msgid=4
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: messagedel msgid={messageID}
 	 */
@@ -963,8 +1209,11 @@ public enum Command {
 	 * Please note that this does not automatically set the flag_read property
 	 * of the message.
 	 *
-	 * Example: messageget msgid=4 msgid=4 cluid=xwEzb5ENOaglVHu9oelK++reUyE=
-	 * subject=Hi! message=Hello?!?
+	 * Example:
+	 * <pre>{@code
+	 * messageget msgid=4
+	 * msgid=4 cluid=xwEzb5ENOaglVHu9oelK++reUyE= subject=Hi! message=Hello?!?
+	 * }</pre>
 	 *
 	 * Usage: messageget msgid={messageID}
 	 */
@@ -975,8 +1224,11 @@ public enum Command {
 	 * Displays a list of offline messages you've received. The output contains
 	 * the senders unique identifier, the messages subject, etc.
 	 *
-	 * Example: messagelist msgid=4 cluid=xwEzb5ENOaglVHu9oelK++reUyE=
-	 * subject=Test flag_read=0...
+	 * Example:
+	 * <pre>{@code
+	 * messagelist
+	 * msgid=4 cluid=xwEzb5ENOaglVHu9oelK++reUyE= subject=Test flag_read=0...
+	 * }</pre>
 	 *
 	 * Usage: messagelist
 	 */
@@ -985,7 +1237,11 @@ public enum Command {
 	 * Updates the flag_read property of the offline message specified with
 	 * msgid. If flag is set to 1, the message will be marked as read.
 	 *
-	 * Example: messageupdateflag msgid=4 flag=1 error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * messageupdateflag msgid=4 flag=1
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: messageupdateflag msgid={messageID} flag={1|0}
 	 */
@@ -998,8 +1254,11 @@ public enum Command {
 	 * includes the type and the ID of the client, channel or group associated
 	 * with the permission.
 	 *
-	 * Example: permfind permid=4353 t=0 id1=1 id2=0 p=4353|t=0 id1=2 id2=0
-	 * p=4353
+	 * Example:
+	 * <pre>{@code
+	 * permfind permid=4353
+	 * t=0 id1=1 id2=0 p=4353|t=0 id1=2 id2=0 p=4353
+	 * }</pre>
 	 *
 	 * Usage: permfind permid={permID}
 	 */
@@ -1011,8 +1270,11 @@ public enum Command {
 	 * permsid for your own connection. This can be useful when you need to
 	 * check your own privileges.
 	 *
-	 * Example: permget permid=21174 permsid=i_client_move_power permid=21174
-	 * permvalue=100
+	 * Example:
+	 * <pre>{@code
+	 * permget permid=21174
+	 * permsid=i_client_move_power permid=21174 permvalue=100
+	 * }</pre>
 	 *
 	 * Usage: permget permid={permID} permget permsid={permName}
 	 */
@@ -1022,8 +1284,11 @@ public enum Command {
 	/**
 	 * Displays the database ID of one or more permissions specified by permsid.
 	 *
-	 * Example: permidgetbyname permsid=b_serverinstance_help_view
+	 * Example:
+	 * <pre>{@code
+	 * permidgetbyname permsid=b_serverinstance_help_view
 	 * permsid=b_serverinstance_help_view permid=4353
+	 * }</pre>
 	 *
 	 * Usage: permidgetbyname permsid={permName}|permsid={permName}|...
 	 */
@@ -1034,8 +1299,11 @@ public enum Command {
 	 * Displays a list of permissions available on the server instance including
 	 * ID, name and description.
 	 *
-	 * Example: permissionlist permid=21413
-	 * permname=b_client_channel_textmessage_send permdesc=Send\ste...
+	 * Example:
+	 * <pre>{@code
+	 * permissionlist
+	 * permid=21413 permname=b_client_channel_textmessage_send permdesc=Send\ste...
+	 * }</pre>
 	 *
 	 * Usage: permissionlist
 	 */
@@ -1059,8 +1327,11 @@ public enum Command {
 	 * <li> 4: Channel Client; =&gt; id1={channelID}, id2={clientDBID}</li>
 	 * </ul>
 	 *
-	 * Example: permoverview cldbid=57 cid=74 permid=0 t=0 id1=5 id2=0 p=37 v=1
-	 * n=0 s=0|t=0 id1=5 id2=0 p=38 v=1 n=0 s=0|...
+	 * Example:
+	 * <pre>{@code
+	 * permoverview cldbid=57 cid=74 permid=0
+	 * t=0 id1=5 id2=0 p=37 v=1 n=0 s=0|t=0 id1=5 id2=0 p=38 v=1 n=0 s=0|...
+	 * }</pre>
 	 *
 	 * Usage: permoverview cid={channelID} cldbid={clientDBID} permid={permID}
 	 */
@@ -1074,7 +1345,11 @@ public enum Command {
 	 * modified or corrupted - the virtual server will be deleted from the
 	 * database.
 	 *
-	 * Example: permreset token=MqQbPLLm6jLC+x8j31jUL7GkME1UY0GaDYK+XG5e
+	 * Example:
+	 * <pre>{@code
+	 * permreset
+	 * token=MqQbPLLm6jLC+x8j31jUL7GkME1UY0GaDYK+XG5e
+	 * }</pre>
 	 *
 	 * Usage: permreset
 	 */
@@ -1094,10 +1369,12 @@ public enum Command {
 	 * ident=ident1 value=value1|ident=ident2 value=value2|ident=ident3
 	 * value=value3
 	 *
-	 * Example: privilegekeyadd tokentype=0 tokenid1=6 tokenid2=0
-	 * tokendescription=Test
-	 * tokencustomset=ident=forum_user\svalue=dante\pident=forum_id\svalue=123
+	 * Example:
+	 * <pre>{@code
+	 * privilegekeyadd tokentype=0 tokenid1=6 tokenid2=0 tokendescription=Test
+	 *  tokencustomset=ident=forum_user\svalue=dante\pident=forum_id\svalue=123
 	 * token=1ayoQOxG8r5Re78zgChvLYBWWaFWCoty0Uh+pUFk
+	 * }</pre>
 	 *
 	 * Usage: privilegekeyadd tokentype={1|0} tokenid1={groupID}
 	 * tokenid2={channelID} [tokendescription={description}]
@@ -1109,8 +1386,11 @@ public enum Command {
 	/**
 	 * Deletes an existing token matching the token key specified with token.
 	 *
-	 * Example: privilegekeydelete
-	 * token=eKnFZQ9EK7G7MhtuQB6+N2B1PNZZ6OZL3ycDp2OW error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * privilegekeydelete token=eKnFZQ9EK7G7MhtuQB6+N2B1PNZZ6OZL3ycDp2OW
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: privilegekeydelete token={tokenKey}
 	 */
@@ -1127,8 +1407,11 @@ public enum Command {
 	 * (random looking) string that can be used as a ticket into a specific
 	 * server group.
 	 *
-	 * Example: privilegekeylist token=88CVUg\/zkujt+y+WfHdko79UcM4R6uyCL6nEfy3B
-	 * token_type=0 token_id1=9...
+	 * Example:
+	 * <pre>{@code
+	 * privilegekeylist
+	 * token=88CVUg\/zkujt+y+WfHdko79UcM4R6uyCL6nEfy3B token_type=0 token_id1=9...
+	 * }</pre>
 	 *
 	 * Usage: privilegekeylist
 	 */
@@ -1138,8 +1421,11 @@ public enum Command {
 	 * that the server will automatically delete the token after it has been
 	 * used.
 	 *
-	 * Example: privilegekeyuse token=eKnFZQ9EK7G7MhtuQB6+N2B1PNZZ6OZL3ycDp2OW
+	 * Example:
+	 * <pre>{@code
+	 * privilegekeyuse token=eKnFZQ9EK7G7MhtuQB6+N2B1PNZZ6OZL3ycDp2OW
 	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: privilegekeyuse token={tokenKey}
 	 */
@@ -1149,7 +1435,11 @@ public enum Command {
 	/**
 	 * Closes the ServerQuery connection to the TeamSpeak 3 Server instance.
 	 *
-	 * Example: quit error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * quit
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: quit
 	 */
@@ -1159,8 +1449,11 @@ public enum Command {
 	 * determined by targetmode while target specifies the ID of the recipient,
 	 * whether it be a virtual server, a channel or a client.
 	 *
-	 * Example: sendtextmessage targetmode=2 target=1 msg=Hello\sWorld! error
-	 * id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * sendtextmessage targetmode=2 target=1 msg=Hello\sWorld!
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: sendtextmessage targetmode={1-3}
 	 * target={serverID|channelID|clientID} msg={text}
@@ -1173,20 +1466,27 @@ public enum Command {
 	 * ID and initial administrator token. If virtualserver_port is not
 	 * specified, the server will test for the first unused UDP port.
 	 *
-	 * Example: servercreate virtualserver_name=TeamSpeak\s]\p[\sServer
-	 * virtualserver_port=9988 virtualserver_maxclients=32 sid=7
-	 * token=HhPbcMAMdAHGUip1yOma2Tl3sN0DN7B3Y0JVzYv6 virtualserver_port=9988
+	 * Example:
+	 * <pre>{@code
+	 * servercreate virtualserver_name=TeamSpeak\s]\p[\sServer
+	 *  virtualserver_port=9988 virtualserver_maxclients=32
+	 * sid=7 token=HhPbcMAMdAHGUip1yOma2Tl3sN0DN7B3Y0JVzYv6 virtualserver_port=9988
+	 * }</pre>
 	 *
 	 * Usage: servercreate [virtualserver_properties...]
 	 */
 	SERVER_CREATE("servercreate",
-			new HashSet<>(Arrays.asList("virtualserver_name", "virtualserver_port", "virtualserver_maxclients", "virtualserver_properties..."))
+			new HashSet<>(Arrays.asList("virtualserver_name", "virtualserver_port", "virtualserver_maxclients", "virtualserver_properties"))
 	),
 	/**
 	 * Deletes the virtual server specified with sid. Please note that only
 	 * virtual servers in stopped state can be deleted.
 	 *
-	 * Example: serverdelete sid=1 error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * serverdelete sid=1
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: serverdelete sid={serverID}
 	 */
@@ -1197,20 +1497,27 @@ public enum Command {
 	 * Changes the selected virtual servers configuration using given
 	 * properties.
 	 *
-	 * Example: serveredit virtualserver_name=TeamSpeak\sServer
-	 * virtualserver_maxclients=32 error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * serveredit virtualserver_name=TeamSpeak\sServer virtualserver_maxclients=32
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: serveredit [virtualserver_properties...]
 	 */
 	SERVER_EDIT("serveredit",
-			new HashSet<>(Arrays.asList("virtualserver_name", "virtualserver_maxclients", "virtualserver_properties..."))
+			new HashSet<>(Arrays.asList("virtualserver_name", "virtualserver_maxclients", "virtualserver_properties"))
 	),
 	/**
 	 * Creates a new server group using the name specified with name and
 	 * displays its ID. The optional type parameter can be used to create
 	 * ServerQuery groups and template groups.
 	 *
-	 * Example: servergroupadd name=Server\sAdmin sgid=13
+	 * Example:
+	 * <pre>{@code
+	 * servergroupadd name=Server\sAdmin
+	 * sgid=13
+	 * }</pre>
 	 *
 	 * Usage: servergroupadd name={groupName} [type={groupDbType}]
 	 */
@@ -1221,7 +1528,11 @@ public enum Command {
 	 * Adds a client to the server group specified with sgid. Please note that a
 	 * client cannot be added to default groups or template groups.
 	 *
-	 * Example: servergroupaddclient sgid=16 cldbid=3 error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * servergroupaddclient sgid=16 cldbid=3
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: servergroupaddclient sgid={groupID} cldbid={clientDBID}
 	 */
@@ -1233,9 +1544,12 @@ public enum Command {
 	 * sgid. Multiple permissions can be added by providing the four parameters
 	 * of each permission. A permission can be specified by permid or permsid.
 	 *
-	 * Example: servergroupaddperm sgid=13 permid=8470 permvalue=1 permnegated=0
-	 * permskip=0|permid=8475 permvalue=0 permnegated=1 permskip=0 error id=0
-	 * msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * servergroupaddperm sgid=13 permid=8470 permvalue=1 permnegated=0
+	 *  permskip=0|permid=8475 permvalue=0 permnegated=1 permskip=0
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: servergroupaddperm sgid={groupID} permid={permID}
 	 * permvalue={permValue} permnegated={1|0} permskip={1|0}|...
@@ -1243,7 +1557,7 @@ public enum Command {
 	 * permvalue={permValue} permnegated={1|0} permskip={1|0}|...
 	 */
 	SERVER_GROUP_ADD_PERM("servergroupaddperm",
-			new HashSet<>(Arrays.asList("sgid", "permid", "permvalue", "permnegated", "permskip", "	", "permsid"))
+			new HashSet<>(Arrays.asList("sgid", "permid", "permvalue", "permnegated", "permskip", "permsid"))
 	),
 	/**
 	 * Adds a set of specified permissions to ALL regular server groups on all
@@ -1258,9 +1572,12 @@ public enum Command {
 	 * Server Normal 35: Channel Operator 40: Channel Admin 45: Server Admin 50:
 	 * Query Admin
 	 *
-	 * Example: servergroupautoaddperm sgtype=45 permid=8470 permvalue=1
-	 * permnegated=0 permskip=0|permid=8475 permvalue=0 permnegated=1 permskip=0
+	 * Example:
+	 * <pre>{@code
+	 * servergroupautoaddperm sgtype=45 permid=8470 permvalue=1 permnegated=0
+	 *  permskip=0|permid=8475 permvalue=0 permnegated=1 permskip=0
 	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: servergroupautoaddperm sgtype={type} permid={permID}
 	 * permvalue={permValue} permnegated={1|0} permskip={1|0}|...
@@ -1268,7 +1585,7 @@ public enum Command {
 	 * permvalue={permValue} permnegated={1|0} permskip={1|0}|...
 	 */
 	SERVER_GROUP_AUTO_ADD_PERM("servergroupautoaddperm",
-			new HashSet<>(Arrays.asList("sgtype", "permid", "permvalue", "permnegated", "permskip", "	", "permsid"))
+			new HashSet<>(Arrays.asList("sgtype", "permid", "permvalue", "permnegated", "permskip", "permsid"))
 	),
 	/**
 	 * Removes a set of specified permissions from ALL regular server groups on
@@ -1283,8 +1600,11 @@ public enum Command {
 	 * Server Normal 35: Channel Operator 40: Channel Admin 45: Server Admin 50:
 	 * Query Admin
 	 *
-	 * Examples: servergroupautodelperm sgtype=45 permid=8470|permid=8475 error
-	 * id=0 msg=ok
+	 * Examples:
+	 * <pre>{@code
+	 * servergroupautodelperm sgtype=45 permid=8470|permid=8475
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: servergroupautodelperm sgtype={type}
 	 * permid={permID}|permid={permID}|... servergroupautodelperm sgtype={type}
@@ -1297,8 +1617,11 @@ public enum Command {
 	 * Displays all server groups the client specified with cldbid is currently
 	 * residing in.
 	 *
-	 * Example: servergroupsbyclientid cldbid=18 name=Server\sAdmin sgid=6
-	 * cldbid=18
+	 * Example:
+	 * <pre>{@code
+	 * servergroupsbyclientid cldbid=18
+	 * name=Server\sAdmin sgid=6 cldbid=18
+	 * }</pre>
 	 *
 	 * Usage: servergroupsbyclientid sgid={clientDBID}
 	 */
@@ -1311,8 +1634,11 @@ public enum Command {
 	 * also contain the last known nickname and the unique identifier of the
 	 * clients.
 	 *
-	 * Example: servergroupclientlist sgid=16
+	 * Example:
+	 * <pre>{@code
+	 * servergroupclientlist sgid=16
 	 * cldbid=7|cldbid=8|cldbid=9|cldbid=11|cldbid=13|cldbid=16|cldbid=18|...
+	 * }</pre>
 	 *
 	 * Usage: servergroupclientlist sgid={groupID} [-names]
 	 */
@@ -1328,8 +1654,11 @@ public enum Command {
 	 *
 	 * The type parameter can be used to create ServerQuery and template groups.
 	 *
-	 * Example: servergroupcopy ssgid=6 tsgid=0 name=My\sGroup\s(Copy) type=1
+	 * Example:
+	 * <pre>{@code
+	 * servergroupcopy ssgid=6 tsgid=0 name=My\sGroup\s(Copy) type=1
 	 * sgid=21
+	 * }</pre>
 	 *
 	 * Usage: servergroupcopy ssgid={sourceGroupID} tsgid={targetGroupID}
 	 * name={groupName} type={groupDbType}
@@ -1341,7 +1670,11 @@ public enum Command {
 	 * Deletes the server group specified with sgid. If force is set to 1, the
 	 * server group will be deleted even if there are clients within.
 	 *
-	 * Example: servergroupdel sgid=13 error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * servergroupdel sgid=13
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: servergroupdel sgid={groupID} force={1|0}
 	 */
@@ -1351,7 +1684,11 @@ public enum Command {
 	/**
 	 * Removes a client from the server group specified with sgid.
 	 *
-	 * Example: servergroupdelclient sgid=16 cldbid=3 error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * servergroupdelclient sgid=16 cldbid=3
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: servergroupdelclient sgid={groupID} cldbid={clientDBID}
 	 */
@@ -1363,8 +1700,11 @@ public enum Command {
 	 * with sgid. Multiple permissions can be removed at once. A permission can
 	 * be specified by permid or permsid.
 	 *
-	 * Examples: servergroupdelperm sgid=16 permid=8470|permid=8475 error id=0
-	 * msg=ok
+	 * Examples:
+	 * <pre>{@code
+	 * servergroupdelperm sgid=16 permid=8470|permid=8475
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: servergroupdelperm sgid={groupID} permid={permID}|permid={permID}
 	 * servergroupdelperm sgid={groupID} permsid={permName}
@@ -1377,8 +1717,11 @@ public enum Command {
 	 * permissions, the output may also contain global ServerQuery groups and
 	 * template groups.
 	 *
-	 * Example: servergrouplist sgid=9 name=Server\sAdmin type=1 iconid=300
-	 * savedb=1|sgid=10 name=Normal t...
+	 * Example:
+	 * <pre>{@code
+	 * servergrouplist
+	 * sgid=9 name=Server\sAdmin type=1 iconid=300 savedb=1|sgid=10 name=Normal t...
+	 * }</pre>
 	 *
 	 * Usage: servergrouplist
 	 */
@@ -1388,8 +1731,11 @@ public enum Command {
 	 * with sgid. The optional -permsid parameter can be used to get the
 	 * permission names instead of their internal ID.
 	 *
-	 * Example: servergrouppermlist sgid=13 permid=8470 permvalue=1
-	 * permnegated=0 permskip=0|permid=8475 permvalue=1|...
+	 * Example:
+	 * <pre>{@code
+	 * servergrouppermlist sgid=13
+	 * permid=8470 permvalue=1 permnegated=0 permskip=0|permid=8475 permvalue=1|...
+	 * }</pre>
 	 *
 	 * Usage: servergrouppermlist sgid={groupID} [-permsid]
 	 */
@@ -1400,7 +1746,11 @@ public enum Command {
 	/**
 	 * Changes the name of the server group specified with sgid.
 	 *
-	 * Example: servergrouprename sgid=13 name=New\sName error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * servergrouprename sgid=13 name=New\sName
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: servergrouprename sgid={groupID} name={groupName}
 	 */
@@ -1411,7 +1761,11 @@ public enum Command {
 	 * Displays the database ID of the virtual server running on the UDP port
 	 * specified by virtualserver_port.
 	 *
-	 * Example: serveridgetbyport virtualserver_port=9987 server_id=1
+	 * Example:
+	 * <pre>{@code
+	 * serveridgetbyport virtualserver_port=9987
+	 * server_id=1
+	 * }</pre>
 	 *
 	 * Usage: serveridgetbyport virtualserver_port={serverPort}
 	 */
@@ -1422,8 +1776,11 @@ public enum Command {
 	 * Displays detailed configuration information about the selected virtual
 	 * server including unique ID, number of clients online, configuration, etc.
 	 *
-	 * Example: serverinfo virtualserver_port=9987
-	 * virtualserver_name=TeamSpeak\s]I[\sServer virtua...
+	 * Example:
+	 * <pre>{@code
+	 * serverinfo
+	 * virtualserver_port=9987 virtualserver_name=TeamSpeak\s]I[\sServer virtua...
+	 * }</pre>
 	 *
 	 * Usage: serverinfo
 	 */
@@ -1445,8 +1802,11 @@ public enum Command {
 	 * connect. As soon as the last ServerQuery client deselects the virtual
 	 * server, its status will be changed back to offline.
 	 *
-	 * Example: serverlist virtualserver_id=1 virtualserver_port=9987
-	 * virtualserver_status=online
+	 * Example:
+	 * <pre>{@code
+	 * serverlist
+	 * virtualserver_id=1 virtualserver_port=9987 virtualserver_status=online
+	 * }</pre>
 	 *
 	 * Usage: serverlist [-uid] [-all] [-short] [-onlyoffline]
 	 */
@@ -1463,7 +1823,11 @@ public enum Command {
 	 * source is declared by the event parameter while id can be used to limit
 	 * the notifications to a specific channel.
 	 *
-	 * Example: servernotifyregister event=server error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * servernotifyregister event=server
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: servernotifyregister [id={channelID}]
 	 * event={server|channel|textserver|textchannel|textprivate}
@@ -1475,7 +1839,11 @@ public enum Command {
 	 * Unregisters all events previously registered with servernotifyregister so
 	 * you will no longer receive notification messages.
 	 *
-	 * Example: servernotifyunregister error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * servernotifyunregister
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: servernotifyunregister
 	 */
@@ -1486,7 +1854,11 @@ public enum Command {
 	 * Stops the entire TeamSpeak 3 Server instance by shutting down the
 	 * process.
 	 *
-	 * Example: serverprocessstop error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * serverprocessstop
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: serverprocessstop
 	 */
@@ -1495,9 +1867,11 @@ public enum Command {
 	 * Displays detailed connection information about the selected virtual
 	 * server including uptime, traffic information, etc.
 	 *
-	 * Example: serverrequestconnectioninfo
-	 * connection_filetransfer_bandwidth_sent=0
-	 * connection_packets_sent_total=0...
+	 * Example:
+	 * <pre>{@code
+	 * serverrequestconnectioninfo
+	 * connection_filetransfer_bandwidth_sent=0 connection_packets_sent_total=0...
+	 * }</pre>
 	 *
 	 * Usage: serverrequestconnectioninfo
 	 */
@@ -1507,8 +1881,11 @@ public enum Command {
 	 * settings, groups and known client identities. The data from a server
 	 * snapshot can be used to restore a virtual servers configuration.
 	 *
-	 * Example: serversnapshotcreate
+	 * Example:
+	 * <pre>{@code
+	 * serversnapshotcreate
 	 * hash=bnTd2E1kNITHjJYRCFjgbKKO5P8=|virtualserver_name=TeamSpeak\sServer...
+	 * }</pre>
 	 *
 	 * Usage: serversnapshotcreate
 	 */
@@ -1519,8 +1896,11 @@ public enum Command {
 	 * Server does NOT check for necessary permissions while deploying a
 	 * snapshot so the command could be abused to gain additional privileges.
 	 *
-	 * Example: serversnapshotdeploy
-	 * hash=bnTd2E1kNITHjJYRCFjgbKKO5P8=|virtualserver_... error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * serversnapshotdeploy hash=bnTd2E1kNITHjJYRCFjgbKKO5P8=|virtualserver_...
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: serversnapshotdeploy {virtualserver_snapshot}
 	 */
@@ -1532,7 +1912,11 @@ public enum Command {
 	 * permissions, you're able to start either your own virtual server only or
 	 * any virtual server in the server instance.
 	 *
-	 * Example: serverstart sid=1 error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * serverstart sid=1
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: serverstart sid={serverID}
 	 */
@@ -1544,7 +1928,11 @@ public enum Command {
 	 * permissions, you're able to stop either your own virtual server only or
 	 * all virtual servers in the server instance.
 	 *
-	 * Example: serverstop sid=1 error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * serverstop sid=1
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: serverstop sid={serverID}
 	 */
@@ -1558,8 +1946,11 @@ public enum Command {
 	 * channel specified with tcid. If tcid is set to 0, the client will join
 	 * the default channel.
 	 *
-	 * Example: servertemppasswordadd pw=secret desc=none duration=3600
-	 * tcid=117535 tcpw=123 error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * servertemppasswordadd pw=secret desc=none duration=3600 tcid=117535 tcpw=123
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: servertemppasswordadd pw={password} desc={description}
 	 * duration={seconds} tcid={channelID} tcpw={channelPW}
@@ -1570,7 +1961,11 @@ public enum Command {
 	/**
 	 * Deletes the temporary server password specified with pw.
 	 *
-	 * Example: servertemppassworddel pw=secret error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * servertemppassworddel pw=secret
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: servertemppassworddel pw={password}
 	 */
@@ -1582,8 +1977,11 @@ public enum Command {
 	 * the clear-text password, the nickname and unique identifier of the
 	 * creating client.
 	 *
-	 * Example: servertemppasswordlist nickname=serveradmin uid=serveradmin
-	 * desc=none pw_clear=secret
+	 * Example:
+	 * <pre>{@code
+	 * servertemppasswordlist
+	 * nickname=serveradmin uid=serveradmin desc=none pw_clear=secret
+	 * }</pre>
 	 *
 	 * Usage: servertemppasswordlist
 	 */
@@ -1591,7 +1989,11 @@ public enum Command {
 	/**
 	 * Sets the channel group of a client to the ID specified with cgid.
 	 *
-	 * Example: setclientchannelgroup cgid=13 cid=15 cldbid=20 error id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * setclientchannelgroup cgid=13 cid=15 cldbid=20
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: setclientchannelgroup cgid={groupID} cid={channelID}
 	 * cldbid={clientDBID}
@@ -1614,8 +2016,11 @@ public enum Command {
 	 * ident=ident1 value=value1|ident=ident2 value=value2|ident=ident3
 	 * value=value3
 	 *
-	 * Example: tokenadd tokentype=0 tokenid1=6 tokenid2=0 tokendescription=Test
+	 * Example:
+	 * <pre>{@code
+	 * tokenadd tokentype=0 tokenid1=6 tokenid2=0 tokendescription=Test
 	 * tokencustomset=ident=forum_user\svalue=ScP\pident=forum_id\svalue=123
+	 * }</pre>
 	 *
 	 * Usage: tokenadd tokentype={1|0} tokenid1={groupID} tokenid2={channelID}
 	 * [tokendescription={description}] [tokencustomset={customFieldSet}]
@@ -1626,8 +2031,11 @@ public enum Command {
 	/**
 	 * Deletes an existing token matching the token key specified with token.
 	 *
-	 * Example: tokendelete token=eKnFZQ9EK7G7MhtuQB6+N2B1PNZZ6OZL3ycDp2OW error
-	 * id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * tokendelete token=eKnFZQ9EK7G7MhtuQB6+N2B1PNZZ6OZL3ycDp2OW
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: tokendelete token={tokenKey}
 	 */
@@ -1644,8 +2052,11 @@ public enum Command {
 	 * (random looking) string that can be used as a ticket into a specific
 	 * server group.
 	 *
-	 * Example: tokenlist token=88CVUg\/zkujt+y+WfHdko79UcM4R6uyCL6nEfy3B
-	 * token_type=0 token_id1=9...
+	 * Example:
+	 * <pre>{@code
+	 * tokenlist
+	 * token=88CVUg\/zkujt+y+WfHdko79UcM4R6uyCL6nEfy3B token_type=0 token_id1=9...
+	 * }</pre>
 	 *
 	 * Usage: tokenlist
 	 */
@@ -1655,8 +2066,11 @@ public enum Command {
 	 * that the server will automatically delete the token after it has been
 	 * used.
 	 *
-	 * Example: tokenuse token=eKnFZQ9EK7G7MhtuQB6+N2B1PNZZ6OZL3ycDp2OW error
-	 * id=0 msg=ok
+	 * Example:
+	 * <pre>{@code
+	 * tokenuse token=eKnFZQ9EK7G7MhtuQB6+N2B1PNZZ6OZL3ycDp2OW
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: tokenuse token={tokenKey}
 	 */
@@ -1672,7 +2086,11 @@ public enum Command {
 	 * If your database contains multiple virtual servers using the same UDP
 	 * port, use will select a random virtual server using the specified port.
 	 *
-	 * Examples: use sid=1 error id=0 msg=ok
+	 * Examples:
+	 * <pre>{@code
+	 * use sid=1
+	 * error id=0 msg=ok
+	 * }</pre>
 	 *
 	 * Usage: use [sid={serverID}] [port={serverPort}] [-virtual] use {serverID}
 	 */
@@ -1684,7 +2102,11 @@ public enum Command {
 	 * Displays the servers version information including platform and build
 	 * number.
 	 *
-	 * Example: version version=3.0.0-beta16 build=9929 platform=Linux
+	 * Example:
+	 * <pre>{@code
+	 * version
+	 * version=3.0.0-beta16 build=9929 platform=Linux
+	 * }</pre>
 	 *
 	 * Usage: version
 	 */
@@ -1693,8 +2115,11 @@ public enum Command {
 	 * Displays information about your current ServerQuery connection including
 	 * the ID of the selected virtual server, your loginname, etc.
 	 *
-	 * Example: whoami virtualserver_status=online virtualserver_id=1
-	 * client_channel_id=2 ...
+	 * Example:
+	 * <pre>{@code
+	 * whoami
+	 * virtualserver_status=online virtualserver_id=1 client_channel_id=2 ...
+	 * }</pre>
 	 *
 	 * Usage: whoami
 	 */
