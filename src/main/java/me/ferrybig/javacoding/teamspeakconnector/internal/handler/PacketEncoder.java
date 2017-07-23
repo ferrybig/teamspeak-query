@@ -124,6 +124,9 @@ public class PacketEncoder extends MessageToMessageEncoder<ComplexRequest> {
 	}
 
 	private void sendPacketRaw(ComplexRequest msg, List<Object> out) {
+		if(msg.getCmd().contains("\n")) {
+			throw new IllegalArgumentException("Packets may not contain a raw newline");
+		}
 		out.add(msg.getCmd());
 		for (Map.Entry<String, String> data : msg.getData().entrySet()) {
 			out.add(SPACE.retain());
