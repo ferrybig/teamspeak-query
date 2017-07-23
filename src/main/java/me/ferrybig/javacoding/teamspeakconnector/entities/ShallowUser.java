@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
-import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequestBuilder;
+import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command;
 
 /**
  *
@@ -168,7 +168,7 @@ public class ShallowUser extends NamedUser {
 		if (!serverGroup.contains(group) && !outdated) {
 			return con.io().getCompletedFuture(this);
 		}
-		return con.io().chainFuture(con.io().sendPacket(new ComplexRequestBuilder("servergroupdelclient").addData("sgid", group.getServerGroupId()).addData("cldbid", this.databaseId).build()), (r) -> {
+		return con.io().chainFuture(con.io().sendPacket(Command.SERVER_GROUP_DEL_CLIENT.addData("sgid", group.getServerGroupId()).addData("cldbid", this.databaseId).build()), (r) -> {
 			outdated = true;
 			return this;
 		});
@@ -179,14 +179,14 @@ public class ShallowUser extends NamedUser {
 		if (serverGroup.contains(group) && !outdated) {
 			return con.io().getCompletedFuture(this);
 		}
-		return con.io().chainFuture(con.io().sendPacket(new ComplexRequestBuilder("servergroupaddclient").addData("sgid", group.getServerGroupId()).addData("cldbid", this.databaseId).build()), (r) -> {
+		return con.io().chainFuture(con.io().sendPacket(Command.SERVER_GROUP_ADD_CLIENT.addData("sgid", group.getServerGroupId()).addData("cldbid", this.databaseId).build()), (r) -> {
 			outdated = true;
 			return this;
 		});
 	}
 
 	public Future<Map<String, String>> getCustomInfo() {
-		return con.io().chainFuture(con.io().sendPacket(new ComplexRequestBuilder("custominfo").addData("cldbid", this.databaseId).build()),
+		return con.io().chainFuture(con.io().sendPacket(Command.CUSTOM_INFO.addData("cldbid", this.databaseId).build()),
 			(r) -> r.getCommands().stream().collect(Collectors.toMap(k-> k.get("ident"), v -> v.get("value")))
 		);
 	}

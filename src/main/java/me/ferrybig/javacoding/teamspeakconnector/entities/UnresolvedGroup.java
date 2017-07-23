@@ -30,6 +30,7 @@ import java.util.Map;
 import me.ferrybig.javacoding.teamspeakconnector.Resolvable;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
 import me.ferrybig.javacoding.teamspeakconnector.internal.handler.PacketEncoder;
+import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequestBuilder;
 
 public class UnresolvedGroup implements Resolvable<Group> {
@@ -122,7 +123,7 @@ public class UnresolvedGroup implements Resolvable<Group> {
 	 * @return a future for this group
 	 */
 	public Future<? extends UnresolvedGroup> rename(String newName) {
-		return con.io().chainFuture(con.io().sendPacket(new ComplexRequestBuilder("servergrouprename").addData("sgid", this.getServerGroupId()).addData("name", newName).build()), (r) -> {
+		return con.io().chainFuture(con.io().sendPacket(Command.SERVER_GROUP_RENAME.addData("sgid", this.getServerGroupId()).addData("name", newName).build()), (r) -> {
 			return this;
 		});
 	}
@@ -144,7 +145,7 @@ public class UnresolvedGroup implements Resolvable<Group> {
 	 * @return a string wrapped in a future containing the privilege token
 	 */
 	public Future<String> generatePrivilegeToken(String description, Map<String, String> customData) {
-		ComplexRequestBuilder builder = new ComplexRequestBuilder("privilegekeyadd");
+		ComplexRequestBuilder builder = Command.PRIVILEGEKEY_ADD.buildUsing();
 		Iterator<Map.Entry<String, String>> itr = customData.entrySet().iterator();
 		if (itr.hasNext()) {
 			StringBuilder customStr = new StringBuilder();

@@ -1458,7 +1458,7 @@ public enum Command {
 	 * Usage: sendtextmessage targetmode={1-3}
 	 * target={serverID|channelID|clientID} msg={text}
 	 */
-	SENDTEXT_MESSAGE("sendtextmessage",
+	SEND_TEXT_MESSAGE("sendtextmessage",
 			new HashSet<>(Arrays.asList("targetmode", "target", "msg"))
 	),
 	/**

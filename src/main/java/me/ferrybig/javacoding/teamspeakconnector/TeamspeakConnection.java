@@ -63,8 +63,7 @@ import me.ferrybig.javacoding.teamspeakconnector.event.meta.Handler;
 import me.ferrybig.javacoding.teamspeakconnector.event.meta.SubscriptionHandler;
 import me.ferrybig.javacoding.teamspeakconnector.internal.SendBehaviour;
 import me.ferrybig.javacoding.teamspeakconnector.internal.TeamspeakIO;
-import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequestBuilder;
-import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexResponse;
+import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Response;
 
 @ThreadSafe
@@ -73,20 +72,20 @@ public class TeamspeakConnection implements Closeable {
 	private static final Logger LOG = Logger.getLogger(TeamspeakConnection.class.getName());
 	private final TeamspeakIO io;
 	private final SubscriptionHandler<ServerMessageListener> serverMessageHandler = new SubscriptionHandler<>(this,
-			new ComplexRequestBuilder("servernotifyregister").addData("event", "textserver").build(),
-			new ComplexRequestBuilder("servernotifyunregister").addData("event", "textserver").build());
+			Command.SERVER_NOTIFY_REGISTER.addData("event", "textserver").build(),
+			Command.SERVER_NOTIFY_UNREGISTER.addData("event", "textserver").build());
 	private final SubscriptionHandler<PrivateMessageListener> privateMessageHandler = new SubscriptionHandler<>(this,
-			new ComplexRequestBuilder("servernotifyregister").addData("event", "textprivate").build(),
-			new ComplexRequestBuilder("servernotifyunregister").addData("event", "textprivate").build());
+			Command.SERVER_NOTIFY_REGISTER.addData("event", "textprivate").build(),
+			Command.SERVER_NOTIFY_UNREGISTER.addData("event", "textprivate").build());
 	private final SubscriptionHandler<ChannelMessageListener> channelMessageHandler = new SubscriptionHandler<>(this,
-			new ComplexRequestBuilder("servernotifyregister").addData("event", "textchannel").build(),
-			new ComplexRequestBuilder("servernotifyunregister").addData("event", "textchannel").build());
+			Command.SERVER_NOTIFY_REGISTER.addData("event", "textchannel").build(),
+			Command.SERVER_NOTIFY_UNREGISTER.addData("event", "textchannel").build());
 	private final SubscriptionHandler<ServerListener> serverHandler = new SubscriptionHandler<>(this,
-			new ComplexRequestBuilder("servernotifyregister").addData("event", "server").build(),
-			new ComplexRequestBuilder("servernotifyunregister").addData("event", "server").build());
+			Command.SERVER_NOTIFY_REGISTER.addData("event", "server").build(),
+			Command.SERVER_NOTIFY_UNREGISTER.addData("event", "server").build());
 	private final SubscriptionHandler<TokenListener> tokenUsedHandler = new SubscriptionHandler<>(this,
-			new ComplexRequestBuilder("servernotifyregister").addData("event", "tokenused").build(),
-			new ComplexRequestBuilder("servernotifyunregister").addData("event", "tokenused").build());
+			Command.SERVER_NOTIFY_REGISTER.addData("event", "tokenused").build(),
+			Command.SERVER_NOTIFY_UNREGISTER.addData("event", "tokenused").build());
 
 	public TeamspeakConnection(TeamspeakIO channel) {
 		this.io = channel;
@@ -266,13 +265,13 @@ public class TeamspeakConnection implements Closeable {
 
 	public Future<UnresolvedServer> getUnresolvedServerByPort(int port) {
 		return this.io.chainFuture(
-				this.io.sendPacket(new ComplexRequestBuilder("serveridgetbyport").addData("virtualserver_port", port).build()),
+				this.io.sendPacket(Command.SERVER_ID_GET_BY_PORT.addData("virtualserver_port", port).build()),
 				p -> getUnresolvedServerById(Integer.parseInt(p.getCommands().get(0).get("server_id"))));
 	}
 
 	public Future<User> getUserById(int id) {
 		return io.mapComplexReponse(io.sendPacket(
-				new ComplexRequestBuilder("clientinfo")
+				Command.CLIENT_INFO
 						.addData("clid", String.valueOf(id))
 						.build()),
 				io::mapUser);
@@ -288,7 +287,7 @@ public class TeamspeakConnection implements Closeable {
 
 	public Future<Channel> getChannelById(int id) {
 		return io.mapComplexReponse(io.sendPacket(
-				new ComplexRequestBuilder("channelinfo")
+				Command.CHANNEL_INFO
 						.addData("cid", String.valueOf(id))
 						.build()),
 				m -> {
@@ -299,13 +298,13 @@ public class TeamspeakConnection implements Closeable {
 
 	public Future<Server> getServer() {
 		return io.mapComplexReponse(io.sendPacket(
-				new ComplexRequestBuilder("serverinfo").build()),
+				Command.SERVER_INFO.build()),
 				io::mapServer);
 	}
 
 	public Future<TeamspeakConnection> login(String username, String password) {
 		return io.chainFuture(io.sendPacket(
-				new ComplexRequestBuilder("login")
+				Command.LOG_IN
 						.addData("client_login_name", username)
 						.addData("client_login_password", password)
 						.build()),
@@ -313,31 +312,31 @@ public class TeamspeakConnection implements Closeable {
 	}
 
 	public Future<?> shutdownServer() {
-		return io.sendPacket(new ComplexRequestBuilder("serverprocessstop").build(), SendBehaviour.CLOSE_CONNECTION);
+		return io.sendPacket(Command.SERVER_PROCESS_STOP.build(), SendBehaviour.CLOSE_CONNECTION);
 	}
 
 	public Future<TeamspeakConnection> logout() {
 		return io.chainFuture(
-				io.sendPacket(new ComplexRequestBuilder("quit").build()),
+				io.sendPacket(Command.LOG_OUT.build()),
 				packet -> this
 		);
 	}
 
 	public Future<List<Server>> getServerList() {
 		return io.mapComplexReponseList(io.sendPacket(
-				new ComplexRequestBuilder("serverlist").addOption("virtual").build()),
+				Command.SERVER_LIST.addOption("virtual").build()),
 				io::mapServer);
 	}
 
 	public Future<List<Channel>> getChannelList() {
 		return io.mapComplexReponseList(io.sendPacket(
-				new ComplexRequestBuilder("channellist").addOption("topic").addOption("flags").addOption("voice").addOption("limits").addOption("icon").build()),
+				Command.CHANNEL_LIST.addOption("topic").addOption("flags").addOption("voice").addOption("limits").addOption("icon").build()),
 				io::mapChannel);
 	}
 
 	public Future<List<User>> getUsersList() {
 		return io.mapComplexReponseList(io.sendPacket(
-				new ComplexRequestBuilder("clientlist").addOption("uid")
+				Command.CLIENT_LIST.addOption("uid")
 						.addOption("away").addOption("voice").addOption("groups")
 						.addOption("times").addOption("info").addOption("icon")
 						.addOption("country").addOption("ip").build()),
@@ -347,7 +346,7 @@ public class TeamspeakConnection implements Closeable {
 	@Override
 	public void close() throws TeamspeakException {
 		try {
-			Future<ComplexResponse> sendPacket = io.sendPacket(new ComplexRequestBuilder("quit").build(), SendBehaviour.FORCE_CLOSE_CONNECTION);
+			Future<?> sendPacket = quit();
 			if (!this.io.getChannel().eventLoop().inEventLoop()) {
 				sendPacket.get();
 			} else if(sendPacket.isDone() && !sendPacket.isSuccess()) {
@@ -363,11 +362,11 @@ public class TeamspeakConnection implements Closeable {
 	}
 
 	public Future<?> quit() {
-		return io.sendPacket(new ComplexRequestBuilder("quit").build(), SendBehaviour.FORCE_CLOSE_CONNECTION);
+		return io.sendPacket(Command.QUIT.build(), SendBehaviour.FORCE_CLOSE_CONNECTION);
 	}
 
 	public Future<?> setOwnName(String name) {
-		return io.sendPacket(new ComplexRequestBuilder("clientupdate").addData("client_nickname", name).build());
+		return io.sendPacket(Command.CLIENT_UPDATE.addData("client_nickname", name).build());
 	}
 
 	public Future<Group> getGroupById(int serverGroupId) {
@@ -376,7 +375,7 @@ public class TeamspeakConnection implements Closeable {
 
 	public Future<List<Group>> getGroups() {
 		return io.mapComplexReponseList(io.sendPacket(
-				new ComplexRequestBuilder("servergrouplist").build()),
+				Command.SERVER_GROUP_LIST.build()),
 				io::mapGroup);
 	}
 

@@ -26,7 +26,7 @@ package me.ferrybig.javacoding.teamspeakconnector.entities;
 import io.netty.util.concurrent.Future;
 import me.ferrybig.javacoding.teamspeakconnector.Resolvable;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
-import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequestBuilder;
+import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command;
 import me.ferrybig.javacoding.teamspeakconnector.util.FutureUtil;
 
 public class UnresolvedUser implements Resolvable<User> {
@@ -43,7 +43,7 @@ public class UnresolvedUser implements Resolvable<User> {
 
 	public Future<?> sendMessage(String message) {
 		return this.con.io().sendPacket(
-				new ComplexRequestBuilder("sendtextmessage")
+				Command.SEND_TEXT_MESSAGE
 						.addData("targetmode", "1")
 						.addData("target", String.valueOf(getId()))
 						.addData("msg", message)
@@ -52,7 +52,7 @@ public class UnresolvedUser implements Resolvable<User> {
 
 	public Future<?> poke(String message) {
 		return this.con.io().sendPacket(
-				new ComplexRequestBuilder("clientpoke")
+				Command.CLIENT_POKE
 						.addData("clid", String.valueOf(getId()))
 						.addData("msg", message)
 						.build());
@@ -60,7 +60,7 @@ public class UnresolvedUser implements Resolvable<User> {
 
 	public Future<?> kickFromChannel(String message) {
 		return this.con.io().sendPacket(
-				new ComplexRequestBuilder("clientkick")
+				Command.CLIENT_KICK
 						.addData("clid", String.valueOf(getId()))
 						.addData("reasonid", "4")
 						.addData("msg", message)
@@ -69,7 +69,7 @@ public class UnresolvedUser implements Resolvable<User> {
 
 	public Future<?> kickFromServer(String message) {
 		return this.con.io().sendPacket(
-				new ComplexRequestBuilder("clientkick")
+				Command.CLIENT_KICK
 						.addData("clid", String.valueOf(getId()))
 						.addData("reasonid", "5")
 						.addData("msg", message)
@@ -82,7 +82,7 @@ public class UnresolvedUser implements Resolvable<User> {
 
 	public Future<?> move(UnresolvedChannel channel, String password) {
 		return this.con.io().sendPacket(
-				new ComplexRequestBuilder("clientmove")
+				Command.CLIENT_MOVE
 						.addData("clid", String.valueOf(getId()))
 						.addData("cid", String.valueOf(channel.getId()))
 						.build());

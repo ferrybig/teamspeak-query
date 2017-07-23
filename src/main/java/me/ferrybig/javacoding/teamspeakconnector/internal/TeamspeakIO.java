@@ -58,8 +58,8 @@ import me.ferrybig.javacoding.teamspeakconnector.entities.Group;
 import me.ferrybig.javacoding.teamspeakconnector.entities.Server;
 import me.ferrybig.javacoding.teamspeakconnector.entities.ShallowUser;
 import me.ferrybig.javacoding.teamspeakconnector.entities.User;
+import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequest;
-import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequestBuilder;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexResponse;
 import me.ferrybig.javacoding.teamspeakconnector.util.FutureUtil;
 
@@ -465,7 +465,7 @@ public class TeamspeakIO {
 				return whoami;
 			}
 			whoami = this.mapComplexReponse(
-					sendPacket(new ComplexRequestBuilder("whoami").build()),
+					sendPacket(Command.WHOAMI.build()),
 					this::mapWhoAmI);
 			this.whoAmIPromise = whoami;
 		}

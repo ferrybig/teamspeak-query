@@ -25,7 +25,7 @@ package me.ferrybig.javacoding.teamspeakconnector.entities;
 
 import io.netty.util.concurrent.Future;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
-import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequestBuilder;
+import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command;
 
 public class UnresolvedServer {
 
@@ -39,7 +39,7 @@ public class UnresolvedServer {
 
 	public Future<TeamspeakConnection> select() {
 		return con.io().chainFuture(
-				con.io().sendPacket(new ComplexRequestBuilder("use").addData("sid", String.valueOf(sid)).addOption("virtual").build()),
+				con.io().sendPacket(Command.USE.addData("sid", String.valueOf(sid)).addOption("virtual").build()),
 				ignored -> con).addListener(future -> {
 					if (future.isSuccess()) {
 						con.io().notifyServerChanged();
@@ -49,13 +49,13 @@ public class UnresolvedServer {
 
 	public Future<TeamspeakConnection> stop() {
 		return con.io().chainFuture(
-				con.io().sendPacket(new ComplexRequestBuilder("serverstop").addData("sid", String.valueOf(sid)).build()),
+				con.io().sendPacket(Command.SERVER_STOP.addData("sid", sid).build()),
 				ignored -> con);
 	}
 
 	public Future<TeamspeakConnection> start() {
 		return con.io().chainFuture(
-				con.io().sendPacket(new ComplexRequestBuilder("serverstart").addData("sid", String.valueOf(sid)).build()),
+				con.io().sendPacket(Command.SERVER_START.addData("sid", sid).build()),
 				ignored -> con);
 	}
 }
