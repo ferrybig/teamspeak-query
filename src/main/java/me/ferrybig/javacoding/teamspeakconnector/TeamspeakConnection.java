@@ -61,6 +61,7 @@ import me.ferrybig.javacoding.teamspeakconnector.event.TokenListener;
 import me.ferrybig.javacoding.teamspeakconnector.event.TokenUsedEvent;
 import me.ferrybig.javacoding.teamspeakconnector.event.meta.Handler;
 import me.ferrybig.javacoding.teamspeakconnector.event.meta.SubscriptionHandler;
+import me.ferrybig.javacoding.teamspeakconnector.internal.Mapper;
 import me.ferrybig.javacoding.teamspeakconnector.internal.SendBehaviour;
 import me.ferrybig.javacoding.teamspeakconnector.internal.TeamspeakIO;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command;
@@ -86,6 +87,7 @@ public class TeamspeakConnection implements Closeable {
 	private final SubscriptionHandler<TokenListener> tokenUsedHandler = new SubscriptionHandler<>(this,
 			Command.SERVER_NOTIFY_REGISTER.addData("event", "tokenused").build(),
 			Command.SERVER_NOTIFY_UNREGISTER.addData("event", "tokenused").build());
+	private final Mapper mapper = new Mapper(this);
 
 	public TeamspeakConnection(TeamspeakIO channel) {
 		this.io = channel;
@@ -132,7 +134,7 @@ public class TeamspeakConnection implements Closeable {
 						}
 						lastPacket = msg;
 						options.put("cid", options.get("ctid"));
-						ShallowUser client = io.mapShallowUser(options);
+						ShallowUser client = mapping().mapShallowUser(options);
 						UnresolvedChannel from = "0".equals(options.get("cfid")) ? null : getUnresolvedChannelById(parseInt(options.get("cfid")));
 						ChangeReason reason = ChangeReason.getById(parseInt(options.get("reasonid")));
 						ClientEnterViewEvent event;
@@ -270,11 +272,11 @@ public class TeamspeakConnection implements Closeable {
 	}
 
 	public Future<User> getUserById(int id) {
-		return io.mapComplexReponse(io.sendPacket(
+		return mapping().mapComplexReponse(io.sendPacket(
 				Command.CLIENT_INFO
 						.addData("clid", String.valueOf(id))
 						.build()),
-				io::mapUser);
+				mapping()::mapUser);
 	}
 
 	public UnresolvedUser getUnresolvedUserById(int id) {
@@ -286,20 +288,20 @@ public class TeamspeakConnection implements Closeable {
 	}
 
 	public Future<Channel> getChannelById(int id) {
-		return io.mapComplexReponse(io.sendPacket(
+		return mapping().mapComplexReponse(io.sendPacket(
 				Command.CHANNEL_INFO
 						.addData("cid", String.valueOf(id))
 						.build()),
 				m -> {
 					m.put("cid", String.valueOf(id)); // This is needed because teamspeak doesn't repeat our send channel id
-					return io.mapChannel(m);
+					return mapping().mapChannel(m);
 				});
 	}
 
 	public Future<Server> getServer() {
-		return io.mapComplexReponse(io.sendPacket(
+		return mapping().mapComplexReponse(io.sendPacket(
 				Command.SERVER_INFO.build()),
-				io::mapServer);
+				mapping()::mapServer);
 	}
 
 	public Future<TeamspeakConnection> login(String username, String password) {
@@ -323,24 +325,24 @@ public class TeamspeakConnection implements Closeable {
 	}
 
 	public Future<List<Server>> getServerList() {
-		return io.mapComplexReponseList(io.sendPacket(
+		return mapping().mapComplexReponseList(io.sendPacket(
 				Command.SERVER_LIST.addOption("virtual").build()),
-				io::mapServer);
+				mapping()::mapServer);
 	}
 
 	public Future<List<Channel>> getChannelList() {
-		return io.mapComplexReponseList(io.sendPacket(
+		return mapping().mapComplexReponseList(io.sendPacket(
 				Command.CHANNEL_LIST.addOption("topic").addOption("flags").addOption("voice").addOption("limits").addOption("icon").build()),
-				io::mapChannel);
+				mapping()::mapChannel);
 	}
 
 	public Future<List<User>> getUsersList() {
-		return io.mapComplexReponseList(io.sendPacket(
+		return mapping().mapComplexReponseList(io.sendPacket(
 				Command.CLIENT_LIST.addOption("uid")
 						.addOption("away").addOption("voice").addOption("groups")
 						.addOption("times").addOption("info").addOption("icon")
 						.addOption("country").addOption("ip").build()),
-				io::mapUser);
+				mapping()::mapUser);
 	}
 
 	@Override
@@ -374,9 +376,13 @@ public class TeamspeakConnection implements Closeable {
 	}
 
 	public Future<List<Group>> getGroups() {
-		return io.mapComplexReponseList(io.sendPacket(
+		return mapping().mapComplexReponseList(io.sendPacket(
 				Command.SERVER_GROUP_LIST.build()),
-				io::mapGroup);
+				mapping()::mapGroup);
+	}
+
+	public final Mapper mapping() {
+		return mapper;
 	}
 
 }
