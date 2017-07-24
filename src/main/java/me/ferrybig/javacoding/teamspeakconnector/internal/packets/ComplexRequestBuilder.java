@@ -91,4 +91,8 @@ public class ComplexRequestBuilder {
 		return new ComplexRequest(cmd.getCmd(), data, false);
 	}
 
+	public Command getCmd() {
+		return cmd;
+	}
+
 }
