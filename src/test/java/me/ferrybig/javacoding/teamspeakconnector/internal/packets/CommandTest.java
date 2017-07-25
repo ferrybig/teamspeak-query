@@ -51,7 +51,7 @@ public class CommandTest {
 
 	@Test
 	public void testNameUppercase() {
-		for(char c : command.name().toCharArray()) {
+		for (char c : command.name().toCharArray()) {
 			assertTrue(c == '_' || Character.isUpperCase(c));
 		}
 	}
@@ -68,7 +68,7 @@ public class CommandTest {
 
 	@Test
 	public void testOptionsIsValid() {
-		for(String s : command.getOptions()) {
+		for (String s : command.getOptions()) {
 			assertTrue(command.isValidOption(s));
 		}
 		assertFalse(command.isValidOption("foorbarbaz"));
@@ -76,7 +76,7 @@ public class CommandTest {
 
 	@Test
 	public void testFlagIsValid() {
-		for(String s : command.getFlags()) {
+		for (String s : command.getFlags()) {
 			assertTrue(command.isValidFlag(s));
 		}
 		assertFalse(command.isValidFlag("foorbarbaz"));
