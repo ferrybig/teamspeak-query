@@ -25,13 +25,10 @@ package me.ferrybig.javacoding.teamspeakconnector.entities;
 
 import io.netty.util.concurrent.Future;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Map;
 import me.ferrybig.javacoding.teamspeakconnector.Resolvable;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
-import me.ferrybig.javacoding.teamspeakconnector.internal.handler.PacketEncoder;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command;
-import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequestBuilder;
 
 public class UnresolvedGroup implements Resolvable<Group> {
 
@@ -131,10 +128,32 @@ public class UnresolvedGroup implements Resolvable<Group> {
 	/**
 	 * Requests a new privilege token for this group
 	 *
-	 * @return a string wrapped in a future containing the privilege token
+	 * @return a string wrapped in a future containing the privilege key data
 	 */
+	public Future<PrivilegeKey> generatePrivilegeKey() {
+		return generatePrivilegeKey("", Collections.emptyMap());
+	}
+
+	/**
+	 * Requests a new privilege token for this group
+	 *
+	 * @param description description of this token
+	 * @param customData custom data to be added to the privilege token
+	 * @return a PrivilegeKey wrapped in a future containing the privilege key data
+	 */
+	public Future<PrivilegeKey> generatePrivilegeKey(String description, Map<String, String> customData) {
+		return new PrivilegeKeyTemplate(customData, description, PrivilegeKey.Type.SERVER_GROUP, serverGroupId, 0).createKey(con);
+	}
+
+	/**
+	 * Requests a new privilege token for this group
+	 *
+	 * @return a string wrapped in a future containing the privilege token
+	 * @deprecated Use {@code generatePrivilegeKey} instead
+	 */
+	@Deprecated
 	public Future<String> generatePrivilegeToken() {
-		return generatePrivilegeToken("", Collections.emptyMap());
+		return con.io().chainFuture(generatePrivilegeKey(), l -> l.getToken());
 	}
 
 	/**
@@ -143,23 +162,10 @@ public class UnresolvedGroup implements Resolvable<Group> {
 	 * @param description description of this token
 	 * @param customData custom data to be added to the privilege token
 	 * @return a string wrapped in a future containing the privilege token
+	 * @deprecated Use {@code generatePrivilegeKey} instead
 	 */
+	@Deprecated
 	public Future<String> generatePrivilegeToken(String description, Map<String, String> customData) {
-		ComplexRequestBuilder builder = Command.PRIVILEGEKEY_ADD.buildUsing();
-		Iterator<Map.Entry<String, String>> itr = customData.entrySet().iterator();
-		if (itr.hasNext()) {
-			StringBuilder customStr = new StringBuilder();
-			do {
-				Map.Entry<String, String> next = itr.next();
-				customStr.append("|ident=").append(PacketEncoder.encodeTeamspeakCode(next.getKey())).append(" value=").append(PacketEncoder.encodeTeamspeakCode(next.getValue()));
-			} while (itr.hasNext());
-			builder.addData("tokencustomset", customStr.substring(1));
-		}
-		builder.addData("tokentype", PrivilegeKey.Type.SERVER_GROUP);
-		builder.addData("tokenid1", getServerGroupId());
-		builder.addData("tokenid2", "0");
-		builder.addData("tokendescription", description);
-
-		return con.io().chainFuture(con.io().sendPacket(builder.build()), l -> l.getCommands().get(0).get("token"));
+		return con.io().chainFuture(generatePrivilegeKey(description, customData), l -> l.getToken());
 	}
 }

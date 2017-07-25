@@ -23,16 +23,88 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.entities;
 
+import io.netty.util.concurrent.Future;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
+import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
+
 /**
  *
  * @author Fernando van Loenhout
  */
-public class PrivilegeKey {
+@ParametersAreNonnullByDefault
+public class PrivilegeKey extends UnresolvedPrivilegeKey {
 
-	/**
-	 *
-	 * @author Fernando van Loenhout
-	 */
+	private final Map<String, String> customset;
+	private final String description;
+	private final PrivilegeKey.Type type;
+	private final int token1;
+	private final int token2;
+
+	public PrivilegeKey(TeamspeakConnection con, String token, PrivilegeKeyTemplate template) {
+		this(con, token,
+				Collections.unmodifiableMap(new LinkedHashMap<>(Objects.requireNonNull(template, "template").getCustomset())),
+				template.getDescription(), template.getType(),
+				template.getToken1(), template.getToken2());
+	}
+
+	public PrivilegeKey(TeamspeakConnection con, String token, Map<String, String> customset, String description, Type type, int token1, int token2) {
+		super(con, token);
+		this.customset = customset;
+		this.description = description;
+		this.type = type;
+		this.token1 = token1;
+		this.token2 = token2;
+	}
+
+	@Nonnull
+	public Map<String, String> getCustomset() {
+		return customset;
+	}
+
+	@Nonnull
+	public String getDescription() {
+		return description;
+	}
+
+	@Nonnull
+	public Type getType() {
+		return type;
+	}
+
+	public int getToken1() {
+		return token1;
+	}
+
+	public int getToken2() {
+		return token2;
+	}
+
+	@Nonnull
+	public PrivilegeKeyTemplate toTemplate() {
+		return new PrivilegeKeyTemplate(new HashMap<>(customset), description, type, token1, token2);
+	}
+
+	@Override
+	public String toString() {
+		return "PrivilegeKey{" + "token=" + getToken() + ", customset=" + customset + ", description=" + description + ", type=" + type + ", token1=" + token1 + ", token2=" + token2 + '}';
+	}
+
+	@Override
+	public boolean isResolved() {
+		return true;
+	}
+
+	@Override
+	public Future<PrivilegeKey> resolve() {
+		return con.io().getCompletedFuture(this);
+	}
+
 	public enum Type {
 		/**
 		 * server group token (id1={groupID} id2=0)
@@ -44,6 +116,7 @@ public class PrivilegeKey {
 		CHANNEL_GROUP(1);
 
 		private static final Type[] BY_ID;
+
 		static {
 			Type[] values = values();
 			BY_ID = new Type[values.length];

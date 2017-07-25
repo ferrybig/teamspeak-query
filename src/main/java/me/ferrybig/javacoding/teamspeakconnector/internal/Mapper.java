@@ -30,6 +30,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -37,13 +38,17 @@ import java.util.function.IntFunction;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
 import me.ferrybig.javacoding.teamspeakconnector.entities.Channel;
 import me.ferrybig.javacoding.teamspeakconnector.entities.File;
 import me.ferrybig.javacoding.teamspeakconnector.entities.Group;
+import me.ferrybig.javacoding.teamspeakconnector.entities.PrivilegeKey;
 import me.ferrybig.javacoding.teamspeakconnector.entities.Server;
 import me.ferrybig.javacoding.teamspeakconnector.entities.ShallowUser;
+import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedChannel;
 import me.ferrybig.javacoding.teamspeakconnector.entities.User;
+import me.ferrybig.javacoding.teamspeakconnector.internal.handler.PacketDecoder;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexResponse;
 
 public class Mapper {
@@ -185,7 +190,7 @@ public class Mapper {
 				0,
 				0,
 				"",
-				((InetSocketAddress)  con.io().getChannel().localAddress()).getAddress());
+				((InetSocketAddress) con.io().getChannel().localAddress()).getAddress());
 	}
 
 	/**
@@ -241,11 +246,35 @@ public class Mapper {
 
 	private Map<Integer, Channel> mapChannelParents(Map<Integer, Channel> list) {
 		for (Channel c : list.values()) {
-			Channel parent = list.get(c.getParent().getId());
+			UnresolvedChannel parentUnresolved = c.getParent();
+			if (parentUnresolved == null) {
+				continue;
+			}
+			Channel parent = list.get(parentUnresolved.getId());
 			if (parent != null) {
 				c.setParent(parent);
 			}
 		}
 		return list;
+	}
+
+	@Nonnull
+	public PrivilegeKey mapPrivilegeKey(Map<String, String> data) {
+		Map<String, String> customSet = new HashMap<>();
+		final String tokenCustomSetString = data.get("tokencustomset");
+		if(!tokenCustomSetString.isEmpty()) {
+			Map<String, String> customSetCache = new HashMap<>(2);
+			for(String part : tokenCustomSetString.split("\\|")) {
+				PacketDecoder.singleDecode(part, customSetCache, true, true);
+				customSet.put(customSetCache.get("ident"), customSetCache.get("value"));
+			}
+		}
+		return new PrivilegeKey(con,
+				data.get("token"),
+				customSet,
+				data.get("tokendescription"),
+				PrivilegeKey.Type.getById(Integer.parseInt(data.get("tokentype"))),
+				Integer.parseInt(data.get("tokenid1")),
+				Integer.parseInt(data.get("tokenid2")));
 	}
 }

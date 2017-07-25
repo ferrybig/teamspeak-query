@@ -39,12 +39,14 @@ import me.ferrybig.javacoding.teamspeakconnector.entities.Channel;
 import me.ferrybig.javacoding.teamspeakconnector.entities.File;
 import me.ferrybig.javacoding.teamspeakconnector.entities.Group;
 import me.ferrybig.javacoding.teamspeakconnector.entities.NamedUser;
+import me.ferrybig.javacoding.teamspeakconnector.entities.PrivilegeKey;
 import me.ferrybig.javacoding.teamspeakconnector.entities.Server;
 import me.ferrybig.javacoding.teamspeakconnector.entities.ShallowUser;
 import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedChannel;
 import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedChannelGroup;
 import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedFile;
 import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedGroup;
+import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedPrivilegeKey;
 import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedServer;
 import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedUser;
 import me.ferrybig.javacoding.teamspeakconnector.entities.User;
@@ -182,7 +184,7 @@ public class TeamspeakConnection implements Closeable {
 		});
 	}
 
-	protected void handleMessage(Response msg, User whoAmI) {
+	private void handleMessage(Response msg, User whoAmI) {
 		LOG.log(Level.FINEST, "Who I am: {0}", whoAmI);
 		final Map<String, String> options = msg.getOptions();
 		final int invokerId = Integer.parseInt(options.get("invokerid"));
@@ -265,6 +267,10 @@ public class TeamspeakConnection implements Closeable {
 		return new UnresolvedServer(this, id);
 	}
 
+	public UnresolvedPrivilegeKey getUnresolvedPrivilegeKeyById(String token) {
+		return new UnresolvedPrivilegeKey(this, token);
+	}
+
 	public Future<UnresolvedServer> getUnresolvedServerByPort(int port) {
 		return this.io.chainFuture(
 				this.io.sendPacket(Command.SERVER_ID_GET_BY_PORT.addData("virtualserver_port", port).build()),
@@ -296,6 +302,10 @@ public class TeamspeakConnection implements Closeable {
 					m.put("cid", String.valueOf(id)); // This is needed because teamspeak doesn't repeat our send channel id
 					return mapping().mapChannel(m);
 				});
+	}
+
+	public Future<PrivilegeKey> getPrivilegeKeyById(String token) {
+		return this.getUnresolvedPrivilegeKeyById(token).resolve();
 	}
 
 	public Future<Server> getServer() {
@@ -345,13 +355,18 @@ public class TeamspeakConnection implements Closeable {
 				mapping()::mapUser);
 	}
 
+	public Future<List<PrivilegeKey>> getPrivilegeKeyList() {
+		return mapping().mapComplexReponseList(io().sendPacket(Command.PRIVILEGEKEY_LIST.build()),
+				mapping()::mapPrivilegeKey);
+	}
+
 	@Override
 	public void close() throws TeamspeakException {
 		try {
 			Future<?> sendPacket = quit();
 			if (!this.io.getChannel().eventLoop().inEventLoop()) {
 				sendPacket.get();
-			} else if(sendPacket.isDone() && !sendPacket.isSuccess()) {
+			} else if (sendPacket.isDone() && !sendPacket.isSuccess()) {
 				throw new TeamspeakException(sendPacket.cause());
 			}
 		} catch (InterruptedException | ExecutionException ex) {
