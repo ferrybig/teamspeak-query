@@ -32,7 +32,8 @@ public class UnresolvedFile {
 	private final UnresolvedChannel channel;
 	private final String name;
 
-	public UnresolvedFile(TeamspeakConnection connection, UnresolvedChannel channel, String name) {
+	public UnresolvedFile(TeamspeakConnection connection,
+			UnresolvedChannel channel, String name) {
 		this.connection = connection;
 		this.channel = channel;
 		this.name = name;
@@ -52,7 +53,8 @@ public class UnresolvedFile {
 
 	@Override
 	public String toString() {
-		return "UnresolvedFile{" + "connection=" + connection + ", channel=" + channel + ", name=" + name + '}';
+		return "UnresolvedFile{" + "connection=" + connection
+				+ ", channel=" + channel + ", name=" + name + '}';
 	}
 
 //	public ProgressiveFuture<?> uploadFile(java.io.File file) throws FileNotFoundException {
@@ -79,5 +81,4 @@ public class UnresolvedFile {
 //		});
 //		return progressive;
 //	}
-
 }

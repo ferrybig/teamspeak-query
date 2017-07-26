@@ -41,7 +41,8 @@ public class ServerEditEvent extends InvokedEvent {
 
 	@Override
 	public String toString() {
-		return "ServerEditEvent{" + "reason=" + reason + ", invoker=" + getInvoker() + '}';
+		return "ServerEditEvent{" + "reason=" + reason
+				+ ", invoker=" + getInvoker() + '}';
 	}
 
 }

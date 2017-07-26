@@ -62,12 +62,14 @@ public class UnresolvedChannel {
 
 	public Future<List<File>> getFileTransferList(String path) {
 		return con.mapping().mapComplexReponseList(con.io().sendPacket(
-				Command.FT_GET_FILE_LIST.addData("cid", getId()).addData("path", path).build()),
+				Command.FT_GET_FILE_LIST.addData("cid",
+						getId()).addData("path", path).build()),
 				con.mapping()::mapFile);
 	}
 
 	public Future<?> moveInto(UnresolvedUser user) {
-		return con.io().sendPacket(Command.CLIENT_MOVE.addData("cid", getId()).addData("clid", user.getId()).build());
+		return con.io().sendPacket(Command.CLIENT_MOVE.addData("cid",
+				getId()).addData("clid", user.getId()).build());
 	}
 
 }

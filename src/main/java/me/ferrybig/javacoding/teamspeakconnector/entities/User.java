@@ -38,13 +38,23 @@ public class User extends ShallowUser {
 	protected final long lastConnected;
 	protected final InetAddress ip;
 
-	public User(TeamspeakConnection con, int id, UnresolvedChannel channel, int databaseId, String nickname,
+	public User(TeamspeakConnection con, int id, UnresolvedChannel channel,
+			int databaseId, String nickname,
 			Type type, String awayMessage,
-			boolean talking, boolean inputMuted, boolean outputMuted, boolean inputHardware, boolean outputHardware,
-			int talkPower, boolean talker, boolean prioritySpeaker, boolean recording, boolean channelCommander,
-			String uniqueIdentifier, List<UnresolvedGroup> serverGroup, List<UnresolvedChannelGroup> channelGroup,
-			UnresolvedChannel channelGroupInherited, String version, String platform, int idleTime, long created, long lastConnected, int iconId, String country, InetAddress ip) {
-		super(con, id, uniqueIdentifier, databaseId, channel, nickname, type, awayMessage, inputMuted, outputMuted, inputHardware, outputHardware, talkPower, talker, prioritySpeaker, recording, channelCommander, serverGroup, channelGroup, channelGroupInherited, iconId, country);
+			boolean talking, boolean inputMuted, boolean outputMuted,
+			boolean inputHardware, boolean outputHardware,
+			int talkPower, boolean talker, boolean prioritySpeaker,
+			boolean recording, boolean channelCommander,
+			String uniqueIdentifier, List<UnresolvedGroup> serverGroup,
+			List<UnresolvedChannelGroup> channelGroup,
+			UnresolvedChannel channelGroupInherited, String version,
+			String platform, int idleTime, long created, long lastConnected,
+			int iconId, String country, InetAddress ip) {
+		super(con, id, uniqueIdentifier, databaseId, channel, nickname, type,
+				awayMessage, inputMuted, outputMuted, inputHardware,
+				outputHardware, talkPower, talker, prioritySpeaker,
+				recording, channelCommander, serverGroup, channelGroup,
+				channelGroupInherited, iconId, country);
 		this.talking = talking;
 		this.version = version;
 		this.platform = platform;
@@ -127,7 +137,25 @@ public class User extends ShallowUser {
 
 	@Override
 	public String toString() {
-		return "User{" + "id=" + getId() + ",channel=" + channel + ", databaseId=" + databaseId + ", nickname=" + getNickname() + ", type=" + type + ", awayMessage=" + awayMessage + ", talking=" + talking + ", inputMuted=" + inputMuted + ", outputMuted=" + outputMuted + ", inputHardware=" + inputHardware + ", outputHardware=" + outputHardware + ", talkPower=" + talkPower + ", talker=" + talker + ", prioritySpeaker=" + prioritySpeaker + ", recording=" + recording + ", channelCommander=" + channelCommander + ", uniqueIdentifier=" + getUniqueId() + ", serverGroup=" + serverGroup + ", channelGroup=" + channelGroup + ", channelGroupInherited=" + channelGroupInherited + ", version=" + version + ", platform=" + platform + ", idleTime=" + idleTime + ", created=" + created + ", lastConnected=" + lastConnected + ", iconId=" + iconId + ", country=" + country + ", ip=" + ip + '}';
+		return "User{" + "id=" + getId() + ",channel=" + channel
+				+ ", databaseId=" + databaseId + ", nickname=" + getNickname()
+				+ ", type=" + type + ", awayMessage=" + awayMessage
+				+ ", talking=" + talking + ", inputMuted=" + inputMuted
+				+ ", outputMuted=" + outputMuted
+				+ ", inputHardware=" + inputHardware
+				+ ", outputHardware=" + outputHardware
+				+ ", talkPower=" + talkPower + ", talker=" + talker
+				+ ", prioritySpeaker=" + prioritySpeaker
+				+ ", recording=" + recording
+				+ ", channelCommander=" + channelCommander
+				+ ", uniqueIdentifier=" + getUniqueId()
+				+ ", serverGroup=" + serverGroup
+				+ ", channelGroup=" + channelGroup
+				+ ", channelGroupInherited=" + channelGroupInherited
+				+ ", version=" + version + ", platform=" + platform
+				+ ", idleTime=" + idleTime + ", created=" + created
+				+ ", lastConnected=" + lastConnected + ", iconId=" + iconId
+				+ ", country=" + country + ", ip=" + ip + '}';
 	}
 
 	public static enum Type {
@@ -140,7 +168,8 @@ public class User extends ShallowUser {
 				case 1:
 					return QUERY;
 				default:
-					throw new IllegalArgumentException("ClientType " + id + " not known");
+					throw new IllegalArgumentException(
+							"ClientType " + id + " not known");
 			}
 		}
 	}

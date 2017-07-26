@@ -73,8 +73,10 @@ public class TeamspeakApi {
 	 * @see TeamspeakBootstrap#connect(java.net.SocketAddress)
 	 */
 	@Deprecated
-	public Future<TeamspeakConnection> connect(SocketAddress addr, String username, String password) {
-		return new TeamspeakBootstrap(group).login(username, password).connect(addr);
+	public Future<TeamspeakConnection> connect(SocketAddress addr,
+			String username, String password) {
+		return new TeamspeakBootstrap(group).login(username, password)
+				.connect(addr);
 	}
 
 }

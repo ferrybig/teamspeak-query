@@ -46,7 +46,9 @@ public class PrivilegeKeyTemplate {
 	private int token1;
 	private int token2;
 
-	public PrivilegeKeyTemplate(Map<String, String> tokencustomset, String description, PrivilegeKey.Type type, int token1, int token2) {
+	public PrivilegeKeyTemplate(Map<String, String> tokencustomset,
+			String description, PrivilegeKey.Type type,
+			int token1, int token2) {
 		this.customset = Objects.requireNonNull(tokencustomset, "customset");
 		this.description = Objects.requireNonNull(description, "description");
 		this.type = Objects.requireNonNull(type, "type");
@@ -96,7 +98,9 @@ public class PrivilegeKeyTemplate {
 
 	@Override
 	public String toString() {
-		return "PrivilegeKeyTemplate{" + "tokencustomset=" + customset + ", description=" + description + ", type=" + type + ", token1=" + token1 + ", token2=" + token2 + '}';
+		return "PrivilegeKeyTemplate{" + "tokencustomset=" + customset
+				+ ", description=" + description + ", type=" + type
+				+ ", token1=" + token1 + ", token2=" + token2 + '}';
 	}
 
 	@Override
@@ -140,12 +144,14 @@ public class PrivilegeKeyTemplate {
 		return true;
 	}
 
+	@SuppressWarnings("LocalVariableHidesMemberVariable")
 	public Future<PrivilegeKey> createKey(TeamspeakConnection con) {
 		String description = this.description;
 		PrivilegeKey.Type type = this.type;
 		int token1 = this.token1;
 		int token2 = this.token2;
-		Map<String, String> customset = this.customset.isEmpty() ? Collections.emptyMap() : new LinkedHashMap<>(this.customset);
+		Map<String, String> customset = this.customset.isEmpty()
+				? Collections.emptyMap() : new LinkedHashMap<>(this.customset);
 
 		final ComplexRequestBuilder builder = Command.PRIVILEGEKEY_ADD
 				.addData("tokendescription", description)
@@ -153,19 +159,24 @@ public class PrivilegeKeyTemplate {
 				.addData("tokenid1", token1)
 				.addData("tokenid2", token2);
 
-		Iterator<Map.Entry<String, String>> itr = customset.entrySet().iterator();
+		Iterator<Map.Entry<String, String>> itr
+				= customset.entrySet().iterator();
 		if (itr.hasNext()) {
 			StringBuilder customStr = new StringBuilder();
 			do {
 				Map.Entry<String, String> next = itr.next();
-				customStr.append("|ident=").append(PacketEncoder.encodeTeamspeakCode(next.getKey()))
-						.append(" value=").append(PacketEncoder.encodeTeamspeakCode(next.getValue()));
+				customStr
+						.append("|ident=").append(
+						PacketEncoder.encodeTeamspeakCode(next.getKey()))
+						.append(" value=").append(
+						PacketEncoder.encodeTeamspeakCode(next.getValue()));
 			} while (itr.hasNext());
 			builder.addData("tokencustomset", customStr.substring(1));
 		}
 
 		return con.io().chainFuture(con.io().sendPacket(builder.build()),
-				p -> new PrivilegeKey(con, p.getCommands().get(0).get("token"), customset, description, type, token1, token2));
+				p -> new PrivilegeKey(con, p.getCommands().get(0).get("token"),
+						customset, description, type, token1, token2));
 	}
 
 }

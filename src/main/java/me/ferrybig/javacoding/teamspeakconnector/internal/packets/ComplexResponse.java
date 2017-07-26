@@ -35,7 +35,8 @@ public class ComplexResponse {
 	private final String msg;
 	private final String extraMsg;
 
-	public ComplexResponse(ArrayList<Map<String, String>> commands, int id, String msg, String extraMsg) {
+	public ComplexResponse(ArrayList<Map<String, String>> commands, int id,
+			String msg, String extraMsg) {
 		this.commands = commands;
 		this.id = id;
 		this.msg = msg;
@@ -60,7 +61,8 @@ public class ComplexResponse {
 
 	@Override
 	public String toString() {
-		return "ComplexResponse{" + "commands=" + commands + ",\nid=" + id + ", msg=" + msg + '}';
+		return "ComplexResponse{" + "commands=" + commands + ",\nid="
+				+ id + ", msg=" + msg + '}';
 	}
 
 }

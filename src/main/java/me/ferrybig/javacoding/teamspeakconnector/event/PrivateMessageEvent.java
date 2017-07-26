@@ -30,14 +30,17 @@ public class PrivateMessageEvent extends MessageEvent {
 
 	private final UnresolvedUser target;
 
-	public PrivateMessageEvent(UnresolvedUser target, String message, NamedUser invoker) {
+	public PrivateMessageEvent(UnresolvedUser target, String message,
+			NamedUser invoker) {
 		super(message, TargetMode.PRIVATE, invoker);
 		this.target = target;
 	}
 
 	@Override
 	public String toString() {
-		return "PrivateMessageEvent{" + "message=" + getMessage() + ", targetMode=" + getTargetMode() + ", target=" + getTarget() + ", invoker=" + getInvoker() + '}';
+		return "PrivateMessageEvent{" + "message=" + getMessage()
+				+ ", targetMode=" + getTargetMode() + ", target=" + getTarget()
+				+ ", invoker=" + getInvoker() + '}';
 	}
 
 	public UnresolvedUser getTarget() {

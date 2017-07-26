@@ -57,8 +57,10 @@ import me.ferrybig.javacoding.teamspeakconnector.util.FutureUtil;
  */
 public class TeamspeakIO {
 
-	private static final Logger LOG = Logger.getLogger(TeamspeakIO.class.getName());
-	private static final ByteBuf PING_PACKET = Unpooled.wrappedBuffer("\n".getBytes(StandardCharsets.UTF_8));
+	private static final Logger LOG
+			= Logger.getLogger(TeamspeakIO.class.getName());
+	private static final ByteBuf PING_PACKET = Unpooled.wrappedBuffer(
+			"\n".getBytes(StandardCharsets.UTF_8));
 
 	@GuardedBy(value = "incomingQueue")
 	private final Queue<PendingPacket> incomingQueue = new LinkedList<>();
@@ -87,7 +89,8 @@ public class TeamspeakIO {
 		return sendPacket(new ComplexRequest(raw, true), SendBehaviour.NORMAL);
 	}
 
-	public Future<ComplexResponse> sendPacket(String raw, SendBehaviour sendBehaviour) {
+	public Future<ComplexResponse> sendPacket(
+			String raw, SendBehaviour sendBehaviour) {
 		return sendPacket(new ComplexRequest(raw, true), sendBehaviour);
 	}
 
@@ -95,12 +98,14 @@ public class TeamspeakIO {
 		return sendPacket(req, SendBehaviour.NORMAL);
 	}
 
-	public Future<ComplexResponse> sendPacket(ComplexRequest req, SendBehaviour sendBehaviour) {
+	public Future<ComplexResponse> sendPacket(
+			ComplexRequest req, SendBehaviour sendBehaviour) {
 		if (closed) {
 			if (sendBehaviour != SendBehaviour.NORMAL) {
 				return this.closeFuture;
 			}
-			return channel.eventLoop().newFailedFuture(new TeamspeakException("Channel closed"));
+			return channel.eventLoop().newFailedFuture(
+					new TeamspeakException("Channel closed"));
 		}
 		Promise<ComplexResponse> prom = channel.eventLoop().newPromise();
 		ChannelFuture future;
@@ -109,7 +114,8 @@ public class TeamspeakIO {
 				if (sendBehaviour != SendBehaviour.NORMAL) {
 					return this.closeFuture;
 				}
-				return prom.setFailure(new TeamspeakException("Channel closed"));
+				return prom.setFailure(
+						new TeamspeakException("Channel closed"));
 			}
 			incomingQueue.offer(new PendingPacket(prom, req, sendBehaviour));
 			future = channel.writeAndFlush(req);
@@ -127,21 +133,26 @@ public class TeamspeakIO {
 			if (!upstream.isSuccess()) {
 				synchronized (incomingQueue) {
 					if (incomingQueue.removeIf(prom::equals)) {
-						prom.setFailure(new TeamspeakException("Exception during sending", upstream.cause()));
+						prom.setFailure(new TeamspeakException(
+								"Exception during sending", upstream.cause()));
 					}
 				}
 			}
 		});
-		if (sendBehaviour == SendBehaviour.CLOSE_CONNECTION || sendBehaviour == SendBehaviour.FORCE_CLOSE_CONNECTION) {
+		if (sendBehaviour == SendBehaviour.CLOSE_CONNECTION
+				|| sendBehaviour == SendBehaviour.FORCE_CLOSE_CONNECTION) {
 			prom.addListener(upstream -> {
 				assert upstream == prom;
 				if (!prom.isSuccess()) {
-					LOG.log(Level.WARNING, "Failed to close channel cleanly: {0}", prom.cause());
+					LOG.log(Level.WARNING,
+							"Failed to close channel cleanly: {0}",
+							prom.cause());
 				}
 				synchronized (incomingQueue) {
 					this.closed = true;
 				}
-				this.closeFuture.trySuccess(prom.isSuccess() ? prom.get() : null);
+				this.closeFuture.trySuccess(prom.isSuccess()
+						? prom.get() : null);
 				channel.close();
 				LOG.fine("Closing channel because sendmessage asked it");
 			});
@@ -150,11 +161,13 @@ public class TeamspeakIO {
 		return prom;
 	}
 
-	public <T, R> Future<R> chainFuture(Future<T> future, Function<T, R> mapping) {
+	public <T, R> Future<R> chainFuture(
+			Future<T> future, Function<T, R> mapping) {
 		return FutureUtil.chainFuture(newPromise(), future, mapping);
 	}
 
-	public <T, R> Future<R> chainFutureAdvanced(Future<T> future, BiExFunction<T, Throwable, R> mapping) {
+	public <T, R> Future<R> chainFutureAdvanced(
+			Future<T> future, BiExFunction<T, Throwable, R> mapping) {
 		return FutureUtil.chainFutureAdvanced(newPromise(), future, mapping);
 	}
 
@@ -170,7 +183,8 @@ public class TeamspeakIO {
 			} else {
 				this.closeFuture.trySuccess(null);
 			}
-			LOG.log(Level.FINE, "Marking {0} PendingPackets as closed", incomingQueue.size());
+			LOG.log(Level.FINE, "Marking {0} PendingPackets as closed",
+					incomingQueue.size());
 			while ((poll = incomingQueue.poll()) != null) {
 				poll.onChannelClose(upstream);
 			}
@@ -183,28 +197,33 @@ public class TeamspeakIO {
 
 	public void start() {
 		if (this.con == null) {
-			throw new IllegalStateException("No TeamspeakConnection registered");
+			throw new IllegalStateException(
+					"No TeamspeakConnection registered");
 		}
 		if (this.started) {
 			throw new IllegalStateException("Already started");
 		}
 		this.started = true;
-		this.channel.pipeline().addLast(new SimpleChannelInboundHandler<ComplexResponse>() {
+		this.channel.pipeline().addLast(
+				new SimpleChannelInboundHandler<ComplexResponse>() {
 			private Throwable lastException = null;
 
 			@Override
-			protected void messageReceived(ChannelHandlerContext ctx, ComplexResponse msg) throws Exception {
+			protected void messageReceived(ChannelHandlerContext ctx,
+					ComplexResponse msg) throws Exception {
 				recievePacket(msg);
 			}
 
 			@Override
-			public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+			public void exceptionCaught(ChannelHandlerContext ctx,
+					Throwable cause) throws Exception {
 				lastException = cause;
 				ctx.close();
 			}
 
 			@Override
-			public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+			public void channelInactive(ChannelHandlerContext ctx)
+					throws Exception {
 				super.channelInactive(ctx);
 				channelClosed(lastException);
 			}
@@ -213,7 +232,8 @@ public class TeamspeakIO {
 	}
 
 	private void recievePacket(ComplexResponse r) {
-		LOG.log(Level.FINE, "Packet received with {0} commands", r.getCommands());
+		LOG.log(Level.FINE, "Packet received with {0} commands",
+				r.getCommands());
 		PendingPacket prom;
 		synchronized (incomingQueue) {
 			prom = incomingQueue.remove();

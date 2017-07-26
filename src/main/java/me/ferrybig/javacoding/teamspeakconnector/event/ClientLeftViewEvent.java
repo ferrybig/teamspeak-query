@@ -36,7 +36,9 @@ public class ClientLeftViewEvent extends ClientEvent {
 	private final String invokerName;
 	private final String invokerUid;
 
-	public ClientLeftViewEvent(UnresolvedUser client, UnresolvedChannel from, ChangeReason reason, String message, UnresolvedUser invoker, String invokerName, String invokerUid) {
+	public ClientLeftViewEvent(UnresolvedUser client, UnresolvedChannel from,
+			ChangeReason reason, String message, UnresolvedUser invoker,
+			String invokerName, String invokerUid) {
 		super(client);
 		this.from = from;
 		this.reason = reason;
@@ -64,7 +66,11 @@ public class ClientLeftViewEvent extends ClientEvent {
 
 	@Override
 	public String toString() {
-		return "ClientLeftViewEvent{" + "client=" + getClient() + ",channel=" + from + ", reason=" + reason + ", message=" + message + ", invoker=" + invoker + ", invokerName=" + invokerName + ", invokerUid=" + invokerUid + '}';
+		return "ClientLeftViewEvent{" + "client=" + getClient()
+				+ ",channel=" + from + ", reason=" + reason
+				+ ", message=" + message + ", invoker=" + invoker
+				+ ", invokerName=" + invokerName
+				+ ", invokerUid=" + invokerUid + '}';
 	}
 
 	public UnresolvedChannel getFrom() {

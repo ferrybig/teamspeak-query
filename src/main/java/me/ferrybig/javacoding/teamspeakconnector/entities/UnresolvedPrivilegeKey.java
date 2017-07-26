@@ -48,20 +48,24 @@ public class UnresolvedPrivilegeKey implements Resolvable<PrivilegeKey> {
 	}
 
 	public Future<?> useKey() {
-		return con.io().sendPacket(Command.PRIVILEGEKEY_USE.addData("token", getToken()).build());
+		return con.io().sendPacket(Command.PRIVILEGEKEY_USE
+				.addData("token", getToken()).build());
 	}
 
 	@Override
 	public Future<PrivilegeKey> forceResolve() {
-		return con.io().chainFuture(con.io().sendPacket(Command.PRIVILEGEKEY_LIST.build()),
-				r -> r.getCommands().stream().filter(p -> p.get("token").equals("token")).findAny()
-		.map(con.mapping()::mapPrivilegeKey).orElseThrow(() -> new NoSuchElementException("No token found by id " + token)));
+		return con.io().chainFuture(con.io().sendPacket(
+				Command.PRIVILEGEKEY_LIST.build()),
+				r -> r.getCommands().stream()
+						.filter(p -> p.get("token").equals("token")).findAny()
+						.map(con.mapping()::mapPrivilegeKey)
+						.orElseThrow(() -> new NoSuchElementException(
+						"No token found by id " + token)));
 	}
 
 	@Override
 	public boolean isResolved() {
 		return false;
 	}
-
 
 }

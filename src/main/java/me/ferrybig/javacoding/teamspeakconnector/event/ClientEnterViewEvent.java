@@ -34,7 +34,8 @@ public class ClientEnterViewEvent extends ClientResolvedEvent {
 	private final ChangeReason reason;
 	private final NamedUser invoker;
 
-	public ClientEnterViewEvent(ShallowUser client, UnresolvedChannel to, ChangeReason reason, NamedUser invoker) {
+	public ClientEnterViewEvent(ShallowUser client, UnresolvedChannel to,
+			ChangeReason reason, NamedUser invoker) {
 		super(client);
 		this.to = to;
 		this.reason = reason;

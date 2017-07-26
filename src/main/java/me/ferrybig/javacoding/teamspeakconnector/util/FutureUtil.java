@@ -44,7 +44,8 @@ public class FutureUtil {
 		assert false;
 	}
 
-	private static <T, R> Future<R> delegateFutureResult(Future<T> future, Promise<R> prom, Function<T, R> map) {
+	private static <T, R> Future<R> delegateFutureResult(Future<T> future,
+			Promise<R> prom, Function<T, R> map) {
 		Objects.requireNonNull(map, "map");
 		return delegateFutureResult(future, prom, (s, t) -> {
 			if (t != null) {
@@ -54,7 +55,8 @@ public class FutureUtil {
 		});
 	}
 
-	private static <T, R> Future<R> delegateFutureResult(Future<T> future, Promise<R> prom, BiExFunction<T, Throwable, R> map) {
+	private static <T, R> Future<R> delegateFutureResult(Future<T> future,
+			Promise<R> prom, BiExFunction<T, Throwable, R> map) {
 		Objects.requireNonNull(map, "map");
 		future.addListener((ignored) -> {
 			assert ignored == future;
@@ -83,24 +85,30 @@ public class FutureUtil {
 		return prom;
 	}
 
-	public static <T, R> Future<R> chainFuture(Promise<R> result, Future<T> future, Function<T, R> mapping) {
+	public static <T, R> Future<R> chainFuture(Promise<R> result,
+			Future<T> future, Function<T, R> mapping) {
 		return delegateFutureResult(future, result, mapping);
 	}
 
-	public static <T, R> Future<R> chainFutureAdvanced(Promise<R> result, Future<T> future, BiExFunction<T, Throwable, R> mapping) {
+	public static <T, R> Future<R> chainFutureAdvanced(Promise<R> result,
+			Future<T> future, BiExFunction<T, Throwable, R> mapping) {
 		return delegateFutureResult(future, result, mapping);
 	}
 
-	public static <T, R> Future<R> chainFutureFlat(Promise<R> result, Future<T> future, Function<T, Future<R>> mapping) {
+	public static <T, R> Future<R> chainFutureFlat(Promise<R> result,
+			Future<T> future, Function<T, Future<R>> mapping) {
 		return chainFutureFlat(result, future, mapping, (t, i) -> i);
 	}
 
-	public static <T, I, R> Future<R> chainFutureFlat(Promise<R> result, Future<T> future, Function<T, Future<I>> mapping, BiFunction<T, I, R> secondary) {
+	public static <T, I, R> Future<R> chainFutureFlat(Promise<R> result,
+			Future<T> future, Function<T, Future<I>> mapping,
+			BiFunction<T, I, R> secondary) {
 		future.addListener(ignored -> {
 			assert ignored == future;
 			try {
 				if (future.isSuccess()) {
-					delegateFutureResult(mapping.apply(future.getNow()), result, i -> secondary.apply(future.getNow(), i));
+					delegateFutureResult(mapping.apply(future.getNow()), result,
+							i -> secondary.apply(future.getNow(), i));
 				} else {
 					result.tryFailure(future.cause());
 				}
@@ -117,18 +125,23 @@ public class FutureUtil {
 		return result;
 	}
 
-	public static <T> List<T> waitSync(Future<? extends T> future) throws InterruptedException, ExecutionException {
+	public static <T> List<T> waitSync(Future<? extends T> future)
+			throws InterruptedException, ExecutionException {
 		return Collections.singletonList(future.get());
 	}
 
-	public static <T> List<T> waitSync(Future<? extends T> future1, Future<? extends T> future2) throws InterruptedException, ExecutionException {
+	public static <T> List<T> waitSync(Future<? extends T> future1,
+			Future<? extends T> future2)
+			throws InterruptedException, ExecutionException {
 		List<T> result = new ArrayList<>(2);
 		result.add(future1.get());
 		result.add(future2.get());
 		return result;
 	}
 
-	public static <T> List<T> waitSync(Future<? extends T> future1, Future<? extends T> future2, Future<? extends T> future3) throws InterruptedException, ExecutionException {
+	public static <T> List<T> waitSync(Future<? extends T> future1,
+			Future<? extends T> future2, Future<? extends T> future3)
+			throws InterruptedException, ExecutionException {
 		List<T> result = new ArrayList<>(3);
 		result.add(future1.get());
 		result.add(future2.get());
@@ -136,7 +149,10 @@ public class FutureUtil {
 		return result;
 	}
 
-	public static <T> List<T> waitSync(Future<? extends T> future1, Future<? extends T> future2, Future<? extends T> future3, Future<? extends T> future4) throws InterruptedException, ExecutionException {
+	public static <T> List<T> waitSync(Future<? extends T> future1,
+			Future<? extends T> future2, Future<? extends T> future3,
+			Future<? extends T> future4)
+			throws InterruptedException, ExecutionException {
 		List<T> result = new ArrayList<>(4);
 		result.add(future1.get());
 		result.add(future2.get());
@@ -145,7 +161,8 @@ public class FutureUtil {
 		return result;
 	}
 
-	public static <T> List<T> waitSync(Future<? extends T>... list) throws InterruptedException, ExecutionException {
+	public static <T> List<T> waitSync(Future<? extends T>... list)
+			throws InterruptedException, ExecutionException {
 		List<T> result = new ArrayList<>(list.length);
 		for (Future<? extends T> future : list) {
 			result.add(future.get());
@@ -153,7 +170,8 @@ public class FutureUtil {
 		return result;
 	}
 
-	public static <T> List<T> waitSync(Iterable<Future<? extends T>> iterable) throws InterruptedException, ExecutionException {
+	public static <T> List<T> waitSync(Iterable<Future<? extends T>> iterable)
+			throws InterruptedException, ExecutionException {
 		List<T> result;
 		if (iterable instanceof Collection<?>) {
 			result = new ArrayList<>(((Collection<?>) iterable).size());
@@ -166,11 +184,14 @@ public class FutureUtil {
 		return result;
 	}
 
-	public static <T> GenericFutureListener<? extends Future<T>> generateListener(BiConsumer<? super T, Throwable> toCall) {
+	public static <T> GenericFutureListener<? extends Future<T>>
+			generateListener(BiConsumer<? super T, Throwable> toCall) {
 		return f -> toCall.accept(f.isSuccess() ? f.getNow() : null, f.cause());
 	}
 
-	public static <T> GenericFutureListener<? extends Future<T>> generateListener(Consumer<? super T> success, Consumer<Throwable> error) {
+	public static <T> GenericFutureListener<? extends Future<T>>
+			generateListener(
+					Consumer<? super T> success, Consumer<Throwable> error) {
 		return f -> {
 			if (f.isSuccess()) {
 				success.accept(f.getNow());
@@ -180,16 +201,21 @@ public class FutureUtil {
 		};
 	}
 
-	public static <T> GenericFutureListener<? extends Future<T>> generateListener(Consumer<Runnable> executor, BiConsumer<? super T, Throwable> toCall) {
-		if(executor == null)
+	public static <T> GenericFutureListener<? extends Future<T>>
+			generateListener(Consumer<Runnable> executor,
+					BiConsumer<? super T, Throwable> toCall) {
+		if (executor == null) {
 			return generateListener(toCall);
+		}
 		return f
 				-> executor.accept(()
 						-> toCall.accept(f.isSuccess() ? f.getNow() : null, f.cause()));
 	}
 
-	public static <T> GenericFutureListener<? extends Future<T>> generateListener(Consumer<Runnable> executor, Consumer<? super T> success, Consumer<Throwable> error) {
-		if(executor == null) {
+	public static <T> GenericFutureListener<? extends Future<T>>
+			generateListener(Consumer<Runnable> executor,
+					Consumer<? super T> success, Consumer<Throwable> error) {
+		if (executor == null) {
 			return generateListener(success, error);
 		}
 		return f -> executor.accept(() -> {

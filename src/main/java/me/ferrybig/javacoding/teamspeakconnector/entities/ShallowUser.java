@@ -160,7 +160,23 @@ public class ShallowUser extends NamedUser {
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + "{" + "id=" + getId() + ",uniqueid=" + uniqueid + ", nickname=" + nickname + ", databaseId=" + databaseId + ", channel=" + channel + ", channelGroupInherited=" + channelGroupInherited + ", type=" + type + ", awayMessage=" + awayMessage + ", inputMuted=" + inputMuted + ", outputMuted=" + outputMuted + ", inputHardware=" + inputHardware + ", outputHardware=" + outputHardware + ", talkPower=" + talkPower + ", talker=" + talker + ", prioritySpeaker=" + prioritySpeaker + ", recording=" + recording + ", channelCommander=" + channelCommander + ", serverGroup=" + serverGroup + ", channelGroup=" + channelGroup + ", iconId=" + iconId + ", country=" + country + '}';
+		return getClass().getSimpleName() + "{" + "id=" + getId()
+				+ ",uniqueid=" + uniqueid + ", nickname=" + nickname
+				+ ", databaseId=" + databaseId + ", channel=" + channel
+				+ ", channelGroupInherited=" + channelGroupInherited
+				+ ", type=" + type + ", awayMessage=" + awayMessage
+				+ ", inputMuted=" + inputMuted
+				+ ", outputMuted=" + outputMuted
+				+ ", inputHardware=" + inputHardware
+				+ ", outputHardware=" + outputHardware
+				+ ", talkPower=" + talkPower
+				+ ", talker=" + talker
+				+ ", prioritySpeaker=" + prioritySpeaker
+				+ ", recording=" + recording
+				+ ", channelCommander=" + channelCommander
+				+ ", serverGroup=" + serverGroup
+				+ ", channelGroup=" + channelGroup
+				+ ", iconId=" + iconId + ", country=" + country + '}';
 	}
 
 	@Override
@@ -168,10 +184,14 @@ public class ShallowUser extends NamedUser {
 		if (!serverGroup.contains(group) && !outdated) {
 			return con.io().getCompletedFuture(this);
 		}
-		return con.io().chainFuture(con.io().sendPacket(Command.SERVER_GROUP_DEL_CLIENT.addData("sgid", group.getServerGroupId()).addData("cldbid", this.databaseId).build()), (r) -> {
-			outdated = true;
-			return this;
-		});
+		return con.io().chainFuture(con.io().sendPacket(
+				Command.SERVER_GROUP_DEL_CLIENT.
+						addData("sgid", group.getServerGroupId())
+						.addData("cldbid", this.databaseId).build()),
+				(r) -> {
+					outdated = true;
+					return this;
+				});
 	}
 
 	@Override
@@ -179,15 +199,23 @@ public class ShallowUser extends NamedUser {
 		if (serverGroup.contains(group) && !outdated) {
 			return con.io().getCompletedFuture(this);
 		}
-		return con.io().chainFuture(con.io().sendPacket(Command.SERVER_GROUP_ADD_CLIENT.addData("sgid", group.getServerGroupId()).addData("cldbid", this.databaseId).build()), (r) -> {
-			outdated = true;
-			return this;
-		});
+		return con.io().chainFuture(con.io().sendPacket(
+				Command.SERVER_GROUP_ADD_CLIENT
+						.addData("sgid", group.getServerGroupId())
+						.addData("cldbid", this.databaseId).build()),
+				(r) -> {
+					outdated = true;
+					return this;
+				});
 	}
 
 	public Future<Map<String, String>> getCustomInfo() {
-		return con.io().chainFuture(con.io().sendPacket(Command.CUSTOM_INFO.addData("cldbid", this.databaseId).build()),
-			(r) -> r.getCommands().stream().collect(Collectors.toMap(k-> k.get("ident"), v -> v.get("value")))
+		return con.io().chainFuture(con.io().sendPacket(
+				Command.CUSTOM_INFO.addData("cldbid", this.databaseId).build()),
+				(r) -> r.getCommands().stream().collect(
+						Collectors.toMap(
+								k -> k.get("ident"),
+								v -> v.get("value")))
 		);
 	}
 }

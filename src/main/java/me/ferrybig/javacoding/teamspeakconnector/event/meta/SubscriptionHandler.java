@@ -38,7 +38,8 @@ public class SubscriptionHandler<L> implements Handler<L> {
 	private final TeamspeakConnection con;
 	private Future<?> lastFuture;
 
-	public SubscriptionHandler(TeamspeakConnection con, ComplexRequest subscribe, ComplexRequest unsubscribe) {
+	public SubscriptionHandler(TeamspeakConnection con,
+			ComplexRequest subscribe, ComplexRequest unsubscribe) {
 		this.subscribe = subscribe;
 		this.unsubscribe = unsubscribe;
 		this.con = con;
@@ -55,7 +56,8 @@ public class SubscriptionHandler<L> implements Handler<L> {
 				return lastFuture;
 			}
 			listeners.clear();
-			return lastFuture = con.io().sendPacket(unsubscribe);
+			lastFuture = con.io().sendPacket(unsubscribe);
+			return lastFuture;
 		}
 	}
 

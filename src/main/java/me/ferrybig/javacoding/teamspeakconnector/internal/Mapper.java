@@ -75,33 +75,45 @@ public class Mapper {
 		return new Server(con,
 				Integer.parseInt(data.get("virtualserver_id")),
 				Integer.parseInt(data.get("virtualserver_port")),
-				resolveEnum(Server.Status.class, data.get("virtualserver_status")),
-				Integer.parseInt(data.getOrDefault("virtualserver_clientsonline", "0")),
-				Integer.parseInt(data.getOrDefault("virtualserver_queryclientsonline", "0")),
-				Integer.parseInt(data.getOrDefault("virtualserver_maxclients", "0")),
-				Integer.parseInt(data.getOrDefault("virtualserver_uptime", "0")),
+				resolveEnum(Server.Status.class,
+						data.get("virtualserver_status")),
+				Integer.parseInt(
+						data.getOrDefault("virtualserver_clientsonline", "0")),
+				Integer.parseInt(
+						data.getOrDefault(
+								"virtualserver_queryclientsonline", "0")),
+				Integer.parseInt(
+						data.getOrDefault("virtualserver_maxclients", "0")),
+				Integer.parseInt(
+						data.getOrDefault("virtualserver_uptime", "0")),
 				data.get("virtualserver_name"),
 				data.get("virtualserver_autostart").equals("1"));
 	}
 
-	public me.ferrybig.javacoding.teamspeakconnector.entities.Channel mapChannel(Map<String, String> data) {
-		return new me.ferrybig.javacoding.teamspeakconnector.entities.Channel(con,
+	public Channel mapChannel(Map<String, String> data) {
+		return new Channel(con,
 				Integer.parseInt(data.get("cid")),
 				Integer.parseInt(data.get("channel_order")),
 				con.getUnresolvedChannelById(Integer.parseInt(data.get("pid"))),
 				data.get("channel_name"), data.get("channel_topic"),
 				data.get("channel_flag_password").equals("1"),
-				Integer.parseInt(data.getOrDefault("channel_needed_subscribe_power", "0")), // Not sure why this one is missing with `channelinfo`
+				// Not sure why this one is missing with `channelinfo`
+				Integer.parseInt(data.getOrDefault(
+						"channel_needed_subscribe_power", "0")),
 				Integer.parseInt(data.get("channel_needed_talk_power")),
 				data.get("channel_flag_default").equals("1"),
 				data.get("channel_flag_permanent").equals("1"),
 				Integer.parseInt(data.get("channel_icon_id")),
-				Integer.parseInt(data.getOrDefault("total_clients_family", "0")), // These are missing with `channelinfo`
-				Integer.parseInt(data.getOrDefault("channel_maxfamilyclients", "0")),
+				// These are missing with `channelinfo`
+				Integer.parseInt(
+						data.getOrDefault("total_clients_family", "0")),
+				Integer.parseInt(
+						data.getOrDefault("channel_maxfamilyclients", "0")),
 				Integer.parseInt(data.get("channel_maxclients")),
 				Integer.parseInt(data.getOrDefault("total_clients", "0")),
 				data.get("channel_flag_semi_permanent").equals("1"),
-				me.ferrybig.javacoding.teamspeakconnector.entities.Channel.Codec.getById(Integer.parseInt(data.get("channel_codec"))),
+				Channel.Codec.getById(
+						Integer.parseInt(data.get("channel_codec"))),
 				Integer.parseInt(data.get("channel_codec_quality")));
 	}
 
@@ -112,7 +124,8 @@ public class Mapper {
 				Integer.parseInt(data.get("client_database_id")),
 				data.get("client_nickname"),
 				User.Type.getById(Integer.parseInt(data.get("client_type"))),
-				data.get("client_away").equals("1") ? data.get("client_away_message") : null,
+				data.get("client_away").equals("1")
+				? data.get("client_away_message") : null,
 				data.get("client_flag_talking").equals("1"),
 				data.get("client_input_muted").equals("1"),
 				data.get("client_output_muted").equals("1"),
@@ -124,9 +137,13 @@ public class Mapper {
 				data.get("client_is_recording").equals("1"),
 				data.get("client_is_channel_commander").equals("1"),
 				data.get("client_unique_identifier"),
-				mapIntList(data.get("client_servergroups"), con::getUnresolvedGroupById),
-				mapIntList(data.get("client_channel_group_id"), con::getUnresolvedChannelGroupById),
-				con.getUnresolvedChannelById(Integer.parseInt(data.get("client_channel_group_inherited_channel_id"))),
+				mapIntList(data.get("client_servergroups"),
+						con::getUnresolvedGroupById),
+				mapIntList(data.get("client_channel_group_id"),
+						con::getUnresolvedChannelGroupById),
+				con.getUnresolvedChannelById(
+						Integer.parseInt(data.get(
+								"client_channel_group_inherited_channel_id"))),
 				data.get("client_version"),
 				data.get("client_platform"),
 				Integer.parseInt(data.get("client_idle_time")),
@@ -145,7 +162,8 @@ public class Mapper {
 				con.getUnresolvedChannelById(Integer.parseInt(data.get("cid"))),
 				data.get("client_nickname"),
 				User.Type.getById(Integer.parseInt(data.get("client_type"))),
-				data.get("client_away").equals("1") ? data.get("client_away_message") : null,
+				data.get("client_away").equals("1")
+				? data.get("client_away_message") : null,
 				data.get("client_input_muted").equals("1"),
 				data.get("client_output_muted").equals("1"),
 				data.get("client_input_hardware").equals("1"),
@@ -155,9 +173,12 @@ public class Mapper {
 				data.get("client_is_priority_speaker").equals("1"),
 				data.get("client_is_recording").equals("1"),
 				data.get("client_is_channel_commander").equals("1"),
-				mapIntList(data.get("client_servergroups"), con::getUnresolvedGroupById),
-				mapIntList(data.get("client_channel_group_id"), con::getUnresolvedChannelGroupById),
-				con.getUnresolvedChannelById(Integer.parseInt(data.get("client_channel_group_inherited_channel_id"))),
+				mapIntList(data.get("client_servergroups"),
+						con::getUnresolvedGroupById),
+				mapIntList(data.get("client_channel_group_id"),
+						con::getUnresolvedChannelGroupById),
+				con.getUnresolvedChannelById(Integer.parseInt(
+						data.get("client_channel_group_inherited_channel_id"))),
 				Integer.parseInt(data.get("client_icon_id")),
 				data.get("client_country"));
 	}
@@ -165,7 +186,8 @@ public class Mapper {
 	public User mapWhoAmI(Map<String, String> data) {
 		return new User(con,
 				Integer.parseInt(data.get("client_id")),
-				con.getUnresolvedChannelById(Integer.parseInt(data.get("client_channel_id"))),
+				con.getUnresolvedChannelById(Integer.parseInt(
+						data.get("client_channel_id"))),
 				Integer.parseInt(data.get("client_database_id")),
 				data.get("client_nickname"),
 				User.Type.QUERY,
@@ -183,7 +205,8 @@ public class Mapper {
 				data.get("client_unique_identifier"),
 				Collections.emptyList(),
 				Collections.emptyList(),
-				con.getUnresolvedChannelById(Integer.parseInt(data.get("client_channel_id"))),
+				con.getUnresolvedChannelById(
+						Integer.parseInt(data.get("client_channel_id"))),
 				"", // TODO program version
 				"", // TODO program platform
 				0,
@@ -191,7 +214,8 @@ public class Mapper {
 				0,
 				0,
 				"",
-				((InetSocketAddress) con.io().getChannel().localAddress()).getAddress());
+				((InetSocketAddress) con.io().getChannel().
+						localAddress()).getAddress());
 	}
 
 	/**
@@ -218,39 +242,56 @@ public class Mapper {
 		return null; // TODO
 	}
 
-	public <R> Future<R> mapComplexReponse(Future<ComplexResponse> in, Function<Map<String, String>, R> mapper) {
+	public <R> Future<R> mapComplexReponse(Future<ComplexResponse> in,
+			Function<Map<String, String>, R> mapper) {
 		return con.io().chainFuture(in, r -> {
 			if (r.getCommands().size() != 1) {
-				throw new IllegalArgumentException("Cannot map a response of size " + r.getCommands().size() + " as a simple instance");
+				throw new IllegalArgumentException(
+						"Cannot map a response of size "
+						+ r.getCommands().size()
+						+ " as a simple instance");
 			}
 			return mapper.apply(r.getCommands().get(0));
 		});
 	}
 
-	public <R> Future<List<R>> mapComplexReponseList(Future<ComplexResponse> in, Function<Map<String, String>, R> mapper) {
-		return this.<R, R>mapComplexReponseList(in, mapper, Function.identity());
+	public <R> Future<List<R>> mapComplexReponseList(
+			Future<ComplexResponse> in,
+			Function<Map<String, String>, R> mapper) {
+		return this.<R, R>mapComplexReponseList(
+				in, mapper, Function.identity());
 	}
 
-	public <R, I> Future<List<R>> mapComplexReponseList(Future<ComplexResponse> in, Function<Map<String, String>, I> mapper, Function<List<I>, List<R>> finalizer) {
+	public <R, I> Future<List<R>> mapComplexReponseList(
+			Future<ComplexResponse> in,
+			Function<Map<String, String>, I> mapper,
+			Function<List<I>, List<R>> finalizer) {
 		return con.io().chainFutureAdvanced(in, (r, t) -> {
-			if(t instanceof TeamspeakCommandException && ((TeamspeakCommandException) t).getError() == 1281)
+			if (t instanceof TeamspeakCommandException
+					&& ((TeamspeakCommandException) t).getError() == 1281) {
 				return Collections.emptyList();
-			if(t != null)
+			}
+			if (t != null) {
 				throw t;
+			}
 			assert r != null;
-			return finalizer.apply(r.getCommands().stream().map(mapper).collect(Collectors.toList()));
+			return finalizer.apply(r.getCommands().stream().map(mapper)
+					.collect(Collectors.toList()));
 		});
 	}
 
 	public <R> List<R> mapIntList(String in, IntFunction<R> mapper) {
-		return in.isEmpty() ? new ArrayList<>() : Arrays.stream(in.split(",")).mapToInt(Integer::parseInt).mapToObj(mapper).collect(Collectors.toList());
+		return in.isEmpty() ? new ArrayList<>() : Arrays.stream(in.split(","))
+				.mapToInt(Integer::parseInt)
+				.mapToObj(mapper).collect(Collectors.toList());
 	}
 
 	public <E extends Enum<E>> E resolveEnum(Class<E> enu, String var) {
 		return Enum.valueOf(enu, var.toUpperCase().replace(' ', '_'));
 	}
 
-	private Map<Integer, Channel> mapChannelParents(Map<Integer, Channel> list) {
+	private Map<Integer, Channel> mapChannelParents(
+			Map<Integer, Channel> list) {
 		for (Channel c : list.values()) {
 			UnresolvedChannel parentUnresolved = c.getParent();
 			if (parentUnresolved == null) {
@@ -268,18 +309,22 @@ public class Mapper {
 	public PrivilegeKey mapPrivilegeKey(Map<String, String> data) {
 		Map<String, String> customSet = new HashMap<>();
 		final String tokenCustomSetString = data.get("tokencustomset");
-		if(!tokenCustomSetString.isEmpty()) {
+		if (!tokenCustomSetString.isEmpty()) {
 			Map<String, String> customSetCache = new HashMap<>(2);
-			for(String part : tokenCustomSetString.split("\\|")) {
+			for (String part : tokenCustomSetString.split("\\|")) {
 				PacketDecoder.singleDecode(part, customSetCache, true, true);
-				customSet.put(customSetCache.get("ident"), customSetCache.get("value"));
+				customSet.put(
+						customSetCache.get("ident"),
+						customSetCache.get("value"));
 			}
 		}
 		return new PrivilegeKey(con,
 				data.get("token"),
 				customSet,
 				data.getOrDefault("tokendescription", ""),
-				PrivilegeKey.Type.getById(Integer.parseInt(data.getOrDefault("token_type", data.get("tokenid2").equals("0") ? "0" : "1"))),
+				PrivilegeKey.Type.getById(Integer.parseInt(
+						data.getOrDefault("token_type",
+								data.get("tokenid2").equals("0") ? "0" : "1"))),
 				Integer.parseInt(data.get("token_id1")),
 				Integer.parseInt(data.get("token_id2")));
 	}

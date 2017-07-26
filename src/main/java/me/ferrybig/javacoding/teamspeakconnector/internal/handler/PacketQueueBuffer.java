@@ -38,13 +38,15 @@ import java.util.function.Consumer;
  */
 public class PacketQueueBuffer extends ChannelHandlerAdapter {
 
-	private final List<ByteBuf> queue = new ArrayList<>(); // TODO optimalize using a single bytebuf
+	// TODO optimalize using a single bytebuf
+	private final List<ByteBuf> queue = new ArrayList<>();
 	private boolean readComplete;
 	private boolean replaced = false;
 	private ChannelHandlerContext ctx;
 
 	@Override
-	public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+	public void channelReadComplete(ChannelHandlerContext ctx)
+			throws Exception {
 		if (replaced) {
 			ctx.fireChannelReadComplete();
 		} else {
@@ -53,7 +55,8 @@ public class PacketQueueBuffer extends ChannelHandlerAdapter {
 	}
 
 	@Override
-	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+	public void channelRead(ChannelHandlerContext ctx, Object msg)
+			throws Exception {
 		if (replaced) {
 			ctx.fireChannelRead(msg);
 		} else {

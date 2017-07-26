@@ -37,9 +37,12 @@ import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequest
 @ChannelHandler.Sharable
 public class PacketEncoder extends MessageToMessageEncoder<ComplexRequest> {
 
-	private static final ByteBuf SPACE = Unpooled.wrappedBuffer(" ".getBytes(StandardCharsets.UTF_8));
-	private static final ByteBuf EQUALS = Unpooled.wrappedBuffer("=".getBytes(StandardCharsets.UTF_8));
-	private static final ByteBuf LINEFEED = Unpooled.wrappedBuffer("\n".getBytes(StandardCharsets.UTF_8));
+	private static final ByteBuf SPACE = Unpooled.wrappedBuffer(" "
+			.getBytes(StandardCharsets.UTF_8));
+	private static final ByteBuf EQUALS = Unpooled.wrappedBuffer("="
+			.getBytes(StandardCharsets.UTF_8));
+	private static final ByteBuf LINEFEED = Unpooled.wrappedBuffer("\n"
+			.getBytes(StandardCharsets.UTF_8));
 
 	public static String encodeTeamspeakCode(String input) {
 
@@ -102,7 +105,8 @@ public class PacketEncoder extends MessageToMessageEncoder<ComplexRequest> {
 	}
 
 	@Override
-	protected void encode(ChannelHandlerContext ctx, ComplexRequest msg, List<Object> out) throws Exception {
+	protected void encode(ChannelHandlerContext ctx, ComplexRequest msg,
+			List<Object> out) throws Exception {
 		if (msg.isRaw()) {
 			sendPacketRaw(msg, out);
 		} else {
@@ -124,8 +128,9 @@ public class PacketEncoder extends MessageToMessageEncoder<ComplexRequest> {
 	}
 
 	private void sendPacketRaw(ComplexRequest msg, List<Object> out) {
-		if(msg.getCmd().contains("\n")) {
-			throw new IllegalArgumentException("Packets may not contain a raw newline");
+		if (msg.getCmd().contains("\n")) {
+			throw new IllegalArgumentException(
+					"Raw packets may not contain a newline");
 		}
 		out.add(msg.getCmd());
 		for (Map.Entry<String, String> data : msg.getData().entrySet()) {

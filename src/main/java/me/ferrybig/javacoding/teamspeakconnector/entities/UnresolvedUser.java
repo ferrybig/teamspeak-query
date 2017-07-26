@@ -108,11 +108,13 @@ public class UnresolvedUser implements Resolvable<User> {
 	}
 
 	public Future<? extends UnresolvedUser> addToGroup(UnresolvedGroup group) {
-		return FutureUtil.chainFutureFlat(con.io().newPromise(), resolve(), user -> user.addToGroup(group));
+		return FutureUtil.chainFutureFlat(con.io().newPromise(), resolve(),
+				user -> user.addToGroup(group));
 	}
 
 	public Future<? extends UnresolvedUser> removeFromGroup(UnresolvedGroup group) {
-		return FutureUtil.chainFutureFlat(con.io().newPromise(), resolve(), user -> user.removeFromGroup(group));
+		return FutureUtil.chainFutureFlat(con.io().newPromise(), resolve(),
+				user -> user.removeFromGroup(group));
 	}
 
 }

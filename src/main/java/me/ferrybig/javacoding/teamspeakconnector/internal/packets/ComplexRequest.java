@@ -41,7 +41,8 @@ public class ComplexRequest {
 
 	public ComplexRequest(String cmd, Map<String, String> data, boolean raw) {
 		this.cmd = Objects.requireNonNull(cmd);
-		this.data = data.isEmpty() ? Collections.emptyMap() : Collections.unmodifiableMap(data);
+		this.data = data.isEmpty()
+				? Collections.emptyMap() : Collections.unmodifiableMap(data);
 		this.raw = raw;
 	}
 

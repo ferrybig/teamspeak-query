@@ -36,7 +36,9 @@ public class Server extends UnresolvedServer {
 	private final String name;
 	private final boolean autostart;
 
-	public Server(TeamspeakConnection con, int sid, int port, Status status, int clientsOnline, int queryClientsOnline, int maxClients, int uptime, String name, boolean autostart) {
+	public Server(TeamspeakConnection con, int sid, int port, Status status,
+			int clientsOnline, int queryClientsOnline, int maxClients,
+			int uptime, String name, boolean autostart) {
 		super(con, sid);
 		this.port = port;
 		this.status = status;
@@ -81,7 +83,12 @@ public class Server extends UnresolvedServer {
 	}
 
 	public static enum Status {
-		ONLINE, OFFLINE, DEPLOY_RUNNING, BOOTING_UP, SHUTTING_DOWN, ONLINE_VIRTUAL
+		ONLINE,
+		OFFLINE,
+		DEPLOY_RUNNING,
+		BOOTING_UP,
+		SHUTTING_DOWN,
+		ONLINE_VIRTUAL
 	}
 
 }

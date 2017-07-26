@@ -32,7 +32,8 @@ public class TeamspeakCommandException extends TeamspeakException {
 	private final String message;
 	private final String extraMessage;
 
-	public TeamspeakCommandException(String command, int error, String message, String extraMessage) {
+	public TeamspeakCommandException(String command, int error, String message,
+			String extraMessage) {
 		super(generateMessage(command, error, message, extraMessage));
 		this.command = command;
 		this.error = error;
@@ -40,7 +41,8 @@ public class TeamspeakCommandException extends TeamspeakException {
 		this.extraMessage = extraMessage;
 	}
 
-	private static String generateMessage(String command, int error, String message, String extraMessage) {
+	private static String generateMessage(String command, int error,
+			String message, String extraMessage) {
 		if (extraMessage == null) {
 			return command + ": " + error + ", " + message;
 		} else {

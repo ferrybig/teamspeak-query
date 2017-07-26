@@ -36,7 +36,8 @@ public class ComplexPacketDecoder extends MessageToMessageDecoder<Response> {
 	private final ArrayList<Map<String, String>> queue = new ArrayList<>();
 
 	@Override
-	protected void decode(ChannelHandlerContext ctx, Response msg, List<Object> out) throws Exception {
+	protected void decode(ChannelHandlerContext ctx, Response msg,
+			List<Object> out) throws Exception {
 		if (msg.getCmd().isEmpty()) {
 			queue.add(msg.getOptions());
 			return;
@@ -44,7 +45,10 @@ public class ComplexPacketDecoder extends MessageToMessageDecoder<Response> {
 		if (!msg.getCmd().equals("error")) {
 			out.add(msg);
 		} else {
-			out.add(new ComplexResponse(new ArrayList<>(queue), Integer.parseInt(msg.getOptions().get("id")), msg.getOptions().get("msg"), msg.getOptions().get("extra_msg")));
+			out.add(new ComplexResponse(new ArrayList<>(queue),
+					Integer.parseInt(msg.getOptions().get("id")),
+					msg.getOptions().get("msg"),
+					msg.getOptions().get("extra_msg")));
 			queue.clear();
 		}
 	}

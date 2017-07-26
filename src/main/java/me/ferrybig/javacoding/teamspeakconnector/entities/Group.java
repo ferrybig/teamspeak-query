@@ -61,7 +61,10 @@ public class Group extends UnresolvedGroup {
 	 * @param namemode unknown
 	 * @param type Type of the group
 	 */
-	public Group(TeamspeakConnection con, int serverGroupId, int sortId, int icon, boolean savedb, String name, int memberRemovePrivilege, int memberAddPrivilege, int modifyPrivilege, int namemode, Type type) {
+	public Group(TeamspeakConnection con, int serverGroupId, int sortId,
+			int icon, boolean savedb, String name, int memberRemovePrivilege,
+			int memberAddPrivilege, int modifyPrivilege, int namemode,
+			Type type) {
 		super(con, serverGroupId);
 		this.sortId = sortId;
 		this.icon = icon;
@@ -101,7 +104,8 @@ public class Group extends UnresolvedGroup {
 	/**
 	 * Unknown (probability related to default group)
 	 *
-	 * @return an unknown value observed to be 0 or 1, and it seams to be related to default group
+	 * @return an unknown value observed to be 0 or 1, and it seams to be
+	 * related to default group
 	 */
 	public boolean isSavedb() {
 		return savedb;
@@ -163,7 +167,13 @@ public class Group extends UnresolvedGroup {
 
 	@Override
 	public String toString() {
-		return "Group{" + "serverGroupId=" + getServerGroupId() + ", icon=" + icon + ", savedb=" + savedb + ", name=" + name + ", memberRemovePrivilege=" + memberRemovePrivilege + ", memberAddPrivilege=" + memberAddPrivilege + ", modifyPrivilege=" + modifyPrivilege + ", namemode=" + namemode + ", type=" + type + '}';
+		return "Group{" + "serverGroupId=" + getServerGroupId()
+				+ ", icon=" + icon + ", savedb=" + savedb
+				+ ", name=" + name
+				+ ", memberRemovePrivilege=" + memberRemovePrivilege
+				+ ", memberAddPrivilege=" + memberAddPrivilege
+				+ ", modifyPrivilege=" + modifyPrivilege
+				+ ", namemode=" + namemode + ", type=" + type + '}';
 	}
 
 	@Override
@@ -222,7 +232,7 @@ public class Group extends UnresolvedGroup {
 		 */
 		public static Type getById(int id) {
 			if (id >= BY_ID_LENGTH || id < 0 || BY_ID[id] == null) {
-				throw new IllegalArgumentException("No type found for id " + id);
+				throw new IllegalArgumentException("No type found by " + id);
 			}
 			return BY_ID[id];
 		}

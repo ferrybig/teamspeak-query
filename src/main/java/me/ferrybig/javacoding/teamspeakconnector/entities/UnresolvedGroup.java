@@ -53,7 +53,8 @@ public class UnresolvedGroup implements Resolvable<Group> {
 
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + "{" + "serverGroupId=" + serverGroupId + '}';
+		return this.getClass().getSimpleName() + "{"
+				+ "serverGroupId=" + serverGroupId + '}';
 	}
 
 	@Override
@@ -67,8 +68,9 @@ public class UnresolvedGroup implements Resolvable<Group> {
 	}
 
 	/**
-	 * Adds a user to this group. This internally routes to {@link UnresolvedUser#addToGroup(UnresolvedGroup)
-	 * }, but is included here for utility purposes
+	 * Adds a user to this group. This internally routes to
+	 * {@link UnresolvedUser#addToGroup(UnresolvedGroup)}, but is included here
+	 * for utility purposes
 	 *
 	 * @param user user to add to the group
 	 * @return the modified user
@@ -78,8 +80,9 @@ public class UnresolvedGroup implements Resolvable<Group> {
 	}
 
 	/**
-	 * Removes a user from this group. This internally routes to {@link UnresolvedUser#removeFromGroup(UnresolvedGroup)
-	 * }, but is included here for utility purposes
+	 * Removes a user from this group. This internally routes to
+	 * {@link UnresolvedUser#removeFromGroup(UnresolvedGroup)}, but is included
+	 * here for utility purposes
 	 *
 	 * @param user user to remove from the group
 	 * @return the modified user
@@ -120,9 +123,13 @@ public class UnresolvedGroup implements Resolvable<Group> {
 	 * @return a future for this group
 	 */
 	public Future<? extends UnresolvedGroup> rename(String newName) {
-		return con.io().chainFuture(con.io().sendPacket(Command.SERVER_GROUP_RENAME.addData("sgid", this.getServerGroupId()).addData("name", newName).build()), (r) -> {
-			return this;
-		});
+		return con.io().chainFuture(con.io().sendPacket(
+				Command.SERVER_GROUP_RENAME
+						.addData("sgid", this.getServerGroupId())
+						.addData("name", newName).build()),
+				(r) -> {
+					return this;
+				});
 	}
 
 	/**
@@ -139,10 +146,14 @@ public class UnresolvedGroup implements Resolvable<Group> {
 	 *
 	 * @param description description of this token
 	 * @param customData custom data to be added to the privilege token
-	 * @return a PrivilegeKey wrapped in a future containing the privilege key data
+	 * @return a PrivilegeKey wrapped in a future containing the privilege key
+	 * data
 	 */
-	public Future<PrivilegeKey> generatePrivilegeKey(String description, Map<String, String> customData) {
-		return new PrivilegeKeyTemplate(customData, description, PrivilegeKey.Type.SERVER_GROUP, serverGroupId, 0).createKey(con);
+	public Future<PrivilegeKey> generatePrivilegeKey(String description,
+			Map<String, String> customData) {
+		return new PrivilegeKeyTemplate(customData, description,
+				PrivilegeKey.Type.SERVER_GROUP, serverGroupId, 0)
+				.createKey(con);
 	}
 
 	/**
@@ -165,7 +176,10 @@ public class UnresolvedGroup implements Resolvable<Group> {
 	 * @deprecated Use {@code generatePrivilegeKey} instead
 	 */
 	@Deprecated
-	public Future<String> generatePrivilegeToken(String description, Map<String, String> customData) {
-		return con.io().chainFuture(generatePrivilegeKey(description, customData), l -> l.getToken());
+	public Future<String> generatePrivilegeToken(String description,
+			Map<String, String> customData) {
+		return con.io().chainFuture(
+				generatePrivilegeKey(description, customData),
+				l -> l.getToken());
 	}
 }

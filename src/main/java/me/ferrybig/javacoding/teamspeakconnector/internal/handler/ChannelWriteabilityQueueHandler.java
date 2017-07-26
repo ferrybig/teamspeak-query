@@ -56,7 +56,8 @@ public class ChannelWriteabilityQueueHandler extends ChannelHandlerAdapter {
 	}
 
 	@Override
-	public void channelWritabilityChanged(ChannelHandlerContext ctx) throws Exception {
+	public void channelWritabilityChanged(ChannelHandlerContext ctx)
+			throws Exception {
 		super.channelWritabilityChanged(ctx);
 		trafficStopped = !ctx.channel().isWritable();
 		if (!trafficStopped) {
@@ -65,7 +66,8 @@ public class ChannelWriteabilityQueueHandler extends ChannelHandlerAdapter {
 	}
 
 	@Override
-	public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
+	public void write(ChannelHandlerContext ctx, Object msg,
+			ChannelPromise promise) throws Exception {
 		if (trafficStopped) {
 			queue.add(msg, promise);
 		} else {

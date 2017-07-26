@@ -551,7 +551,7 @@ public enum Command {
 	 * ID, creation date, etc.
 	 */
 	CLIENTDB_INFO("clientdbinfo",
-			new HashSet<>(Arrays.asList("cldbid", "Displays", "detailed", "database", "information", "about", "a", "client", "including", "unique", "ID,", "creation", "date,", "etc."))
+			new HashSet<>(Arrays.asList("cldbid"))
 	),
 	/**
 	 * Displays a list of client identities known by the server including their
@@ -1476,7 +1476,9 @@ public enum Command {
 	 * Usage: servercreate [virtualserver_properties...]
 	 */
 	SERVER_CREATE("servercreate",
-			new HashSet<>(Arrays.asList("virtualserver_name", "virtualserver_port", "virtualserver_maxclients", "virtualserver_properties"))
+			new HashSet<>(Arrays.asList("virtualserver_name",
+					"virtualserver_port", "virtualserver_maxclients",
+					"virtualserver_properties"))
 	),
 	/**
 	 * Deletes the virtual server specified with sid. Please note that only

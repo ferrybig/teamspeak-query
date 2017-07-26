@@ -185,7 +185,19 @@ public class Channel extends NamedChannel {
 
 	@Override
 	public String toString() {
-		return "Channel{" + "id=" + getId() + ", order=" + order + ", parent=" + parent + ", name=" + getName() + ", topic=" + topic + ", password=" + password + ", neededSubscribePower=" + neededSubscribePower + ", neededTalkPower=" + neededTalkPower + ", defaultChannel=" + defaultChannel + ", permanent=" + permanent + ", iconId=" + iconId + ", totalClientsFamily=" + totalClientsFamily + ", maxFamilyClients=" + maxFamilyClients + ", maxClients=" + maxClients + ", totalClients=" + totalClients + ", semiPermanent=" + semiPermanent + ", codec=" + codec + ", codecQuality=" + codecQuality + '}';
+		return "Channel{" + "id=" + getId() + ", order=" + order
+				+ ", parent=" + parent + ", name=" + getName()
+				+ ", topic=" + topic + ", password=" + password
+				+ ", neededSubscribePower=" + neededSubscribePower
+				+ ", neededTalkPower=" + neededTalkPower
+				+ ", defaultChannel=" + defaultChannel
+				+ ", permanent=" + permanent + ", iconId=" + iconId
+				+ ", totalClientsFamily=" + totalClientsFamily
+				+ ", maxFamilyClients=" + maxFamilyClients
+				+ ", maxClients=" + maxClients
+				+ ", totalClients=" + totalClients
+				+ ", semiPermanent=" + semiPermanent
+				+ ", codec=" + codec + ", codecQuality=" + codecQuality + '}';
 	}
 
 	public boolean isSpacer() {

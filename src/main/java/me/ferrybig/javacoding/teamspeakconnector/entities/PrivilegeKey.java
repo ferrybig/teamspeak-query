@@ -46,14 +46,19 @@ public class PrivilegeKey extends UnresolvedPrivilegeKey {
 	private final int token1;
 	private final int token2;
 
-	public PrivilegeKey(TeamspeakConnection con, String token, PrivilegeKeyTemplate template) {
+	public PrivilegeKey(TeamspeakConnection con, String token,
+			PrivilegeKeyTemplate template) {
 		this(con, token,
-				Collections.unmodifiableMap(new LinkedHashMap<>(Objects.requireNonNull(template, "template").getCustomset())),
+				Collections.unmodifiableMap(new LinkedHashMap<>(
+						Objects.requireNonNull(template, "template")
+								.getCustomset())),
 				template.getDescription(), template.getType(),
 				template.getToken1(), template.getToken2());
 	}
 
-	public PrivilegeKey(TeamspeakConnection con, String token, Map<String, String> customset, String description, Type type, int token1, int token2) {
+	public PrivilegeKey(TeamspeakConnection con, String token,
+			Map<String, String> customset, String description, Type type,
+			int token1, int token2) {
 		super(con, token);
 		this.customset = customset;
 		this.description = description;
@@ -87,12 +92,16 @@ public class PrivilegeKey extends UnresolvedPrivilegeKey {
 
 	@Nonnull
 	public PrivilegeKeyTemplate toTemplate() {
-		return new PrivilegeKeyTemplate(new HashMap<>(customset), description, type, token1, token2);
+		return new PrivilegeKeyTemplate(new HashMap<>(customset),
+				description, type, token1, token2);
 	}
 
 	@Override
 	public String toString() {
-		return "PrivilegeKey{" + "token=" + getToken() + ", customset=" + customset + ", description=" + description + ", type=" + type + ", token1=" + token1 + ", token2=" + token2 + '}';
+		return "PrivilegeKey{" + "token=" + getToken()
+				+ ", customset=" + customset + ", description=" + description
+				+ ", type=" + type + ", token1=" + token1
+				+ ", token2=" + token2 + '}';
 	}
 
 	@Override
@@ -153,7 +162,7 @@ public class PrivilegeKey extends UnresolvedPrivilegeKey {
 		 */
 		public static Type getById(int id) {
 			if (id >= BY_ID.length || id < 0 || BY_ID[id] == null) {
-				throw new IllegalArgumentException("No type found for id " + id);
+				throw new IllegalArgumentException("No type found by" + id);
 			}
 			return BY_ID[id];
 		}

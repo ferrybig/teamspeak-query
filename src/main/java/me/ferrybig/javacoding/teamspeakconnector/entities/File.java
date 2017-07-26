@@ -27,7 +27,8 @@ import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
 
 public class File extends UnresolvedFile {
 
-	public File(TeamspeakConnection connection, UnresolvedChannel channel, String name) {
+	public File(TeamspeakConnection connection, UnresolvedChannel channel,
+			String name) {
 		super(connection, channel, name);
 	}
 

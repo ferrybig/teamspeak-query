@@ -67,6 +67,8 @@ import me.ferrybig.javacoding.teamspeakconnector.internal.Mapper;
 import me.ferrybig.javacoding.teamspeakconnector.internal.SendBehaviour;
 import me.ferrybig.javacoding.teamspeakconnector.internal.TeamspeakIO;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command;
+import static me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command.SERVER_NOTIFY_REGISTER;
+import static me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command.SERVER_NOTIFY_UNREGISTER;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Response;
 
 @ThreadSafe
@@ -75,20 +77,20 @@ public class TeamspeakConnection implements Closeable {
 	private static final Logger LOG = Logger.getLogger(TeamspeakConnection.class.getName());
 	private final TeamspeakIO io;
 	private final SubscriptionHandler<ServerMessageListener> serverMessageHandler = new SubscriptionHandler<>(this,
-			Command.SERVER_NOTIFY_REGISTER.addData("event", "textserver").build(),
-			Command.SERVER_NOTIFY_UNREGISTER.addData("event", "textserver").build());
+			SERVER_NOTIFY_REGISTER.addData("event", "textserver").build(),
+			SERVER_NOTIFY_UNREGISTER.addData("event", "textserver").build());
 	private final SubscriptionHandler<PrivateMessageListener> privateMessageHandler = new SubscriptionHandler<>(this,
-			Command.SERVER_NOTIFY_REGISTER.addData("event", "textprivate").build(),
-			Command.SERVER_NOTIFY_UNREGISTER.addData("event", "textprivate").build());
+			SERVER_NOTIFY_REGISTER.addData("event", "textprivate").build(),
+			SERVER_NOTIFY_UNREGISTER.addData("event", "textprivate").build());
 	private final SubscriptionHandler<ChannelMessageListener> channelMessageHandler = new SubscriptionHandler<>(this,
-			Command.SERVER_NOTIFY_REGISTER.addData("event", "textchannel").build(),
-			Command.SERVER_NOTIFY_UNREGISTER.addData("event", "textchannel").build());
+			SERVER_NOTIFY_REGISTER.addData("event", "textchannel").build(),
+			SERVER_NOTIFY_UNREGISTER.addData("event", "textchannel").build());
 	private final SubscriptionHandler<ServerListener> serverHandler = new SubscriptionHandler<>(this,
-			Command.SERVER_NOTIFY_REGISTER.addData("event", "server").build(),
-			Command.SERVER_NOTIFY_UNREGISTER.addData("event", "server").build());
+			SERVER_NOTIFY_REGISTER.addData("event", "server").build(),
+			SERVER_NOTIFY_UNREGISTER.addData("event", "server").build());
 	private final SubscriptionHandler<TokenListener> tokenUsedHandler = new SubscriptionHandler<>(this,
-			Command.SERVER_NOTIFY_REGISTER.addData("event", "tokenused").build(),
-			Command.SERVER_NOTIFY_UNREGISTER.addData("event", "tokenused").build());
+			SERVER_NOTIFY_REGISTER.addData("event", "tokenused").build(),
+			SERVER_NOTIFY_UNREGISTER.addData("event", "tokenused").build());
 	private final Mapper mapper = new Mapper(this);
 
 	public TeamspeakConnection(TeamspeakIO channel) {
@@ -102,86 +104,7 @@ public class TeamspeakConnection implements Closeable {
 	public void start() {
 		this.io.registerConnection(this);
 		this.io.start();
-		this.io.getChannel().pipeline().addLast(new SimpleChannelInboundHandler<Response>() {
-
-			private Response lastPacket = null;
-			//notifyclientleftview cfid=1 ctid=0 reasonid=8 reasonmsg=leaving clid=1
-			//notifycliententerview cfid=0 ctid=1 reasonid=0 clid=4 client_unique_identifier=P+m\/uXn4o2nLwN5gOimuQcfQZIQ= client_nickname=Ferrybig client_input_muted=0 client_output_muted=0 client_outputonly_muted=0 client_input_hardware=0 client_output_hardware=1 client_meta_data client_is_recording=0 client_database_id=2 client_channel_group_id=5 client_servergroups=6,10 client_away=0 client_away_message client_type=0 client_flag_avatar=12f359409d033f5eebcc821a5dbcecf5 client_talk_power=75 client_talk_request=0 client_talk_request_msg client_description client_is_talker=0 client_is_priority_speaker=0 client_unread_messages=0 client_nickname_phonetic=Ferrybig client_needed_serverquery_view_power=75 client_icon_id=0 client_is_channel_commander=0 client_country client_channel_group_inherited_channel_id=1 client_badges=Overwolf=0
-			//notifyclientleftview cfid=72 ctid=0 reasonid=8 reasonmsg=leaving clid=4
-			//notifycliententerview cfid=0 ctid=1 reasonid=0 clid=5 client_unique_identifier=P+m\/uXn4o2nLwN5gOimuQcfQZIQ= client_nickname=Ferrybig client_input_muted=0 client_output_muted=0 client_outputonly_muted=0 client_input_hardware=0 client_output_hardware=1 client_meta_data client_is_recording=0 client_database_id=2 client_channel_group_id=5 client_servergroups=6,10 client_away=0 client_away_message client_type=0 client_flag_avatar=12f359409d033f5eebcc821a5dbcecf5 client_talk_power=75 client_talk_request=0 client_talk_request_msg client_description client_is_talker=0 client_is_priority_speaker=0 client_unread_messages=0 client_nickname_phonetic=Ferrybig client_needed_serverquery_view_power=75 client_icon_id=0 client_is_channel_commander=0 client_country client_channel_group_inherited_channel_id=1 client_badges=Overwolf=0
-
-			@Override
-			protected void messageReceived(ChannelHandlerContext ctx, Response msg) throws Exception {
-				final Map<String, String> options = msg.getOptions();
-				LOG.log(Level.FINE, "Handling packet: {0}", msg);
-				switch (msg.getCmd()) {
-					case "notifytextmessage": {
-						Future<User> whoami = io.whoAmI();
-						if (whoami.isSuccess()) {
-							handleMessage(msg, whoami.get());
-						} else {
-							whoami.addListener(f -> {
-								assert f == whoami;
-								LOG.fine("Handling delayed message delivery because whoami is not known");
-								handleMessage(msg, whoami.get());
-							});
-						}
-					}
-					break;
-					case "notifycliententerview": {
-						if (msg.equals(lastPacket)) {
-							LOG.log(Level.FINE, "Dropping packet {0} because teamspeak usually sends dublicate packets when both channel and server listener is active", msg);
-							lastPacket = null;
-							return;
-						}
-						lastPacket = msg;
-						options.put("cid", options.get("ctid"));
-						ShallowUser client = mapping().mapShallowUser(options);
-						UnresolvedChannel from = "0".equals(options.get("cfid")) ? null : getUnresolvedChannelById(parseInt(options.get("cfid")));
-						ChangeReason reason = ChangeReason.getById(parseInt(options.get("reasonid")));
-						ClientEnterViewEvent event;
-						if (true && from == null) {
-							event = new ClientEnterViewEvent(client, client.getChannel(), reason, null);
-							serverHandler.callAll(ServerListener::onClientEnterView, event);
-						} else {
-							// TODO: channel change event
-						}
-
-					}
-					break;
-					case "notifyclientleftview": {
-						// TODO: leave notification
-					}
-					break;
-					case "notifyserveredited": {
-						final int invokerId = Integer.parseInt(options.get("invokerid"));
-						final String invokerName = options.get("invokername");
-						final String invokeruid = options.get("invokeruid");
-						serverHandler.callAll(ServerListener::onEditServer, new ServerEditEvent(
-								ChangeReason.getById(parseInt(options.get("reasonid"))),
-								getUnresolvedNamedUser(invokerId, invokerName, invokeruid)));
-					}
-					break;
-					case "notifytokenused": {
-						// clid=5 cldbid=4 cluid=zhPQ0oNLH8boM42jlbgTWC6G\\/64= token=4oquHhp03YKofI4dYVBLWZ9Ik+Mf0M6ogomh5RsU tokencustomset token1=7 token2=0
-						final UnresolvedUser client = getUnresolvedUserById(parseInt(options.get("clid")));
-						final int databaseId = parseInt(options.get("cldbid"));
-						final String uniqueId = options.get("cluid");
-						final String token = options.get("token");
-						final String tokencustomset = options.get("tokencustomset");
-						final String token1 = options.get("token1");
-						final String token2 = options.get("token2");
-						tokenUsedHandler.callAll(TokenListener::onTokenUsed, new TokenUsedEvent(
-								client, databaseId, uniqueId, token, tokencustomset, token1, token2));
-					}
-					break;
-					default: {
-						LOG.log(Level.WARNING, "Unhandled packet: {0}", msg);
-					}
-				}
-			}
-
-		});
+		this.io.getChannel().pipeline().addLast(new InternalPacketHandler());
 	}
 
 	private void handleMessage(Response msg, User whoAmI) {
@@ -196,32 +119,33 @@ public class TeamspeakConnection implements Closeable {
 		final String message = options.get("msg");
 		final String invokerName = options.get("invokername");
 		final String invokeruid = options.get("invokeruid");
-		final NamedUser invoker = invokerId == 0 ? null : getUnresolvedNamedUser(invokerId, invokerName, invokeruid);
+		final NamedUser invoker = invokerId == 0 ? null
+				: getUnresolvedNamedUser(invokerId, invokerName, invokeruid);
 		switch (parseInt(options.get("targetmode"))) {
 			case 1: {
-				privateMessageHandler.callAll(PrivateMessageListener::onPrivateMessage,
+				privateMessageHandler.callAll(
+						PrivateMessageListener::onPrivateMessage,
 						new PrivateMessageEvent(
-								getUnresolvedUserById(parseInt(options.get("target"))),
-								message,
-								invoker));
+								getUnresolvedUserById(
+										parseInt(options.get("target"))),
+								message, invoker));
 			}
 			break;
 			case 2: {
-				channelMessageHandler.callAll(ChannelMessageListener::onChannelMessage,
-						new ChannelMessageEvent(
-								message,
-								invoker));
+				channelMessageHandler.callAll(
+						ChannelMessageListener::onChannelMessage,
+						new ChannelMessageEvent(message, invoker));
 			}
 			break;
 			case 3: {
-				serverMessageHandler.callAll(ServerMessageListener::onServerMessage,
-						new ServerMessageEvent(
-								message,
-								invoker));
+				serverMessageHandler.callAll(
+						ServerMessageListener::onServerMessage,
+						new ServerMessageEvent(message, invoker));
 			}
 			break;
 			default: {
-				assert false : "Target mode " + options.get("targetmode") + " invalid";
+				assert false : "Target mode "
+						+ options.get("targetmode") + " invalid";
 			}
 		}
 
@@ -255,11 +179,13 @@ public class TeamspeakConnection implements Closeable {
 		return null; // TODO
 	}
 
-	public Future<UnresolvedFile> getUnresolvedFileByChannelAndName(UnresolvedChannel channel, String name) {
+	public Future<UnresolvedFile> getUnresolvedFileByChannelAndName(
+			UnresolvedChannel channel, String name) {
 		throw new UnsupportedOperationException(); // TODO;
 	}
 
-	public Future<File> getFileByChannelAndName(UnresolvedChannel channel, String name) {
+	public Future<File> getFileByChannelAndName(
+			UnresolvedChannel channel, String name) {
 		throw new UnsupportedOperationException(); // TODO;
 	}
 
@@ -273,8 +199,10 @@ public class TeamspeakConnection implements Closeable {
 
 	public Future<UnresolvedServer> getUnresolvedServerByPort(int port) {
 		return this.io.chainFuture(
-				this.io.sendPacket(Command.SERVER_ID_GET_BY_PORT.addData("virtualserver_port", port).build()),
-				p -> getUnresolvedServerById(Integer.parseInt(p.getCommands().get(0).get("server_id"))));
+				this.io.sendPacket(Command.SERVER_ID_GET_BY_PORT
+						.addData("virtualserver_port", port).build()),
+				p -> getUnresolvedServerById(Integer.parseInt(
+						p.getCommands().get(0).get("server_id"))));
 	}
 
 	public Future<User> getUserById(int id) {
@@ -289,7 +217,8 @@ public class TeamspeakConnection implements Closeable {
 		return new UnresolvedUser(this, id);
 	}
 
-	public NamedUser getUnresolvedNamedUser(int id, String nickname, String uniqueId) {
+	public NamedUser getUnresolvedNamedUser(int id,
+			String nickname, String uniqueId) {
 		return new NamedUser(this, id, nickname, uniqueId);
 	}
 
@@ -299,7 +228,8 @@ public class TeamspeakConnection implements Closeable {
 						.addData("cid", String.valueOf(id))
 						.build()),
 				m -> {
-					m.put("cid", String.valueOf(id)); // This is needed because teamspeak doesn't repeat our send channel id
+					// This is needed because teamspeak doesn't repeat our send channel id
+					m.put("cid", String.valueOf(id));
 					return mapping().mapChannel(m);
 				});
 	}
@@ -324,7 +254,8 @@ public class TeamspeakConnection implements Closeable {
 	}
 
 	public Future<?> shutdownServer() {
-		return io.sendPacket(Command.SERVER_PROCESS_STOP.build(), SendBehaviour.CLOSE_CONNECTION);
+		return io.sendPacket(Command.SERVER_PROCESS_STOP.build(),
+				SendBehaviour.CLOSE_CONNECTION);
 	}
 
 	public Future<TeamspeakConnection> logout() {
@@ -342,21 +273,25 @@ public class TeamspeakConnection implements Closeable {
 
 	public Future<List<Channel>> getChannelList() {
 		return mapping().mapComplexReponseList(io.sendPacket(
-				Command.CHANNEL_LIST.addOption("topic").addOption("flags").addOption("voice").addOption("limits").addOption("icon").build()),
+				Command.CHANNEL_LIST.addOption("topic").addOption("flags")
+						.addOption("voice").addOption("limits")
+						.addOption("icon").build()),
 				mapping()::mapChannel);
 	}
 
 	public Future<List<User>> getUsersList() {
 		return mapping().mapComplexReponseList(io.sendPacket(
 				Command.CLIENT_LIST.addOption("uid")
-						.addOption("away").addOption("voice").addOption("groups")
-						.addOption("times").addOption("info").addOption("icon")
+						.addOption("away").addOption("voice")
+						.addOption("groups").addOption("times")
+						.addOption("info").addOption("icon")
 						.addOption("country").addOption("ip").build()),
 				mapping()::mapUser);
 	}
 
 	public Future<List<PrivilegeKey>> getPrivilegeKeyList() {
-		return mapping().mapComplexReponseList(io().sendPacket(Command.PRIVILEGEKEY_LIST.build()),
+		return mapping().mapComplexReponseList(io().sendPacket(
+				Command.PRIVILEGEKEY_LIST.build()),
 				mapping()::mapPrivilegeKey);
 	}
 
@@ -379,15 +314,20 @@ public class TeamspeakConnection implements Closeable {
 	}
 
 	public Future<?> quit() {
-		return io.sendPacket(Command.QUIT.build(), SendBehaviour.FORCE_CLOSE_CONNECTION);
+		return io.sendPacket(Command.QUIT.build(),
+				SendBehaviour.FORCE_CLOSE_CONNECTION);
 	}
 
 	public Future<?> setOwnName(String name) {
-		return io.sendPacket(Command.CLIENT_UPDATE.addData("client_nickname", name).build());
+		return io.sendPacket(Command.CLIENT_UPDATE
+				.addData("client_nickname", name).build());
 	}
 
 	public Future<Group> getGroupById(int serverGroupId) {
-		return io.chainFuture(getGroups(), l -> l.stream().filter(g -> g.getServerGroupId() == serverGroupId).findAny().orElseThrow(NoSuchElementException::new)); // TODO: make this more efficient with caching
+		// TODO: make this more efficient with caching
+		return io.chainFuture(getGroups(), l -> l.stream()
+				.filter(g -> g.getServerGroupId() == serverGroupId)
+				.findAny().orElseThrow(NoSuchElementException::new));
 	}
 
 	public Future<List<Group>> getGroups() {
@@ -398,6 +338,95 @@ public class TeamspeakConnection implements Closeable {
 
 	public final Mapper mapping() {
 		return mapper;
+	}
+
+	private class InternalPacketHandler extends SimpleChannelInboundHandler<Response> {
+
+		private Response lastPacket = null;
+
+		@Override
+		protected void messageReceived(ChannelHandlerContext ctx,
+				Response msg) throws Exception {
+			final Map<String, String> options = msg.getOptions();
+			LOG.log(Level.FINE, "Handling packet: {0}", msg);
+			switch (msg.getCmd()) {
+				case "notifytextmessage": {
+					Future<User> whoami = io.whoAmI();
+					if (whoami.isSuccess()) {
+						handleMessage(msg, whoami.get());
+					} else {
+						whoami.addListener(f -> {
+							assert f == whoami;
+							LOG.fine("Handling delayed message delivery "
+									+ "because whoami is not known");
+							handleMessage(msg, whoami.get());
+						});
+					}
+				}
+				break;
+				case "notifycliententerview": {
+					if (msg.equals(lastPacket)) {
+						LOG.log(Level.FINE, "Dropping packet {0} because "
+								+ "teamspeak usually sends dublicate "
+								+ "packets when both channel and server "
+								+ "listener is active", msg);
+						lastPacket = null;
+						return;
+					}
+					lastPacket = msg;
+					options.put("cid", options.get("ctid"));
+					ShallowUser client = mapping().mapShallowUser(options);
+					UnresolvedChannel from = "0".equals(options.get("cfid"))
+							? null : getUnresolvedChannelById(
+									parseInt(options.get("cfid")));
+					ChangeReason reason = ChangeReason.getById(
+							parseInt(options.get("reasonid")));
+					ClientEnterViewEvent event;
+					event = new ClientEnterViewEvent(client,
+							client.getChannel(), reason, null);
+					serverHandler.callAll(
+							ServerListener::onClientEnterView, event);
+					// TODO: channel change event when from == null
+				}
+				break;
+				case "notifyclientleftview": {
+					// TODO: leave notification
+				}
+				break;
+				case "notifyserveredited": {
+					final int invokerId
+							= parseInt(options.get("invokerid"));
+					final String invokerName = options.get("invokername");
+					final String invokeruid = options.get("invokeruid");
+					serverHandler.callAll(ServerListener::onEditServer,
+							new ServerEditEvent(ChangeReason.getById(
+									parseInt(options.get("reasonid"))),
+									getUnresolvedNamedUser(invokerId,
+											invokerName, invokeruid)));
+				}
+				break;
+				case "notifytokenused": {
+					// clid=5 cldbid=4 cluid=zhPQ0oNLH8boM42jlbgTWC6G\\/64=
+					// token=4oquHhp03YKofI4dYVBLWZ9Ik+Mf0M6ogomh5RsU
+					// tokencustomset token1=7 token2=0
+					UnresolvedUser client = getUnresolvedUserById(
+							parseInt(options.get("clid")));
+					int databaseId = parseInt(options.get("cldbid"));
+					String uniqueId = options.get("cluid");
+					String token = options.get("token");
+					String tokencustomset = options.get("tokencustomset");
+					String token1 = options.get("token1");
+					String token2 = options.get("token2");
+					tokenUsedHandler.callAll(TokenListener::onTokenUsed,
+							new TokenUsedEvent(client, databaseId, uniqueId,
+									token, tokencustomset, token1, token2));
+				}
+				break;
+				default: {
+					LOG.log(Level.WARNING, "Unhandled packet: {0}", msg);
+				}
+			}
+		}
 	}
 
 }

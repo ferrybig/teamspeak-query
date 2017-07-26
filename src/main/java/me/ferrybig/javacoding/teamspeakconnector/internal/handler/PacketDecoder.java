@@ -79,7 +79,8 @@ public class PacketDecoder extends MessageToMessageDecoder<String> {
 						break;
 					default:
 						throw new DecoderException("Unable to decode pattern \\"
-								+ chars[i + ahead + 1] + " in the following text: " + input);
+								+ chars[i + ahead + 1] + " in the "
+								+ "following text: " + input);
 				}
 
 				ahead++;
@@ -94,7 +95,8 @@ public class PacketDecoder extends MessageToMessageDecoder<String> {
 		return new String(chars, 0, newLength);
 	}
 
-	public static Response singleDecode(String msg, Map<String, String> cache, boolean first, boolean last) {
+	public static Response singleDecode(String msg, Map<String, String> cache,
+			boolean first, boolean last) {
 		String[] split = msg.split(" ");
 		String cmd = "";
 		for (int i = 0; i < split.length; i++) {
@@ -103,17 +105,20 @@ public class PacketDecoder extends MessageToMessageDecoder<String> {
 				if (i == 0 && first) {
 					cmd = decodeTeamspeakCode(args[0]);
 				} else {
-					cache.put(decodeTeamspeakCode(args[0]), ""); // Special cases for when the value is empty
+					// Special cases for when the value is empty
+					cache.put(decodeTeamspeakCode(args[0]), "");
 				}
 			} else {
-				cache.put(decodeTeamspeakCode(args[0]), decodeTeamspeakCode(args[1]));
+				cache.put(decodeTeamspeakCode(args[0]),
+						decodeTeamspeakCode(args[1]));
 			}
 		}
 		return new Response(last ? cache : new HashMap<>(cache), cmd);
 	}
 
 	@Override
-	protected void decode(ChannelHandlerContext ctx, String msg, List<Object> out) throws Exception {
+	protected void decode(ChannelHandlerContext ctx, String msg,
+			List<Object> out) throws Exception {
 		String cmd = "";
 		Map<String, String> cache = new HashMap<>();
 		if (msg.charAt(0) == '\r') {
@@ -121,7 +126,8 @@ public class PacketDecoder extends MessageToMessageDecoder<String> {
 		}
 		String[] compound = msg.split("\\|");
 		for (int j = 0; j < compound.length; j++) {
-			out.add(singleDecode(compound[j], cache, j == 0, compound.length - 1 == j));
+			out.add(singleDecode(compound[j], cache, j == 0,
+					compound.length - 1 == j));
 		}
 	}
 

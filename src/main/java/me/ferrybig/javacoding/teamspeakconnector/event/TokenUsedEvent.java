@@ -36,7 +36,9 @@ public class TokenUsedEvent {
 	private final String token1;
 	private final String token2; // TODO figure out what there options mean
 
-	public TokenUsedEvent(UnresolvedUser client, int databaseId, String uniqueId, String token, String tokencustomset, String token1, String token2) {
+	public TokenUsedEvent(UnresolvedUser client, int databaseId,
+			String uniqueId, String token, String tokencustomset,
+			String token1, String token2) {
 		this.client = client;
 		this.databaseId = databaseId;
 		this.uniqueId = uniqueId;
@@ -76,7 +78,10 @@ public class TokenUsedEvent {
 
 	@Override
 	public String toString() {
-		return "TokenUsedEvent{" + "client=" + client + ", databaseId=" + databaseId + ", uniqueId=" + uniqueId + ", token=" + token + ", tokencustomset=" + tokencustomset + ", token1=" + token1 + ", token2=" + token2 + '}';
+		return "TokenUsedEvent{" + "client=" + client
+				+ ", databaseId=" + databaseId + ", uniqueId=" + uniqueId
+				+ ", token=" + token + ", tokencustomset=" + tokencustomset
+				+ ", token1=" + token1 + ", token2=" + token2 + '}';
 	}
 
 	@Override

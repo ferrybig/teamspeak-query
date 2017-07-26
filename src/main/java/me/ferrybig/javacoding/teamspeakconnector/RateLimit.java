@@ -75,8 +75,9 @@ public interface RateLimit {
 		@Override
 		public double maxPacketsPerSecond(SocketAddress s) {
 			return (s instanceof InetSocketAddress
-					&& ((InetSocketAddress) s).getAddress().getHostAddress().equals("127.0.0.1")
-					? UNLIMITED : LIMITED).maxPacketsPerSecond(s);
+					&& ((InetSocketAddress) s).getAddress().getHostAddress()
+							.equals("127.0.0.1") ? UNLIMITED : LIMITED)
+					.maxPacketsPerSecond(s);
 		}
 
 		@Override

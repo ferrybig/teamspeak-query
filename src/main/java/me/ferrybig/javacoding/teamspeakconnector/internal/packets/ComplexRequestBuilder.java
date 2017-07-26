@@ -63,7 +63,8 @@ public class ComplexRequestBuilder {
 
 	public ComplexRequestBuilder addData(String key, String value, boolean force) {
 		if (!force && !cmd.isValidOption(key)) {
-			throw new IllegalArgumentException("Options '" + key + "' is not known for cmd '" + cmd + "'");
+			throw new IllegalArgumentException("Options '" + key
+					+ "' is not known for cmd '" + cmd + "'");
 		}
 		if (data.isEmpty()) {
 			data = new LinkedHashMap<>();
@@ -78,7 +79,8 @@ public class ComplexRequestBuilder {
 
 	public ComplexRequestBuilder addOption(String key, boolean force) {
 		if (!force && !cmd.isValidFlag(key)) {
-			throw new IllegalArgumentException("Flag '" + key + "' is not known for cmd '" + cmd + "'");
+			throw new IllegalArgumentException("Flag '" + key
+					+ "' is not known for cmd '" + cmd + "'");
 		}
 		if (data.isEmpty()) {
 			data = new LinkedHashMap<>();

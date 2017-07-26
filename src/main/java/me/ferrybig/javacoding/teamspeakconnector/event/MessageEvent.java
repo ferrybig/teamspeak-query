@@ -36,7 +36,8 @@ public abstract class MessageEvent extends InvokedEvent {
 	 */
 	private final TargetMode targetMode;
 
-	public MessageEvent(String message, TargetMode targetMode, NamedUser invoker) {
+	public MessageEvent(String message, TargetMode targetMode,
+			NamedUser invoker) {
 		super(invoker);
 		this.message = message;
 		this.targetMode = targetMode;
@@ -52,7 +53,9 @@ public abstract class MessageEvent extends InvokedEvent {
 
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + "{" + "message=" + message + ", targetMode=" + targetMode + ", invoker=" + getInvoker() + '}';
+		return this.getClass().getSimpleName() + "{" + "message=" + message
+				+ ", targetMode=" + targetMode
+				+ ", invoker=" + getInvoker() + '}';
 	}
 
 	public enum TargetMode {

@@ -34,7 +34,8 @@ public class NamedUser extends UnresolvedUser {
 	protected final String uniqueid;
 	protected final String nickname;
 
-	public NamedUser(TeamspeakConnection con, int id, String uniqueid, String nickname) {
+	public NamedUser(TeamspeakConnection con, int id, String uniqueid,
+			String nickname) {
 		super(con, id);
 		this.uniqueid = uniqueid;
 		this.nickname = nickname;
@@ -50,7 +51,8 @@ public class NamedUser extends UnresolvedUser {
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + "{" + "id=" + getId() + ", uniqueid=" + uniqueid + ", nickname=" + nickname + '}';
+		return getClass().getSimpleName() + "{" + "id=" + getId()
+				+ ", uniqueid=" + uniqueid + ", nickname=" + nickname + '}';
 	}
 
 }
