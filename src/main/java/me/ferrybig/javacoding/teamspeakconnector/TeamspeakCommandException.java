@@ -39,7 +39,7 @@ public class TeamspeakCommandException extends TeamspeakException {
 		this.message = message;
 		this.extraMessage = extraMessage;
 	}
-	
+
 	private static String generateMessage(String command, int error, String message, String extraMessage) {
 		if (extraMessage == null) {
 			return command + ": " + error + ", " + message;
