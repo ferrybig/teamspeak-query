@@ -47,6 +47,7 @@ import me.ferrybig.javacoding.teamspeakconnector.entities.User;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequest;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexResponse;
+import me.ferrybig.javacoding.teamspeakconnector.util.BiExFunction;
 import me.ferrybig.javacoding.teamspeakconnector.util.FutureUtil;
 
 /**
@@ -151,6 +152,10 @@ public class TeamspeakIO {
 
 	public <T, R> Future<R> chainFuture(Future<T> future, Function<T, R> mapping) {
 		return FutureUtil.chainFuture(newPromise(), future, mapping);
+	}
+
+	public <T, R> Future<R> chainFutureAdvanced(Future<T> future, BiExFunction<T, Throwable, R> mapping) {
+		return FutureUtil.chainFutureAdvanced(newPromise(), future, mapping);
 	}
 
 	private void channelClosed(Throwable upstream) {

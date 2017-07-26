@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -44,15 +45,30 @@ public class FutureUtil {
 	}
 
 	private static <T, R> Future<R> delegateFutureResult(Future<T> future, Promise<R> prom, Function<T, R> map) {
-		future.addListener(ignored -> {
+		Objects.requireNonNull(map, "map");
+		return delegateFutureResult(future, prom, (s, t) -> {
+			if (t != null) {
+				throw t;
+			}
+			return map.apply(s);
+		});
+	}
+
+	private static <T, R> Future<R> delegateFutureResult(Future<T> future, Promise<R> prom, BiExFunction<T, Throwable, R> map) {
+		Objects.requireNonNull(map, "map");
+		future.addListener((ignored) -> {
 			assert ignored == future;
 			try {
-				if (future.isSuccess()) {
-					if (!prom.isDone() && !prom.trySuccess(map.apply(future.getNow()))) {
-						ReferenceCountUtil.release(future.getNow());
-					}
-				} else {
-					prom.tryFailure(future.cause());
+				T val = future.isSuccess() ? future.getNow() : null;
+				Throwable t = future.cause();
+				assert val == null || t == null;
+				if (prom.isDone()) {
+					ReferenceCountUtil.release(val);
+					return;
+				}
+				R result = map.apply(val, t);
+				if (!prom.trySuccess(result)) {
+					ReferenceCountUtil.release(result);
 				}
 			} catch (Throwable e) {
 				prom.tryFailure(e);
@@ -68,6 +84,10 @@ public class FutureUtil {
 	}
 
 	public static <T, R> Future<R> chainFuture(Promise<R> result, Future<T> future, Function<T, R> mapping) {
+		return delegateFutureResult(future, result, mapping);
+	}
+
+	public static <T, R> Future<R> chainFutureAdvanced(Promise<R> result, Future<T> future, BiExFunction<T, Throwable, R> mapping) {
 		return delegateFutureResult(future, result, mapping);
 	}
 

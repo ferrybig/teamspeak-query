@@ -39,6 +39,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
+import me.ferrybig.javacoding.teamspeakconnector.TeamspeakCommandException;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
 import me.ferrybig.javacoding.teamspeakconnector.entities.Channel;
 import me.ferrybig.javacoding.teamspeakconnector.entities.File;
@@ -231,7 +232,12 @@ public class Mapper {
 	}
 
 	public <R, I> Future<List<R>> mapComplexReponseList(Future<ComplexResponse> in, Function<Map<String, String>, I> mapper, Function<List<I>, List<R>> finalizer) {
-		return con.io().chainFuture(in, r -> {
+		return con.io().chainFutureAdvanced(in, (r, t) -> {
+			if(t instanceof TeamspeakCommandException && ((TeamspeakCommandException) t).getError() == 1281)
+				return Collections.emptyList();
+			if(t != null)
+				throw t;
+			assert r != null;
 			return finalizer.apply(r.getCommands().stream().map(mapper).collect(Collectors.toList()));
 		});
 	}
@@ -272,9 +278,9 @@ public class Mapper {
 		return new PrivilegeKey(con,
 				data.get("token"),
 				customSet,
-				data.get("tokendescription"),
-				PrivilegeKey.Type.getById(Integer.parseInt(data.get("tokentype"))),
-				Integer.parseInt(data.get("tokenid1")),
-				Integer.parseInt(data.get("tokenid2")));
+				data.getOrDefault("tokendescription", ""),
+				PrivilegeKey.Type.getById(Integer.parseInt(data.getOrDefault("token_type", data.get("tokenid2").equals("0") ? "0" : "1"))),
+				Integer.parseInt(data.get("token_id1")),
+				Integer.parseInt(data.get("token_id2")));
 	}
 }

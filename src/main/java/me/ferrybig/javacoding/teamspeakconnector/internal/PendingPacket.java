@@ -24,6 +24,7 @@
 package me.ferrybig.javacoding.teamspeakconnector.internal;
 
 import io.netty.util.concurrent.Promise;
+import me.ferrybig.javacoding.teamspeakconnector.TeamspeakCommandException;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakException;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequest;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexResponse;
@@ -42,13 +43,7 @@ public class PendingPacket {
 
 	public void onResponseReceived(ComplexResponse response) {
 		if (response.getId() != 0) {
-			TeamspeakException ex;
-			if (response.getExtraMsg() == null) {
-				ex = new TeamspeakException(request.getCmd() + ": " + response.getMsg());
-			} else {
-				ex = new TeamspeakException(request.getCmd() + ": " + response.getMsg() + "; " + response.getExtraMsg());
-			}
-			promise.setFailure(ex);
+			promise.setFailure(new TeamspeakCommandException(request.getCmd(), response.getId(), response.getMsg(), response.getExtraMsg()));
 		} else {
 			promise.setSuccess(response);
 		}
