@@ -136,7 +136,7 @@ public enum Command {
 	 * permid={permID}|permsid={permName} permvalue={permValue} )...
 	 */
 	CHANNEL_ADD_PERM("channeladdperm",
-			new HashSet<>(Arrays.asList("cid", "permsid", "permvalue", "(", "permid", ")"))
+			new HashSet<>(Arrays.asList("cid", "permsid", "permvalue", "permid"))
 	),
 	/**
 	 * Adds a set of specified permissions to a client in a specific channel.
@@ -153,7 +153,7 @@ public enum Command {
 	 * permid={permID}|permsid={permName} permvalue={permValue} )...
 	 */
 	CHANNEL_CLIENT_ADD_PERM("channelclientaddperm",
-			new HashSet<>(Arrays.asList("cid", "cldbid", "permsid", "permvalue", "(", "permid", ")"))
+			new HashSet<>(Arrays.asList("cid", "cldbid", "permsid", "permvalue", "permid"))
 	),
 	/**
 	 * Removes a set of specified permissions from a client in a specific

@@ -25,9 +25,12 @@ package me.ferrybig.javacoding.teamspeakconnector.internal.packets;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.stream.Collectors;
+import org.hamcrest.BaseMatcher;
+import static org.hamcrest.CoreMatchers.everyItem;
+import org.hamcrest.Description;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,9 +39,9 @@ import org.junit.runners.Parameterized;
 @RunWith(Parameterized.class)
 public class CommandTest {
 
-	@Parameterized.Parameters
-	public static Collection<Object[]> data() {
-		return Arrays.stream(Command.values()).map(o -> new Object[]{o}).collect(Collectors.toList());
+	@Parameterized.Parameters(name = "{index}: {0}")
+	public static Collection<Object> data() {
+		return Arrays.asList((Object[])Command.values());
 	}
 
 	@Parameterized.Parameter
@@ -95,6 +98,36 @@ public class CommandTest {
 	@Test
 	public void testByName() {
 		assertEquals(command, Command.byName(command.getCmd()));
+	}
+
+	@Test
+	public void testOptionsAreAllSimpleTerms() {
+		assertThat(command.getOptions(), everyItem(new BaseMatcher<String>() {
+			@Override
+			public boolean matches(Object item) {
+				return item.toString().matches("[a-z0-9]+(_[a-z0-9]+)*");
+			}
+
+			@Override
+			public void describeTo(Description description) {
+				description.appendText("matching to regex ^[a-z0-9]+(_[a-z0-9]+)*$");
+			}
+		}));
+	}
+
+	@Test
+	public void testFlagsAreAllSimpleTerms() {
+		assertThat(command.getFlags(), everyItem(new BaseMatcher<String>() {
+			@Override
+			public boolean matches(Object item) {
+				return item.toString().matches("[a-z0-9]+(_[a-z0-9]+)*");
+			}
+
+			@Override
+			public void describeTo(Description description) {
+				description.appendText("matching to regex ^[a-z0-9]+(_[a-z0-9]+)*$");
+			}
+		}));
 	}
 
 }
