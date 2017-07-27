@@ -175,7 +175,7 @@ public class PrivilegeKeyTemplate {
 		}
 
 		return con.io().chainFuture(con.io().sendPacket(builder.build()),
-				p -> new PrivilegeKey(con, p.getCommands().get(0).get("token"),
+				p -> new PrivilegeKey(con.privilegeKeys(), p.getCommands().get(0).get("token"),
 						customset, description, type, token1, token2));
 	}
 

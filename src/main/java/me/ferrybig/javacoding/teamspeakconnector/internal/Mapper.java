@@ -30,7 +30,6 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -38,17 +37,14 @@ import java.util.function.IntFunction;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakCommandException;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
 import me.ferrybig.javacoding.teamspeakconnector.entities.Channel;
 import me.ferrybig.javacoding.teamspeakconnector.entities.File;
-import me.ferrybig.javacoding.teamspeakconnector.entities.PrivilegeKey;
 import me.ferrybig.javacoding.teamspeakconnector.entities.Server;
 import me.ferrybig.javacoding.teamspeakconnector.entities.ShallowUser;
 import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedChannel;
 import me.ferrybig.javacoding.teamspeakconnector.entities.User;
-import me.ferrybig.javacoding.teamspeakconnector.internal.handler.PacketDecoder;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexResponse;
 
 public class Mapper {
@@ -284,34 +280,4 @@ public class Mapper {
 		return list;
 	}
 
-	@Nonnull
-	public PrivilegeKey mapPrivilegeKeyEvent(Map<String, String> data) {
-		data.put("token_id1", data.get("token1"));
-		data.put("token_id2", data.get("token2"));
-		return mapPrivilegeKey(data);
-	}
-
-	@Nonnull
-	public PrivilegeKey mapPrivilegeKey(Map<String, String> data) {
-		Map<String, String> customSet = new HashMap<>();
-		final String tokenCustomSetString = data.get("tokencustomset");
-		if (!tokenCustomSetString.isEmpty()) {
-			Map<String, String> customSetCache = new HashMap<>(2);
-			for (String part : tokenCustomSetString.split("\\|")) {
-				PacketDecoder.singleDecode(part, customSetCache, true, true);
-				customSet.put(
-						customSetCache.get("ident"),
-						customSetCache.get("value"));
-			}
-		}
-		return new PrivilegeKey(con,
-				data.get("token"),
-				customSet,
-				data.getOrDefault("tokendescription", ""),
-				PrivilegeKey.Type.getById(Integer.parseInt(
-						data.getOrDefault("token_type",
-								data.get("tokenid2").equals("0") ? "0" : "1"))),
-				Integer.parseInt(data.get("token_id1")),
-				Integer.parseInt(data.get("token_id2")));
-	}
 }

@@ -74,6 +74,7 @@ import static me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command
 import static me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command.SERVER_NOTIFY_UNREGISTER;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Response;
 import me.ferrybig.javacoding.teamspeakconnector.repository.GroupRepository;
+import me.ferrybig.javacoding.teamspeakconnector.repository.PrivilegeKeyRepository;
 
 @ThreadSafe
 public class TeamspeakConnection implements Closeable {
@@ -100,7 +101,12 @@ public class TeamspeakConnection implements Closeable {
 	private final Object repositoryLock = new Object();
 
 	@GuardedBy(value = "repositoryLock")
-	private volatile WeakReference<GroupRepository> groups;
+	private volatile WeakReference<GroupRepository> groups
+			= new WeakReference<>(null);
+
+	@GuardedBy(value = "repositoryLock")
+	private volatile WeakReference<PrivilegeKeyRepository> privilegeKeys
+			= new WeakReference<>(null);
 
 	public TeamspeakConnection(TeamspeakIO channel) {
 		this.io = channel;
@@ -203,8 +209,9 @@ public class TeamspeakConnection implements Closeable {
 		return new UnresolvedServer(this, id);
 	}
 
+	@Deprecated
 	public UnresolvedPrivilegeKey getUnresolvedPrivilegeKeyById(String token) {
-		return new UnresolvedPrivilegeKey(this, token);
+		return privilegeKeys().unresolved(token);
 	}
 
 	public Future<UnresolvedServer> getUnresolvedServerByPort(int port) {
@@ -244,8 +251,9 @@ public class TeamspeakConnection implements Closeable {
 				});
 	}
 
+	@Deprecated
 	public Future<PrivilegeKey> getPrivilegeKeyById(String token) {
-		return this.getUnresolvedPrivilegeKeyById(token).resolve();
+		return privilegeKeys().getById(token);
 	}
 
 	public Future<Server> getServer() {
@@ -299,10 +307,9 @@ public class TeamspeakConnection implements Closeable {
 				mapping()::mapUser);
 	}
 
+	@Deprecated
 	public Future<List<PrivilegeKey>> getPrivilegeKeyList() {
-		return mapping().mapComplexReponseList(io().sendPacket(
-				Command.PRIVILEGEKEY_LIST.build()),
-				mapping()::mapPrivilegeKey);
+		return privilegeKeys().list();
 	}
 
 	@Override
@@ -368,6 +375,23 @@ public class TeamspeakConnection implements Closeable {
 			}
 			repo = new GroupRepository(this);
 			groups = new WeakReference<>(repo);
+		}
+		return repo;
+	}
+
+	@Nonnull
+	public PrivilegeKeyRepository privilegeKeys() {
+		PrivilegeKeyRepository repo = privilegeKeys.get();
+		if (repo != null) {
+			return repo;
+		}
+		synchronized (repositoryLock) {
+			repo = privilegeKeys.get();
+			if (repo != null) {
+				return repo;
+			}
+			repo = new PrivilegeKeyRepository(this);
+			privilegeKeys = new WeakReference<>(repo);
 		}
 		return repo;
 	}
@@ -452,7 +476,8 @@ public class TeamspeakConnection implements Closeable {
 							parseInt(options.get("clid")));
 					int databaseId = parseInt(options.get("cldbid"));
 					String uniqueId = options.get("cluid");
-					PrivilegeKey key = mapping().mapPrivilegeKeyEvent(options);
+					PrivilegeKey key = privilegeKeys()
+							.readEntityFromEvent(options);
 					tokenUsedHandler.callAll(TokenListener::onTokenUsed,
 							new TokenUsedEvent(
 									client, databaseId, uniqueId, key));

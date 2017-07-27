@@ -24,10 +24,10 @@
 package me.ferrybig.javacoding.teamspeakconnector.entities;
 
 import io.netty.util.concurrent.Future;
-import java.util.NoSuchElementException;
+import java.util.Objects;
 import me.ferrybig.javacoding.teamspeakconnector.Resolvable;
-import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command;
+import me.ferrybig.javacoding.teamspeakconnector.repository.PrivilegeKeyRepository;
 
 /**
  *
@@ -35,11 +35,11 @@ import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command;
  */
 public class UnresolvedPrivilegeKey implements Resolvable<PrivilegeKey> {
 
-	protected final TeamspeakConnection con;
+	protected final PrivilegeKeyRepository repo;
 	protected final String token;
 
-	public UnresolvedPrivilegeKey(TeamspeakConnection con, String token) {
-		this.con = con;
+	public UnresolvedPrivilegeKey(PrivilegeKeyRepository repo, String token) {
+		this.repo = repo;
 		this.token = token;
 	}
 
@@ -47,35 +47,47 @@ public class UnresolvedPrivilegeKey implements Resolvable<PrivilegeKey> {
 		return token;
 	}
 
-	public Future<?> useKey() {
-		return con.io().sendPacket(Command.PRIVILEGEKEY_USE
-				.addData("token", getToken()).build());
-	}
-
 	@Override
 	public Future<PrivilegeKey> forceResolve() {
-		return con.io().chainFuture(con.io().sendPacket(
-				Command.PRIVILEGEKEY_LIST.build()),
-				r -> r.getCommands().stream()
-						.filter(p -> p.get("token").equals("token")).findAny()
-						.map(con.mapping()::mapPrivilegeKey)
-						.orElseThrow(() -> new NoSuchElementException(
-						"No token found by id " + token)));
+		return repo.get(this);
 	}
 
 	public Future<?> use() {
-		return con.io().sendPacket( Command.PRIVILEGEKEY_USE
-				.addData("token", token).build());
+		return repo.getConnection().io().sendPacket(
+				Command.PRIVILEGEKEY_USE
+						.addData("token", token)
+						.build());
 	}
 
 	public Future<?> delete() {
-		return con.io().sendPacket( Command.PRIVILEGEKEY_DELETE
-				.addData("token", token).build());
+		return repo.deleteUnresolved(this);
 	}
 
 	@Override
 	public boolean isResolved() {
 		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 5;
+		hash = 41 * hash + Objects.hashCode(this.token);
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!(obj instanceof UnresolvedPrivilegeKey)) {
+			return false;
+		}
+		final UnresolvedPrivilegeKey other = (UnresolvedPrivilegeKey) obj;
+		if (!Objects.equals(this.token, other.token)) {
+			return false;
+		}
+		return true;
 	}
 
 }

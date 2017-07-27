@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
-import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
+import me.ferrybig.javacoding.teamspeakconnector.repository.PrivilegeKeyRepository;
 
 /**
  *
@@ -46,9 +46,9 @@ public class PrivilegeKey extends UnresolvedPrivilegeKey {
 	private final int token1;
 	private final int token2;
 
-	public PrivilegeKey(TeamspeakConnection con, String token,
+	public PrivilegeKey(PrivilegeKeyRepository repo, String token,
 			PrivilegeKeyTemplate template) {
-		this(con, token,
+		this(repo, token,
 				Collections.unmodifiableMap(new LinkedHashMap<>(
 						Objects.requireNonNull(template, "template")
 								.getCustomset())),
@@ -56,10 +56,10 @@ public class PrivilegeKey extends UnresolvedPrivilegeKey {
 				template.getToken1(), template.getToken2());
 	}
 
-	public PrivilegeKey(TeamspeakConnection con, String token,
+	public PrivilegeKey(PrivilegeKeyRepository repo, String token,
 			Map<String, String> customset, String description, Type type,
 			int token1, int token2) {
-		super(con, token);
+		super(repo, token);
 		this.customset = customset;
 		this.description = description;
 		this.type = type;
@@ -111,7 +111,17 @@ public class PrivilegeKey extends UnresolvedPrivilegeKey {
 
 	@Override
 	public Future<PrivilegeKey> resolve() {
-		return con.io().getCompletedFuture(this);
+		return repo.getConnection().io().getCompletedFuture(this);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return super.equals(obj);
+	}
+
+	@Override
+	public int hashCode() {
+		return super.hashCode();
 	}
 
 	public enum Type {
