@@ -32,9 +32,9 @@ public interface BiExFunction<T, U, R> {
 	 * @param t the first function argument
 	 * @param u the second function argument
 	 * @return the function result
-	 * @throws java.lang.Exception any exception that happened during the
+	 * @throws java.lang.Throwable any exception that happened during the
 	 * computation
 	 */
-	R apply(T t, U u) throws Exception;
+	R apply(T t, U u) throws Throwable;
 
 }

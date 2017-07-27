@@ -45,11 +45,11 @@ public class TeamspeakConnectionIT {
 	private TeamspeakBootstrap creatBootstrap() {
 		TeamspeakBootstrap ts = new TeamspeakBootstrap(group);
 
-		String username = System.getProperty("TS3_USERNAME");
+		String username = System.getProperty("TS3_USERNAME", "");
 		if(username.isEmpty()) {
 			username = "serveradmin";
 		}
-		String password = System.getProperty("TS3_PASSWORD");
+		String password = System.getProperty("TS3_PASSWORD", "");
 		if(password.isEmpty()) {
 			password = "test1234";
 		}
@@ -64,11 +64,11 @@ public class TeamspeakConnectionIT {
 	}
 
 	private Future<TeamspeakConnection> createConnection(String clientname) {
-		String hostname = System.getProperty("TS3_HOSTNAME");
+		String hostname = System.getProperty("TS3_HOSTNAME", "");
 		if (hostname.isEmpty()) {
 			hostname = "localhost";
 		}
-		int port = Integer.parseInt(System.getProperty("TS3_PORT").isEmpty()
+		int port = Integer.parseInt(System.getProperty("TS3_PORT", "").isEmpty()
 				? String.valueOf(TeamspeakBootstrap.DEFAULT_QUERY_PORT)
 				: System.getProperty("TS3_PORT"));
 		return creatBootstrap().clientName(clientname).connect(hostname, port);
