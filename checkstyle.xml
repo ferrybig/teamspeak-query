@@ -45,13 +45,13 @@
 		</module>
 		<module name="InnerTypeLast"/>
 		<module name="LineLength">
-			<property name="max" value="120"/>
-			<property name="severity" value="warning"/>
+			<property name="max" value="160"/>
+			<property name="severity" value="error"/>
 			<property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://|^\t*public static final"/>
 		</module>
 		<module name="LineLength">
-			<property name="max" value="160"/>
-			<property name="severity" value="error"/>
+			<property name="max" value="120"/>
+			<property name="severity" value="warning"/>
 			<property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://|^\t*public static final"/>
 		</module>
 		<module name="LocalVariableName">
