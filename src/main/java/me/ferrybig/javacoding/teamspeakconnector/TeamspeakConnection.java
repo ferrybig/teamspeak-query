@@ -28,13 +28,15 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.concurrent.Future;
 import java.io.Closeable;
 import static java.lang.Integer.parseInt;
+import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
 import me.ferrybig.javacoding.teamspeakconnector.entities.Channel;
 import me.ferrybig.javacoding.teamspeakconnector.entities.File;
@@ -71,6 +73,7 @@ import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command;
 import static me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command.SERVER_NOTIFY_REGISTER;
 import static me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command.SERVER_NOTIFY_UNREGISTER;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Response;
+import me.ferrybig.javacoding.teamspeakconnector.repository.GroupRepository;
 
 @ThreadSafe
 public class TeamspeakConnection implements Closeable {
@@ -93,6 +96,11 @@ public class TeamspeakConnection implements Closeable {
 			SERVER_NOTIFY_REGISTER.addData("event", "tokenused").build(),
 			SERVER_NOTIFY_UNREGISTER.addData("event", "tokenused").build());
 	private final Mapper mapper = new Mapper(this);
+
+	private final Object repositoryLock = new Object();
+
+	@GuardedBy(value = "repositoryLock")
+	private volatile WeakReference<GroupRepository> groups;
 
 	public TeamspeakConnection(TeamspeakIO channel) {
 		this.io = channel;
@@ -172,8 +180,9 @@ public class TeamspeakConnection implements Closeable {
 		return new UnresolvedChannel(this, id);
 	}
 
+	@Deprecated
 	public UnresolvedGroup getUnresolvedGroupById(int id) {
-		return new UnresolvedGroup(this, id);
+		return groups().unresolved(id);
 	}
 
 	public UnresolvedChannelGroup getUnresolvedChannelGroupById(int id) {
@@ -324,17 +333,43 @@ public class TeamspeakConnection implements Closeable {
 				.addData("client_nickname", name).build());
 	}
 
+	/**
+	 * Gets a group by id
+	 * @param serverGroupId id of the group
+	 * @return a future pointed at the group with id serverGroupId
+	 * @deprecated Use {@code groups().getById(serverGroupId)} instead
+	 */
+	@Deprecated
 	public Future<Group> getGroupById(int serverGroupId) {
 		// TODO: make this more efficient with caching
-		return io.chainFuture(getGroups(), l -> l.stream()
-				.filter(g -> g.getServerGroupId() == serverGroupId)
-				.findAny().orElseThrow(NoSuchElementException::new));
+		return groups().getById(serverGroupId);
 	}
 
+	/**
+	 * Get the server group list
+	 * @return a future pointed at the server group list
+	 * @deprecated Use {@code groups().list()} instead
+	 */
+	@Deprecated
 	public Future<List<Group>> getGroups() {
-		return mapping().mapComplexReponseList(io.sendPacket(
-				Command.SERVER_GROUP_LIST.build()),
-				mapping()::mapGroup);
+		return groups().list();
+	}
+
+	@Nonnull
+	public GroupRepository groups() {
+		GroupRepository repo = groups.get();
+		if (repo != null) {
+			return repo;
+		}
+		synchronized (repositoryLock) {
+			repo = groups.get();
+			if (repo != null) {
+				return repo;
+			}
+			repo = new GroupRepository(this);
+			groups = new WeakReference<>(repo);
+		}
+		return repo;
 	}
 
 	public final Mapper mapping() {

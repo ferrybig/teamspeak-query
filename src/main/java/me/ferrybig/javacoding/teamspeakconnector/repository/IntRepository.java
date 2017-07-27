@@ -31,7 +31,6 @@ import javax.annotation.concurrent.ThreadSafe;
 /**
  *
  * @param <T> class that this repository contains
- * @param <I> Id representing the types
  */
 @ThreadSafe
 @ParametersAreNonnullByDefault

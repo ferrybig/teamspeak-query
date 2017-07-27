@@ -33,7 +33,6 @@ import me.ferrybig.javacoding.teamspeakconnector.Resolvable;
  *
  * @param <U> Unresolved variant of class this repository contains
  * @param <T> class that this repository contains
- * @param <I> Id representing the types
  */
 @ThreadSafe
 @ParametersAreNonnullByDefault

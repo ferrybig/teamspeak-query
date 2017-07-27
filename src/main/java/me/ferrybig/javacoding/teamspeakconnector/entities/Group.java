@@ -25,7 +25,7 @@ package me.ferrybig.javacoding.teamspeakconnector.entities;
 
 import io.netty.util.concurrent.Future;
 import java.util.Objects;
-import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
+import me.ferrybig.javacoding.teamspeakconnector.repository.GroupRepository;
 
 /**
  * This class represents a Teamspeak server group. A server group has a type,
@@ -61,7 +61,7 @@ public class Group extends UnresolvedGroup {
 	 * @param namemode unknown
 	 * @param type Type of the group
 	 */
-	public Group(TeamspeakConnection con, int serverGroupId, int sortId,
+	public Group(GroupRepository con, int serverGroupId, int sortId,
 			int icon, boolean savedb, String name, int memberRemovePrivilege,
 			int memberAddPrivilege, int modifyPrivilege, int namemode,
 			Type type) {
@@ -178,7 +178,7 @@ public class Group extends UnresolvedGroup {
 
 	@Override
 	public Future<Group> resolve() {
-		return con.io().getCompletedFuture(this);
+		return repo.getConnection().io().getCompletedFuture(this);
 	}
 
 	/**

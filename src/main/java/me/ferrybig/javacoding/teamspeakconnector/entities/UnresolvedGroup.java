@@ -27,18 +27,18 @@ import io.netty.util.concurrent.Future;
 import java.util.Collections;
 import java.util.Map;
 import me.ferrybig.javacoding.teamspeakconnector.Resolvable;
-import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command;
+import me.ferrybig.javacoding.teamspeakconnector.repository.GroupRepository;
 
 public class UnresolvedGroup implements Resolvable<Group> {
 
-	protected final TeamspeakConnection con;
+	protected final GroupRepository repo;
 	// protected volatile boolean outdated = false;
 
 	private final int serverGroupId;
 
-	public UnresolvedGroup(TeamspeakConnection con, int serverGroupId) {
-		this.con = con;
+	public UnresolvedGroup(GroupRepository repo, int serverGroupId) {
+		this.repo = repo;
 		this.serverGroupId = serverGroupId;
 	}
 
@@ -59,7 +59,7 @@ public class UnresolvedGroup implements Resolvable<Group> {
 
 	@Override
 	public Future<Group> forceResolve() {
-		return con.getGroupById(serverGroupId);
+		return repo.get(this, true);
 	}
 
 	@Override
@@ -123,7 +123,8 @@ public class UnresolvedGroup implements Resolvable<Group> {
 	 * @return a future for this group
 	 */
 	public Future<? extends UnresolvedGroup> rename(String newName) {
-		return con.io().chainFuture(con.io().sendPacket(
+		return repo.getConnection().io().chainFuture(
+				repo.getConnection().io().sendPacket(
 				Command.SERVER_GROUP_RENAME
 						.addData("sgid", this.getServerGroupId())
 						.addData("name", newName).build()),
@@ -153,7 +154,7 @@ public class UnresolvedGroup implements Resolvable<Group> {
 			Map<String, String> customData) {
 		return new PrivilegeKeyTemplate(customData, description,
 				PrivilegeKey.Type.SERVER_GROUP, serverGroupId, 0)
-				.createKey(con);
+				.createKey(repo.getConnection());
 	}
 
 	/**
@@ -164,7 +165,7 @@ public class UnresolvedGroup implements Resolvable<Group> {
 	 */
 	@Deprecated
 	public Future<String> generatePrivilegeToken() {
-		return con.io().chainFuture(generatePrivilegeKey(), l -> l.getToken());
+		return repo.getConnection().io().chainFuture(generatePrivilegeKey(), l -> l.getToken());
 	}
 
 	/**
@@ -178,7 +179,7 @@ public class UnresolvedGroup implements Resolvable<Group> {
 	@Deprecated
 	public Future<String> generatePrivilegeToken(String description,
 			Map<String, String> customData) {
-		return con.io().chainFuture(
+		return repo.getConnection().io().chainFuture(
 				generatePrivilegeKey(description, customData),
 				l -> l.getToken());
 	}

@@ -43,7 +43,6 @@ import me.ferrybig.javacoding.teamspeakconnector.TeamspeakCommandException;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
 import me.ferrybig.javacoding.teamspeakconnector.entities.Channel;
 import me.ferrybig.javacoding.teamspeakconnector.entities.File;
-import me.ferrybig.javacoding.teamspeakconnector.entities.Group;
 import me.ferrybig.javacoding.teamspeakconnector.entities.PrivilegeKey;
 import me.ferrybig.javacoding.teamspeakconnector.entities.Server;
 import me.ferrybig.javacoding.teamspeakconnector.entities.ShallowUser;
@@ -216,26 +215,6 @@ public class Mapper {
 				"",
 				((InetSocketAddress) con.io().getChannel().
 						localAddress()).getAddress());
-	}
-
-	/**
-	 * Map a group received from Teamspeak.
-	 *
-	 * @param data Map containing received objects
-	 * @return the mapped group
-	 */
-	public Group mapGroup(Map<String, String> data) {
-		return new Group(con,
-				Integer.parseInt(data.get("sgid")),
-				Integer.parseInt(data.get("sortid")),
-				Integer.parseInt(data.get("iconid")),
-				data.get("savedb").equals("1"),
-				data.get("name"),
-				Integer.parseInt(data.get("n_member_removep")),
-				Integer.parseInt(data.get("n_member_addp")),
-				Integer.parseInt(data.get("n_modifyp")),
-				Integer.parseInt(data.get("namemode")),
-				Group.Type.getById(Integer.parseInt(data.get("type"))));
 	}
 
 	public File mapFile(Map<String, String> data) {
