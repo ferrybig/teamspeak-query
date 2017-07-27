@@ -306,6 +306,13 @@ public class Mapper {
 	}
 
 	@Nonnull
+	public PrivilegeKey mapPrivilegeKeyEvent(Map<String, String> data) {
+		data.put("token_id1", data.get("token1"));
+		data.put("token_id2", data.get("token2"));
+		return mapPrivilegeKey(data);
+	}
+
+	@Nonnull
 	public PrivilegeKey mapPrivilegeKey(Map<String, String> data) {
 		Map<String, String> customSet = new HashMap<>();
 		final String tokenCustomSetString = data.get("tokencustomset");

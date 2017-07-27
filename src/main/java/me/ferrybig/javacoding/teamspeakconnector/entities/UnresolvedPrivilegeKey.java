@@ -63,6 +63,16 @@ public class UnresolvedPrivilegeKey implements Resolvable<PrivilegeKey> {
 						"No token found by id " + token)));
 	}
 
+	public Future<?> use() {
+		return con.io().sendPacket( Command.PRIVILEGEKEY_USE
+				.addData("token", token).build());
+	}
+
+	public Future<?> delete() {
+		return con.io().sendPacket( Command.PRIVILEGEKEY_DELETE
+				.addData("token", token).build());
+	}
+
 	@Override
 	public boolean isResolved() {
 		return false;

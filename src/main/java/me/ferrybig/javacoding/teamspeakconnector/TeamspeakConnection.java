@@ -417,13 +417,10 @@ public class TeamspeakConnection implements Closeable {
 							parseInt(options.get("clid")));
 					int databaseId = parseInt(options.get("cldbid"));
 					String uniqueId = options.get("cluid");
-					String token = options.get("token");
-					String tokencustomset = options.get("tokencustomset");
-					String token1 = options.get("token1");
-					String token2 = options.get("token2");
+					PrivilegeKey key = mapping().mapPrivilegeKeyEvent(options);
 					tokenUsedHandler.callAll(TokenListener::onTokenUsed,
-							new TokenUsedEvent(client, databaseId, uniqueId,
-									token, tokencustomset, token1, token2));
+							new TokenUsedEvent(
+									client, databaseId, uniqueId, key));
 				}
 				break;
 				default: {

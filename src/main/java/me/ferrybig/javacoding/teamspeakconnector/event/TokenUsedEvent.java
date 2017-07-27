@@ -24,6 +24,7 @@
 package me.ferrybig.javacoding.teamspeakconnector.event;
 
 import java.util.Objects;
+import me.ferrybig.javacoding.teamspeakconnector.entities.PrivilegeKey;
 import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedUser;
 
 public class TokenUsedEvent {
@@ -31,21 +32,14 @@ public class TokenUsedEvent {
 	private final UnresolvedUser client;
 	private final int databaseId;
 	private final String uniqueId;
-	private final String token;
-	private final String tokencustomset;
-	private final String token1;
-	private final String token2; // TODO figure out what there options mean
+	private final PrivilegeKey key;
 
 	public TokenUsedEvent(UnresolvedUser client, int databaseId,
-			String uniqueId, String token, String tokencustomset,
-			String token1, String token2) {
+			String uniqueId, PrivilegeKey key) {
 		this.client = client;
 		this.databaseId = databaseId;
 		this.uniqueId = uniqueId;
-		this.token = token;
-		this.tokencustomset = tokencustomset;
-		this.token1 = token1;
-		this.token2 = token2;
+		this.key = key;
 	}
 
 	public UnresolvedUser getClient() {
@@ -60,28 +54,35 @@ public class TokenUsedEvent {
 		return uniqueId;
 	}
 
+	public PrivilegeKey getKey() {
+		return key;
+	}
+
+	@Deprecated
 	public String getToken() {
-		return token;
+		return key.getToken();
 	}
 
+	@Deprecated
 	public String getTokencustomset() {
-		return tokencustomset;
+		throw new UnsupportedOperationException();
 	}
 
+	@Deprecated
 	public String getToken1() {
-		return token1;
+		return String.valueOf(key.getToken1());
 	}
 
+	@Deprecated
 	public String getToken2() {
-		return token2;
+		return String.valueOf(key.getToken2());
 	}
 
 	@Override
 	public String toString() {
 		return "TokenUsedEvent{" + "client=" + client
 				+ ", databaseId=" + databaseId + ", uniqueId=" + uniqueId
-				+ ", token=" + token + ", tokencustomset=" + tokencustomset
-				+ ", token1=" + token1 + ", token2=" + token2 + '}';
+				+ ", key=" + key + '}';
 	}
 
 	@Override
@@ -90,10 +91,7 @@ public class TokenUsedEvent {
 		hash = 47 * hash + Objects.hashCode(this.client);
 		hash = 47 * hash + this.databaseId;
 		hash = 47 * hash + Objects.hashCode(this.uniqueId);
-		hash = 47 * hash + Objects.hashCode(this.token);
-		hash = 47 * hash + Objects.hashCode(this.tokencustomset);
-		hash = 47 * hash + Objects.hashCode(this.token1);
-		hash = 47 * hash + Objects.hashCode(this.token2);
+		hash = 47 * hash + Objects.hashCode(this.key);
 		return hash;
 	}
 
@@ -115,16 +113,7 @@ public class TokenUsedEvent {
 		if (!Objects.equals(this.uniqueId, other.uniqueId)) {
 			return false;
 		}
-		if (!Objects.equals(this.token, other.token)) {
-			return false;
-		}
-		if (!Objects.equals(this.tokencustomset, other.tokencustomset)) {
-			return false;
-		}
-		if (!Objects.equals(this.token1, other.token1)) {
-			return false;
-		}
-		if (!Objects.equals(this.token2, other.token2)) {
+		if (!Objects.equals(this.key, other.key)) {
 			return false;
 		}
 		if (!Objects.equals(this.client, other.client)) {
