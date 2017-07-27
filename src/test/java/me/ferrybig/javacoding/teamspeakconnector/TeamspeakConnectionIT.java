@@ -24,6 +24,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import org.junit.Assume;
 import org.junit.Test;
 
 /**
@@ -43,19 +44,60 @@ public class TeamspeakConnectionIT {
 
 	private TeamspeakBootstrap creatBootstrap() {
 		TeamspeakBootstrap ts = new TeamspeakBootstrap(group);
-		ts.login("serveradmin", "test1234");
+
+		String username = System.getProperty("TS3_USERNAME");
+		if(username.isEmpty()) {
+			username = "serveradmin";
+		}
+		String password = System.getProperty("TS3_PASSWORD");
+		if(password.isEmpty()) {
+			password = "test1234";
+		}
+		ts.login(username, password);
 		ts.selectServerID(1);
 		ts.clientName("TestingBot");
 		return ts;
 	}
 
+	private Future<TeamspeakConnection> createConnection() {
+		return createConnection("TestingBot");
+	}
+
+	private Future<TeamspeakConnection> createConnection(String clientname) {
+		String hostname = System.getProperty("TS3_HOSTNAME");
+		if (hostname.isEmpty()) {
+			hostname = "localhost";
+		}
+		int port = Integer.parseInt(System.getProperty("TS3_PORT").isEmpty()
+				? String.valueOf(TeamspeakBootstrap.DEFAULT_QUERY_PORT)
+				: System.getProperty("TS3_PORT"));
+		return creatBootstrap().clientName(clientname).connect(hostname, port);
+	}
+
+	private void assumeConnectionWorking(Future<TeamspeakConnection>... cons)
+			throws InterruptedException {
+		if (Boolean.valueOf(System.getProperty("TS3_REQUIRED"))) {
+			return;
+		}
+		for (Future<TeamspeakConnection> con : cons) {
+			con.await();
+			if (!con.isSuccess()) {
+				if (con.cause().getCause() instanceof ConnectException) {
+					Assume.assumeFalse("Cannot connect to teamspeak server, "
+							+ "check the maven vales teamspeak3.hostname, "
+							+ "teamspeak3.port, teamspeak3.username, "
+							+ "teamspeak3.password", true);
+				}
+			}
+		}
+	}
+
 	@Test
 	public void testSomeMethod() throws InterruptedException, ExecutionException {
-		TeamspeakBootstrap ts = creatBootstrap();
-		System.out.println("Creating!");
 
 		System.out.println("Connecting...");
-		Future<TeamspeakConnection> connect = ts.connect("localhost", 10011);
+		Future<TeamspeakConnection> connect = createConnection();
+		assumeConnectionWorking(connect);
 		TeamspeakConnection con = connect.sync().get();
 
 		System.out.println("Connected!");
@@ -120,10 +162,11 @@ public class TeamspeakConnectionIT {
 	@Test
 	public void messagesAreSendAndReceived() throws InterruptedException, ExecutionException {
 		System.out.println("Creating!");
-		TeamspeakBootstrap ts = creatBootstrap();
 
-		Future<TeamspeakConnection> connect1 = ts.clientName("TestingBot1").connect("localhost", 10011);
-		Future<TeamspeakConnection> connect2 = ts.clientName("TestingBot2").connect("localhost", 10011);
+		Future<TeamspeakConnection> connect1 = createConnection("TestingBot1");
+		Future<TeamspeakConnection> connect2 = createConnection("TestingBot2");
+
+		assumeConnectionWorking(connect1, connect2);
 
 		TeamspeakConnection con1 = connect1.get();
 		TeamspeakConnection con2 = connect2.get();
@@ -177,9 +220,8 @@ public class TeamspeakConnectionIT {
 	@Test(timeout = 10000)
 	public void channelForceCloseTest() throws InterruptedException, ExecutionException {
 
-		TeamspeakBootstrap ts = creatBootstrap();
-
-		Future<TeamspeakConnection> connect = ts.connect("localhost", 10011);
+		Future<TeamspeakConnection> connect = createConnection();
+		assumeConnectionWorking(connect);
 		TeamspeakConnection con = connect.get();
 
 		Future<?> namechange1 = con.setOwnName("Test1").await();

@@ -112,6 +112,51 @@
 				</executions>
 			</plugin>
 			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.18.1</version>
+				<configuration>
+					<systemProperties>
+						<property>
+							<name>TS3_HOSTNAME</name>
+							<value>${teamspeak3.hostname}</value>
+						</property>
+						<property>
+							<name>TS3_PORT</name>
+							<value>${teamspeak3.port}</value>
+						</property>
+						<property>
+							<name>TS3_USERNAME</name>
+							<value>${teamspeak3.username}</value>
+						</property>
+						<property>
+							<name>TS3_PASSWORD</name>
+							<value>${teamspeak3.password}</value>
+						</property>
+						<property>
+							<name>TS3_REQUIRED</name>
+							<value>${teamspeak3.required}</value>
+						</property>
+					</systemProperties>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>2.18.1</version>
+				<configuration>
+					<includes>
+						<include>**/*IT.java</include>
+					</includes>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<artifactId>maven-source-plugin</artifactId>
 				<version>3.0.0</version>
 				<executions>
@@ -187,21 +232,21 @@
 			</plugin>
 		</plugins>
 	</build>
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
 				<version>2.17</version>
-                <configuration>
+				<configuration>
 					<configLocation>checkstyle.xml</configLocation>
 					<encoding>UTF-8</encoding>
 					<consoleOutput>true</consoleOutput>
 					<failsOnError>true</failsOnError>
 					<failOnViolation>true</failOnViolation>
 					<linkXRef>false</linkXRef>
-                </configuration>
-            </plugin>
-        </plugins>
-    </reporting>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
 </project>

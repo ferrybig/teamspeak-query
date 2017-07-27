@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.concurrent.ThreadSafe;
@@ -387,6 +388,9 @@ public class TeamspeakConnection implements Closeable {
 					serverHandler.callAll(
 							ServerListener::onClientEnterView, event);
 					// TODO: channel change event when from == null
+					// TODO: remove dummy test because findbugs is annoyed by
+					//  future expansions
+					assert Function.identity().apply(from) == from;
 				}
 				break;
 				case "notifyclientleftview": {
