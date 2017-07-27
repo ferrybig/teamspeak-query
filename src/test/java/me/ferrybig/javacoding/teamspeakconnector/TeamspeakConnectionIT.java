@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import me.ferrybig.javacoding.teamspeakconnector.entities.Channel;
 import me.ferrybig.javacoding.teamspeakconnector.entities.Group;
+import me.ferrybig.javacoding.teamspeakconnector.entities.PrivilegeKey;
 import me.ferrybig.javacoding.teamspeakconnector.entities.User;
 import static me.ferrybig.javacoding.teamspeakconnector.util.FutureUtil.waitSync;
 import org.junit.AfterClass;
@@ -25,6 +26,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.junit.Assume;
+import static org.junit.Assume.assumeTrue;
 import org.junit.Test;
 
 /**
@@ -45,12 +47,12 @@ public class TeamspeakConnectionIT {
 	private TeamspeakBootstrap creatBootstrap() {
 		TeamspeakBootstrap ts = new TeamspeakBootstrap(group);
 
-		String username = System.getProperty("TS3_USERNAME", "");
-		if(username.isEmpty()) {
+		String username = System.getProperty("teamspesk3.username", "");
+		if (username.isEmpty()) {
 			username = "serveradmin";
 		}
-		String password = System.getProperty("TS3_PASSWORD", "");
-		if(password.isEmpty()) {
+		String password = System.getProperty("teamspeak3.password", "");
+		if (password.isEmpty()) {
 			password = "test1234";
 		}
 		ts.login(username, password);
@@ -64,19 +66,19 @@ public class TeamspeakConnectionIT {
 	}
 
 	private Future<TeamspeakConnection> createConnection(String clientname) {
-		String hostname = System.getProperty("TS3_HOSTNAME", "");
+		String hostname = System.getProperty("teamspeak3.hostname", "");
 		if (hostname.isEmpty()) {
 			hostname = "localhost";
 		}
-		int port = Integer.parseInt(System.getProperty("TS3_PORT", "").isEmpty()
+		int port = Integer.parseInt(System.getProperty("teamspeak3.port", "").isEmpty()
 				? String.valueOf(TeamspeakBootstrap.DEFAULT_QUERY_PORT)
-				: System.getProperty("TS3_PORT"));
+				: System.getProperty("teamspeak3.port"));
 		return creatBootstrap().clientName(clientname).connect(hostname, port);
 	}
 
 	private void assumeConnectionWorking(Future<TeamspeakConnection>... cons)
 			throws InterruptedException {
-		if (Boolean.valueOf(System.getProperty("TS3_REQUIRED"))) {
+		if (Boolean.valueOf(System.getProperty("teamspeak3.required"))) {
 			return;
 		}
 		for (Future<TeamspeakConnection> con : cons) {
@@ -234,6 +236,28 @@ public class TeamspeakConnectionIT {
 
 		Future<?> quit = con.quit().await();
 		assertTrue(quit.toString(), quit.isSuccess());
+	}
+
+	@Test
+	public void privilegeTokensCanBeCreatedAndDeleted() throws InterruptedException, ExecutionException {
+		System.out.println("Connecting...");
+		Future<TeamspeakConnection> connect = createConnection();
+		assumeConnectionWorking(connect);
+		TeamspeakConnection con = connect.sync().get();
+
+		final List<Group> groups = con.getGroups().sync().get();
+
+		Optional<Group> bottest = groups.stream().filter(g -> (g.getType() == Group.Type.REGULAR) && g.getName().equals("BotTest")).findAny();
+
+		assumeTrue("No group with the name 'BotTest' found", bottest.isPresent());
+
+		final PrivilegeKey privilegeKey = bottest.get().generatePrivilegeKey().get();
+		privilegeKey.delete().sync();
+		Future<?> second = privilegeKey.forceResolve().await();
+		assertTrue(second.toString(), !second.isSuccess());
+
+		System.out.println("Closing...!");
+		con.quit().sync().get();
 	}
 
 }
