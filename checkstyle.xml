@@ -31,8 +31,10 @@
 		<module name="EmptyStatement"/>
 		<module name="EqualsHashCode"/>
 		<module name="GenericWhitespace"/>
+		<module name="HideUtilityClassConstructor"/>
 		<module name="IllegalInstantiation"/>
-        <module name="IllegalImport"/>
+		<module name="IllegalImport"/>
+		<module name="IllegalThrows"/>
 		<module name="IllegalTokenText">
 			<property name="tokens" value="STRING_LITERAL, CHAR_LITERAL"/>
 			<property name="format" value="\\u00(09|0(a|A)|0(c|C)|0(d|D)|22|27|5(C|c))|\\(0(10|11|12|14|15|42|47)|134)"/>
@@ -42,6 +44,7 @@
 		<module name="InterfaceTypeParameterName">
 			<property name="format" value="(^[A-Z][0-9]?)$|([A-Z][a-zA-Z0-9]*[T]$)"/>
 		</module>
+		<module name="InnerTypeLast"/>
 		<module name="LineLength">
 			<property name="max" value="120"/>
 			<property name="severity" value="warning"/>
@@ -68,6 +71,7 @@
 		<module name="ModifierOrder"/>
 		<module name="MissingSwitchDefault"/>
 		<module name="OneStatementPerLine"/>
+		<module name="OneTopLevelClass"/>
 		<module name="OuterTypeFilename"/>
 		<module name="OverloadMethodsDeclarationOrder"/>
 		<module name="PackageAnnotation"/>
@@ -93,9 +97,9 @@
 		<module name="StringLiteralEquality"/>
 		<module name="SuperFinalize"/>
 		<module name="TypecastParenPad"/>
-        <module name="UnusedImports">
-            <property name="processJavadoc" value="true"/>
-        </module>
+		<module name="UnusedImports">
+			<property name="processJavadoc" value="true"/>
+		</module>
 
 		<!--
 		<module name="JavadocMethod">
@@ -106,10 +110,15 @@
 			<property name="allowMissingReturnTag" value="true"/>
 			<property name="allowThrowsTagsForSubclasses" value="true"/>
 		</module>
-        <module name="JavadocType"/>
-        <module name="JavadocVariable"/>
-        <module name="JavadocStyle"/>
+		<module name="JavadocType"/>
+		<module name="JavadocVariable"/>
+		<module name="JavadocStyle"/>
 		-->
+	</module>
+	<module name="Header">
+		<property name="headerFile" value="src/main/licence/java.txt"/>
+		<property name="ignoreLines" value="4"/>
+		<property name="fileExtensions" value="java"/>
 	</module>
 	<module name="NewlineAtEndOfFile">
 		<property name="fileExtensions" value="java, xml, properties"/>
