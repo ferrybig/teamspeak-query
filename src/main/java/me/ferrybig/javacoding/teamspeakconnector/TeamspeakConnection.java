@@ -50,7 +50,7 @@ import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedChannelGroup
 import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedFile;
 import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedGroup;
 import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedPrivilegeKey;
-import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedServer;
+import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedServerWithId;
 import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedUser;
 import me.ferrybig.javacoding.teamspeakconnector.entities.User;
 import me.ferrybig.javacoding.teamspeakconnector.event.ChannelMessageEvent;
@@ -75,6 +75,7 @@ import static me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Response;
 import me.ferrybig.javacoding.teamspeakconnector.repository.GroupRepository;
 import me.ferrybig.javacoding.teamspeakconnector.repository.PrivilegeKeyRepository;
+import me.ferrybig.javacoding.teamspeakconnector.repository.ServerRepository;
 
 @ThreadSafe
 public class TeamspeakConnection implements Closeable {
@@ -106,6 +107,10 @@ public class TeamspeakConnection implements Closeable {
 
 	@GuardedBy(value = "repositoryLock")
 	private volatile WeakReference<PrivilegeKeyRepository> privilegeKeys
+			= new WeakReference<>(null);
+
+	@GuardedBy(value = "repositoryLock")
+	private volatile WeakReference<ServerRepository> servers
 			= new WeakReference<>(null);
 
 	public TeamspeakConnection(TeamspeakIO channel) {
@@ -205,8 +210,9 @@ public class TeamspeakConnection implements Closeable {
 		throw new UnsupportedOperationException(); // TODO;
 	}
 
-	public UnresolvedServer getUnresolvedServerById(int id) {
-		return new UnresolvedServer(this, id);
+	@Deprecated
+	public UnresolvedServerWithId getUnresolvedServerById(int id) {
+		return servers().unresolved(id);
 	}
 
 	@Deprecated
@@ -214,12 +220,9 @@ public class TeamspeakConnection implements Closeable {
 		return privilegeKeys().unresolved(token);
 	}
 
-	public Future<UnresolvedServer> getUnresolvedServerByPort(int port) {
-		return this.io.chainFuture(
-				this.io.sendPacket(Command.SERVER_ID_GET_BY_PORT
-						.addData("virtualserver_port", port).build()),
-				p -> getUnresolvedServerById(Integer.parseInt(
-						p.getCommands().get(0).get("server_id"))));
+	@Deprecated
+	public Future<UnresolvedServerWithId> getUnresolvedServerByPort(int port) {
+		return servers().unresolvedByPort(port).resolveTillId();
 	}
 
 	public Future<User> getUserById(int id) {
@@ -256,10 +259,9 @@ public class TeamspeakConnection implements Closeable {
 		return privilegeKeys().getById(token);
 	}
 
+	@Deprecated
 	public Future<Server> getServer() {
-		return mapping().mapComplexReponse(io.sendPacket(
-				Command.SERVER_INFO.build()),
-				mapping()::mapServer);
+		return servers().getSelected();
 	}
 
 	public Future<TeamspeakConnection> login(String username, String password) {
@@ -283,10 +285,9 @@ public class TeamspeakConnection implements Closeable {
 		);
 	}
 
+	@Deprecated
 	public Future<List<Server>> getServerList() {
-		return mapping().mapComplexReponseList(io.sendPacket(
-				Command.SERVER_LIST.addOption("virtual").build()),
-				mapping()::mapServer);
+		return servers().list();
 	}
 
 	public Future<List<Channel>> getChannelList() {
@@ -342,6 +343,7 @@ public class TeamspeakConnection implements Closeable {
 
 	/**
 	 * Gets a group by id
+	 *
 	 * @param serverGroupId id of the group
 	 * @return a future pointed at the group with id serverGroupId
 	 * @deprecated Use {@code groups().getById(serverGroupId)} instead
@@ -354,6 +356,7 @@ public class TeamspeakConnection implements Closeable {
 
 	/**
 	 * Get the server group list
+	 *
 	 * @return a future pointed at the server group list
 	 * @deprecated Use {@code groups().list()} instead
 	 */
@@ -392,6 +395,23 @@ public class TeamspeakConnection implements Closeable {
 			}
 			repo = new PrivilegeKeyRepository(this);
 			privilegeKeys = new WeakReference<>(repo);
+		}
+		return repo;
+	}
+
+	@Nonnull
+	public ServerRepository servers() {
+		ServerRepository repo = servers.get();
+		if (repo != null) {
+			return repo;
+		}
+		synchronized (repositoryLock) {
+			repo = servers.get();
+			if (repo != null) {
+				return repo;
+			}
+			repo = new ServerRepository(this);
+			servers = new WeakReference<>(repo);
 		}
 		return repo;
 	}

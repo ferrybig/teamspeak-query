@@ -166,6 +166,11 @@ public class TeamspeakIO {
 		return FutureUtil.chainFuture(newPromise(), future, mapping);
 	}
 
+	public <T, R> Future<R> chainFutureFlat(
+			Future<T> future, Function<T, Future<R>> mapping) {
+		return FutureUtil.chainFutureFlat(newPromise(), future, mapping);
+	}
+
 	public <T, R> Future<R> chainFutureAdvanced(
 			Future<T> future, BiExFunction<T, Throwable, R> mapping) {
 		return FutureUtil.chainFutureAdvanced(newPromise(), future, mapping);

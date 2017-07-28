@@ -41,7 +41,6 @@ import me.ferrybig.javacoding.teamspeakconnector.TeamspeakCommandException;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
 import me.ferrybig.javacoding.teamspeakconnector.entities.Channel;
 import me.ferrybig.javacoding.teamspeakconnector.entities.File;
-import me.ferrybig.javacoding.teamspeakconnector.entities.Server;
 import me.ferrybig.javacoding.teamspeakconnector.entities.ShallowUser;
 import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedChannel;
 import me.ferrybig.javacoding.teamspeakconnector.entities.User;
@@ -64,25 +63,6 @@ public class Mapper {
 			LOG.log(Level.FINE, "Trying to convert address to ip failed", ex);
 			return null;
 		}
-	}
-
-	public Server mapServer(Map<String, String> data) {
-		return new Server(con,
-				Integer.parseInt(data.get("virtualserver_id")),
-				Integer.parseInt(data.get("virtualserver_port")),
-				resolveEnum(Server.Status.class,
-						data.get("virtualserver_status")),
-				Integer.parseInt(
-						data.getOrDefault("virtualserver_clientsonline", "0")),
-				Integer.parseInt(
-						data.getOrDefault(
-								"virtualserver_queryclientsonline", "0")),
-				Integer.parseInt(
-						data.getOrDefault("virtualserver_maxclients", "0")),
-				Integer.parseInt(
-						data.getOrDefault("virtualserver_uptime", "0")),
-				data.get("virtualserver_name"),
-				data.get("virtualserver_autostart").equals("1"));
 	}
 
 	public Channel mapChannel(Map<String, String> data) {

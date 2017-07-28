@@ -23,9 +23,9 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.entities;
 
-import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
+import me.ferrybig.javacoding.teamspeakconnector.repository.ServerRepository;
 
-public class Server extends UnresolvedServer {
+public class Server extends UnresolvedServerWithId {
 
 	private final int port;
 	private final Status status;
@@ -36,10 +36,10 @@ public class Server extends UnresolvedServer {
 	private final String name;
 	private final boolean autostart;
 
-	public Server(TeamspeakConnection con, int sid, int port, Status status,
+	public Server(ServerRepository repo, int sid, int port, Status status,
 			int clientsOnline, int queryClientsOnline, int maxClients,
 			int uptime, String name, boolean autostart) {
-		super(con, sid);
+		super(repo, sid);
 		this.port = port;
 		this.status = status;
 		this.clientsOnline = clientsOnline;

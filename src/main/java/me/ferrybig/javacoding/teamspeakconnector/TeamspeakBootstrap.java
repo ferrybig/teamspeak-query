@@ -526,19 +526,16 @@ public class TeamspeakBootstrap {
 		Integer virtualServerId = this.virtualServerId;
 		if (virtualServerId != null) {
 			connection = FutureUtil.chainFutureFlat(
-					next.newPromise(),
-					connection,
-					con -> con
-							.getUnresolvedServerById(virtualServerId).select());
+					next.newPromise(), connection,
+					con -> con .servers().unresolved(virtualServerId)
+							.select());
 		}
 		Integer virtualServerPort = this.virtualServerPort;
 		if (virtualServerPort != null) {
 			connection = FutureUtil.chainFutureFlat(
-					next.newPromise(),
-					connection,
-					con -> FutureUtil.chainFutureFlat(next.newPromise(),
-							con.getUnresolvedServerByPort(virtualServerPort),
-							server -> server.select()));
+					next.newPromise(), connection,
+					con -> con.servers().unresolvedByPort(virtualServerPort)
+							.select());
 		}
 		String clientName = this.clientName;
 		if (clientName != null) {

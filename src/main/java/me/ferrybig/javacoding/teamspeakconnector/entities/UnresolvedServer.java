@@ -24,41 +24,19 @@
 package me.ferrybig.javacoding.teamspeakconnector.entities;
 
 import io.netty.util.concurrent.Future;
+import me.ferrybig.javacoding.teamspeakconnector.Resolvable;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
-import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command;
 
-public class UnresolvedServer {
+/**
+ *
+ * @author Fernando van Loenhout
+ */
+public interface UnresolvedServer extends Resolvable<Server> {
 
-	protected final TeamspeakConnection con;
-	private final int sid;
+	public Future<TeamspeakConnection> select();
 
-	public UnresolvedServer(TeamspeakConnection con, int sid) {
-		this.con = con;
-		this.sid = sid;
-	}
+	public Future<TeamspeakConnection> start();
 
-	public Future<TeamspeakConnection> select() {
-		return con.io().chainFuture(
-				con.io().sendPacket(Command.USE.addData("sid",
-						String.valueOf(sid)).addOption("virtual").build()),
-				ignored -> con).addListener(future -> {
-					if (future.isSuccess()) {
-						con.io().notifyServerChanged();
-					}
-				});
-	}
+	public Future<TeamspeakConnection> stop();
 
-	public Future<TeamspeakConnection> stop() {
-		return con.io().chainFuture(
-				con.io().sendPacket(Command.SERVER_STOP
-						.addData("sid", sid).build()),
-				ignored -> con);
-	}
-
-	public Future<TeamspeakConnection> start() {
-		return con.io().chainFuture(
-				con.io().sendPacket(Command.SERVER_START
-						.addData("sid", sid).build()),
-				ignored -> con);
-	}
 }
