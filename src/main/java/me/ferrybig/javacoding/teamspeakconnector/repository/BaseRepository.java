@@ -29,22 +29,48 @@ import javax.annotation.Nonnull;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
 
 /**
+ * Base interface for all repository interfaces
  *
- * @author Fernando van Loenhout
+ * @param <T> type that this repository returns
  */
 public interface BaseRepository<T> {
 
+	/**
+	 * Deletes an object
+	 *
+	 * @param type object to delete
+	 * @return a future containing the deletion result
+	 */
 	@Nonnull
 	public default Future<?> delete(T type) {
 		return delete(type, false);
 	}
 
+	/**
+	 * Deletes an object, optionally with force
+	 *
+	 * @param type object to delete
+	 * @param force should deletion be forced, this usually means bypassing any
+	 * in use status if this object has that kind of status
+	 * @return a future containing the deletion result
+	 */
 	@Nonnull
 	public Future<?> delete(T type, boolean force);
 
+	/**
+	 * Gets the {@code TeamspeakConnection} that this repository contains
+	 *
+	 * @return the {@code TeamspeakConnection} that this repository contains
+	 */
 	@Nonnull
 	public TeamspeakConnection getConnection();
 
+	/**
+	 * Gets a list of objects of this type
+	 *
+	 * @return A future containing the list of objects of this type, should
+	 * never wrap a null
+	 */
 	@Nonnull
 	public Future<List<T>> list();
 

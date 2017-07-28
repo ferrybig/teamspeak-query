@@ -29,27 +29,55 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.ThreadSafe;
 
 /**
+ * Repository that allows its objects to be exposed over any object as key keys
  *
  * @param <T> class that this repository contains
- * @param <I> Id representing the types
+ * @param <I> Id representing the key of the types
  */
 @ThreadSafe
 @ParametersAreNonnullByDefault
 public interface ObjectRepository<T, I> extends BaseRepository<T> {
 
+	/**
+	 * Deletes an object by its id
+	 *
+	 * @param id id to delete
+	 * @return a future containing the deletion result
+	 */
 	@Nonnull
 	public default Future<?> deleteById(I id) {
 		return deleteById(id, false);
 	}
 
+	/**
+	 * Deletes an object by its id, optionally with force
+	 *
+	 * @param id id to delete
+	 * @param force should deletion be forced, this usually means bypassing any
+	 * in use status if this object has that kind of status
+	 * @return a future containing the deletion result
+	 */
 	@Nonnull
 	public Future<?> deleteById(I id, boolean force);
 
+	/**
+	 * Gets an object by its id
+	 *
+	 * @param id id to get
+	 * @return a future containing the received object
+	 */
 	@Nonnull
 	public default Future<T> getById(I id) {
 		return getById(id, false);
 	}
 
+	/**
+	 * Gets an object by its id, optionally bypassing any cached values
+	 *
+	 * @param id id to get
+	 * @param force should this retrieval bypass any cached values
+	 * @return a future containing the received object
+	 */
 	@Nonnull
 	public Future<T> getById(I id, boolean force);
 
