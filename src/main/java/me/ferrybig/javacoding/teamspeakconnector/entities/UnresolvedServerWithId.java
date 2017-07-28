@@ -86,4 +86,29 @@ public class UnresolvedServerWithId implements UnresolvedServer {
 	public boolean isResolved() {
 		return false;
 	}
+
+	@Override
+	public final int hashCode() {
+		int hash = 5;
+		hash = 89 * hash + this.sid;
+		return hash;
+	}
+
+	@Override
+	public final boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof UnresolvedServerWithId)) {
+			return false;
+		}
+		final UnresolvedServerWithId other = (UnresolvedServerWithId) obj;
+		if (this.sid != other.sid) {
+			return false;
+		}
+		return true;
+	}
 }

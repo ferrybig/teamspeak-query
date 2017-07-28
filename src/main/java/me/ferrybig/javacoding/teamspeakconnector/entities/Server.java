@@ -23,6 +23,7 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.entities;
 
+import io.netty.util.concurrent.Future;
 import me.ferrybig.javacoding.teamspeakconnector.repository.ServerRepository;
 
 public class Server extends UnresolvedServerWithId {
@@ -89,6 +90,16 @@ public class Server extends UnresolvedServerWithId {
 		BOOTING_UP,
 		SHUTTING_DOWN,
 		ONLINE_VIRTUAL
+	}
+
+	@Override
+	public boolean isResolved() {
+		return true;
+	}
+
+	@Override
+	public Future<Server> resolve() {
+		return repo.getConnection().io().getCompletedFuture(this);
 	}
 
 }

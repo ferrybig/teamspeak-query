@@ -94,4 +94,29 @@ public class UnresolvedServerWithPort implements UnresolvedServer {
 	public boolean isResolved() {
 		return false;
 	}
+
+	@Override
+	public final int hashCode() {
+		int hash = 5;
+		hash = 89 * hash + this.port;
+		return hash;
+	}
+
+	@Override
+	public final boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof UnresolvedServerWithPort)) {
+			return false;
+		}
+		final UnresolvedServerWithPort other = (UnresolvedServerWithPort) obj;
+		if (this.port != other.port) {
+			return false;
+		}
+		return true;
+	}
 }
