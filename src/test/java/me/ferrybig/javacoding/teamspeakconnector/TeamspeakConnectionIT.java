@@ -109,7 +109,7 @@ public class TeamspeakConnectionIT {
 		channel.forEach(System.out::println);
 
 		System.out.println("Group list");
-		final List<Group> groups = con.getGroups().sync().get();
+		final List<Group> groups = con.groups().list().get();
 		groups.forEach(System.out::println);
 
 		Optional<Group> bottest = groups.stream().filter(g -> (g.getType() == Group.Type.REGULAR) && g.getName().equals("BotTest")).findAny();
@@ -245,7 +245,7 @@ public class TeamspeakConnectionIT {
 		assumeConnectionWorking(connect);
 		TeamspeakConnection con = connect.sync().get();
 
-		final List<Group> groups = con.getGroups().sync().get();
+		final List<Group> groups = con.groups().list().get();
 
 		Optional<Group> bottest = groups.stream().filter(g -> (g.getType() == Group.Type.REGULAR) && g.getName().equals("BotTest")).findAny();
 
