@@ -14,5 +14,10 @@
 		Any value defined here will override the pom.xml file value but is only applicable to the current project.
 		-->
 		<netbeans.hint.license>mit</netbeans.hint.license>
+		<!-- Windows line endings should be checked out
+		<com-junichi11-netbeans-changelf.enable>true</com-junichi11-netbeans-changelf.enable>
+		<com-junichi11-netbeans-changelf.use-project>true</com-junichi11-netbeans-changelf.use-project>
+		<com-junichi11-netbeans-changelf.use-global>false</com-junichi11-netbeans-changelf.use-global>
+		-->
 	</properties>
 </project-shared-configuration>
