@@ -73,6 +73,7 @@ import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command;
 import static me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command.SERVER_NOTIFY_REGISTER;
 import static me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command.SERVER_NOTIFY_UNREGISTER;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Response;
+import me.ferrybig.javacoding.teamspeakconnector.repository.ChannelRepository;
 import me.ferrybig.javacoding.teamspeakconnector.repository.GroupRepository;
 import me.ferrybig.javacoding.teamspeakconnector.repository.PrivilegeKeyRepository;
 import me.ferrybig.javacoding.teamspeakconnector.repository.ServerRepository;
@@ -104,13 +105,14 @@ public class TeamspeakConnection implements Closeable {
 	@GuardedBy(value = "repositoryLock")
 	private volatile WeakReference<GroupRepository> groups
 			= new WeakReference<>(null);
-
 	@GuardedBy(value = "repositoryLock")
 	private volatile WeakReference<PrivilegeKeyRepository> privilegeKeys
 			= new WeakReference<>(null);
-
 	@GuardedBy(value = "repositoryLock")
 	private volatile WeakReference<ServerRepository> servers
+			= new WeakReference<>(null);
+	@GuardedBy(value = "repositoryLock")
+	private volatile WeakReference<ChannelRepository> channels
 			= new WeakReference<>(null);
 
 	public TeamspeakConnection(TeamspeakIO channel) {
@@ -187,8 +189,9 @@ public class TeamspeakConnection implements Closeable {
 		return serverHandler;
 	}
 
+	@Deprecated
 	public UnresolvedChannel getUnresolvedChannelById(int id) {
-		return new UnresolvedChannel(this, id);
+		return channels().unresolved(id);
 	}
 
 	@Deprecated
@@ -242,16 +245,9 @@ public class TeamspeakConnection implements Closeable {
 		return new NamedUser(this, id, nickname, uniqueId);
 	}
 
+	@Deprecated
 	public Future<Channel> getChannelById(int id) {
-		return mapping().mapComplexReponse(io.sendPacket(
-				Command.CHANNEL_INFO
-						.addData("cid", String.valueOf(id))
-						.build()),
-				m -> {
-					// This is needed because teamspeak doesn't repeat our send channel id
-					m.put("cid", String.valueOf(id));
-					return mapping().mapChannel(m);
-				});
+		return channels().getById(id);
 	}
 
 	@Deprecated
@@ -290,12 +286,9 @@ public class TeamspeakConnection implements Closeable {
 		return servers().list();
 	}
 
+	@Deprecated
 	public Future<List<Channel>> getChannelList() {
-		return mapping().mapComplexReponseList(io.sendPacket(
-				Command.CHANNEL_LIST.addOption("topic").addOption("flags")
-						.addOption("voice").addOption("limits")
-						.addOption("icon").build()),
-				mapping()::mapChannel);
+		return channels().list();
 	}
 
 	public Future<List<User>> getUsersList() {
@@ -412,6 +405,23 @@ public class TeamspeakConnection implements Closeable {
 			}
 			repo = new ServerRepository(this);
 			servers = new WeakReference<>(repo);
+		}
+		return repo;
+	}
+
+	@Nonnull
+	public ChannelRepository channels() {
+		ChannelRepository repo = channels.get();
+		if (repo != null) {
+			return repo;
+		}
+		synchronized (repositoryLock) {
+			repo = channels.get();
+			if (repo != null) {
+				return repo;
+			}
+			repo = new ChannelRepository(this);
+			channels = new WeakReference<>(repo);
 		}
 		return repo;
 	}

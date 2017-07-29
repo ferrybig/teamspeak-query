@@ -23,12 +23,11 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.entities;
 
-import io.netty.util.concurrent.Future;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
+import me.ferrybig.javacoding.teamspeakconnector.repository.ChannelRepository;
 
 /**
  * A Teamspeak channel, a channel has an optional parent channel, and a required
@@ -36,7 +35,7 @@ import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
  */
 @Nonnull
 @ParametersAreNonnullByDefault
-public class Channel extends NamedChannel {
+public class Channel extends UnresolvedChannelWithName {
 
 	private final int order;
 	private UnresolvedChannel parent;
@@ -82,14 +81,14 @@ public class Channel extends NamedChannel {
 	 * @param codec Codec used in this channel
 	 * @param codecQuality Codec quality
 	 */
-	public Channel(TeamspeakConnection con, int cid, int order,
+	public Channel(ChannelRepository repo, int cid, int order,
 			@Nullable UnresolvedChannel parent, String name, String topic,
 			boolean password, int neededSubscribePower, int neededTalkPower,
 			boolean defaultChannel, boolean permanent, int iconId,
 			int totalClientsFamily, int maxFamilyClients, int maxClients,
 			int totalClients, boolean semiPermanent, Codec codec,
 			int codecQuality) {
-		super(con, cid, name);
+		super(repo, cid, name);
 		this.order = order;
 		this.parent = parent;
 		this.topic = topic;
@@ -174,13 +173,13 @@ public class Channel extends NamedChannel {
 		return codecQuality;
 	}
 
-	public void setParent(@Nullable UnresolvedChannel parent) {
-		this.parent = parent; // TODO: make package private
-	}
-
-	@Override
-	public Future<Channel> resolv() {
-		return con.io().getChannel().eventLoop().newSucceededFuture(this);
+	public void replaceParentReference(@Nullable UnresolvedChannel parent) {
+		if(!this.parent.equals(parent) 
+				|| this.parent.hashCode() != parent.hashCode()) { 
+			throw new IllegalArgumentException(
+					"changed parents don't have the same equality");
+		}
+		this.parent = parent;
 	}
 
 	@Override

@@ -25,26 +25,29 @@ package me.ferrybig.javacoding.teamspeakconnector.entities;
 
 import io.netty.util.concurrent.Future;
 import java.util.List;
-import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
+import me.ferrybig.javacoding.teamspeakconnector.Resolvable;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command;
+import me.ferrybig.javacoding.teamspeakconnector.repository.ChannelRepository;
 
-public class UnresolvedChannel {
+public class UnresolvedChannel implements Resolvable<Channel> {
 
-	protected final TeamspeakConnection con;
+	protected final ChannelRepository repo;
 
 	private final int id;
 
-	public UnresolvedChannel(TeamspeakConnection con, int id) {
-		this.con = con;
+	public UnresolvedChannel(ChannelRepository repo, int id) {
+		this.repo = repo;
 		this.id = id;
 	}
 
-	public Future<Channel> resolv() {
-		return forceResolv();
+	@Override
+	public Future<Channel> forceResolve() {
+		return repo.get(this, true);
 	}
 
-	public Future<Channel> forceResolv() {
-		return con.getChannelById(id);
+	@Override
+	public Future<Channel> resolve() {
+		return repo.get(this);
 	}
 
 	public int getId() {
@@ -61,15 +64,21 @@ public class UnresolvedChannel {
 	}
 
 	public Future<List<File>> getFileTransferList(String path) {
-		return con.mapping().mapComplexReponseList(con.io().sendPacket(
+		return repo.getConnection().mapping().mapComplexReponseList(repo.getConnection().io().sendPacket(
 				Command.FT_GET_FILE_LIST.addData("cid",
 						getId()).addData("path", path).build()),
-				con.mapping()::mapFile);
+				repo.getConnection().mapping()::mapFile);
 	}
 
 	public Future<?> moveInto(UnresolvedUser user) {
-		return con.io().sendPacket(Command.CLIENT_MOVE.addData("cid",
-				getId()).addData("clid", user.getId()).build());
+		return repo.getConnection().io().sendPacket(Command.CLIENT_MOVE
+				.addData("cid", getId()).addData("clid", user.getId())
+				.build());
+	}
+
+	@Override
+	public boolean isResolved() {
+		return false;
 	}
 
 }

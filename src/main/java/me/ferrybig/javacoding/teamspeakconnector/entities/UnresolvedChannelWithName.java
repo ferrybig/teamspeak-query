@@ -23,14 +23,14 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.entities;
 
-import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
+import me.ferrybig.javacoding.teamspeakconnector.repository.ChannelRepository;
 
-public class NamedChannel extends UnresolvedChannel {
+public class UnresolvedChannelWithName extends UnresolvedChannel {
 
 	private final String name;
 
-	public NamedChannel(TeamspeakConnection con, int id, String name) {
-		super(con, id);
+	public UnresolvedChannelWithName(ChannelRepository repo, int id, String name) {
+		super(repo, id);
 		this.name = name;
 	}
 
@@ -40,7 +40,7 @@ public class NamedChannel extends UnresolvedChannel {
 
 	@Override
 	public String toString() {
-		return "NamedChannel{" + "id=" + getId() + ",name=" + getName() + '}';
+		return "UnresolvedChannelWithName{" + "id=" + getId() + ",name=" + getName() + '}';
 	}
 
 }

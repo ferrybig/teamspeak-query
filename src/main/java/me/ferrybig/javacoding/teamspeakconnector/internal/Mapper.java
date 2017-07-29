@@ -39,10 +39,8 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakCommandException;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
-import me.ferrybig.javacoding.teamspeakconnector.entities.Channel;
 import me.ferrybig.javacoding.teamspeakconnector.entities.File;
 import me.ferrybig.javacoding.teamspeakconnector.entities.ShallowUser;
-import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedChannel;
 import me.ferrybig.javacoding.teamspeakconnector.entities.User;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexResponse;
 
@@ -63,33 +61,6 @@ public class Mapper {
 			LOG.log(Level.FINE, "Trying to convert address to ip failed", ex);
 			return null;
 		}
-	}
-
-	public Channel mapChannel(Map<String, String> data) {
-		return new Channel(con,
-				Integer.parseInt(data.get("cid")),
-				Integer.parseInt(data.get("channel_order")),
-				con.getUnresolvedChannelById(Integer.parseInt(data.get("pid"))),
-				data.get("channel_name"), data.get("channel_topic"),
-				data.get("channel_flag_password").equals("1"),
-				// Not sure why this one is missing with `channelinfo`
-				Integer.parseInt(data.getOrDefault(
-						"channel_needed_subscribe_power", "0")),
-				Integer.parseInt(data.get("channel_needed_talk_power")),
-				data.get("channel_flag_default").equals("1"),
-				data.get("channel_flag_permanent").equals("1"),
-				Integer.parseInt(data.get("channel_icon_id")),
-				// These are missing with `channelinfo`
-				Integer.parseInt(
-						data.getOrDefault("total_clients_family", "0")),
-				Integer.parseInt(
-						data.getOrDefault("channel_maxfamilyclients", "0")),
-				Integer.parseInt(data.get("channel_maxclients")),
-				Integer.parseInt(data.getOrDefault("total_clients", "0")),
-				data.get("channel_flag_semi_permanent").equals("1"),
-				Channel.Codec.getById(
-						Integer.parseInt(data.get("channel_codec"))),
-				Integer.parseInt(data.get("channel_codec_quality")));
 	}
 
 	public User mapUser(Map<String, String> data) {
@@ -243,21 +214,6 @@ public class Mapper {
 
 	public <E extends Enum<E>> E resolveEnum(Class<E> enu, String var) {
 		return Enum.valueOf(enu, var.toUpperCase().replace(' ', '_'));
-	}
-
-	private Map<Integer, Channel> mapChannelParents(
-			Map<Integer, Channel> list) {
-		for (Channel c : list.values()) {
-			UnresolvedChannel parentUnresolved = c.getParent();
-			if (parentUnresolved == null) {
-				continue;
-			}
-			Channel parent = list.get(parentUnresolved.getId());
-			if (parent != null) {
-				c.setParent(parent);
-			}
-		}
-		return list;
 	}
 
 }
