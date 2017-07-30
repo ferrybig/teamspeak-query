@@ -84,7 +84,14 @@ public class ChannelRepository extends AbstractIntResolvableRepository<Unresolve
 
 	@Override
 	protected ComplexRequest requestList() {
-		return Command.CHANNEL_LIST.build();
+		return Command.CHANNEL_LIST
+				.addOption("topic")
+				.addOption("flags")
+				.addOption("voice")
+				.addOption("limits")
+				.addOption("icon")
+				.addOption("secondsempty")
+				.build();
 	}
 
 	@Override
@@ -104,6 +111,12 @@ public class ChannelRepository extends AbstractIntResolvableRepository<Unresolve
 				});
 	}
 
+	/**
+	 * Requests a list of channels, these channels are ordered in the way a
+	 * normal Teamspeak 3 client would show them.
+	 *
+	 * @return a future containing Teamspeak channels
+	 */
 	@Override
 	public Future<List<Channel>> list() {
 		return connection.mapping().mapComplexReponseList(
@@ -112,6 +125,12 @@ public class ChannelRepository extends AbstractIntResolvableRepository<Unresolve
 				this::mapChannelParents);
 	}
 
+	/**
+	 * Finds channels by name
+	 *
+	 * @param name name to search for (case insensitive)
+	 * @return a future containing a list of the results
+	 */
 	@Nonnull
 	public Future<List<UnresolvedChannelWithName>> findByName(String name) {
 		return connection.mapping().mapComplexReponseList(
@@ -120,18 +139,40 @@ public class ChannelRepository extends AbstractIntResolvableRepository<Unresolve
 				this::readEntity);
 	}
 
+	/**
+	 * Finds resolved channels by name
+	 *
+	 * @param name name to search for (case insensitive)
+	 * @return a future containing a list of the results
+	 */
 	@Nonnull
 	public Future<List<Channel>> findByNameAndResolv(String name) {
 		return findByRegexAndResolv(Pattern.quote(name), Pattern.CASE_INSENSITIVE);
 	}
 
+	/**
+	 * Finds resolved channels by name, matched by regex
+	 *
+	 * @param regex regex to search for
+	 * @param flags flags to apply to the regex, see {@link Pattern}
+	 * @return a future containing a list of the results
+	 * @see Pattern#compile(java.lang.String, int)
+	 */
 	@Nonnull
 	public Future<List<Channel>> findByRegexAndResolv(@RegEx String regex, int flags) {
 		return findByRegexAndResolv(Pattern.compile(regex, flags));
 	}
 
+	/**
+	 * Finds resolved channels by name, matched by regex
+	 *
+	 * @param pattern Compiled regex to search for
+	 * @return a future containing a list of the results
+	 * @see Pattern#compile(java.lang.String, int)
+	 */
 	@Nonnull
 	public Future<List<Channel>> findByRegexAndResolv(Pattern pattern) {
+		Objects.requireNonNull(pattern, "pattern");
 		Predicate<String> predicate = pattern.asPredicate();
 		return io.chainFuture(list(),
 				l -> l.stream()
@@ -147,7 +188,6 @@ public class ChannelRepository extends AbstractIntResolvableRepository<Unresolve
 	 */
 	@Override
 	protected Channel readEntity(Map<String, String> data) {
-
 		return new Channel(this,
 				Integer.parseInt(data.get("cid")),
 				Integer.parseInt(data.get("channel_order")),

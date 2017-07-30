@@ -23,8 +23,10 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.entities;
 
+import javax.annotation.concurrent.Immutable;
 import me.ferrybig.javacoding.teamspeakconnector.repository.ChannelRepository;
 
+@Immutable
 public class UnresolvedChannelWithName extends UnresolvedChannel {
 
 	private final String name;
@@ -41,6 +43,17 @@ public class UnresolvedChannelWithName extends UnresolvedChannel {
 	@Override
 	public String toString() {
 		return "UnresolvedChannelWithName{" + "id=" + getId() + ",name=" + getName() + '}';
+	}
+
+	@Override
+	@SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
+	public boolean equals(Object obj) {
+		return super.equals(obj);
+	}
+
+	@Override
+	public int hashCode() {
+		return super.hashCode();
 	}
 
 }

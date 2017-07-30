@@ -27,6 +27,7 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import javax.annotation.concurrent.Immutable;
 import me.ferrybig.javacoding.teamspeakconnector.repository.ChannelRepository;
 
 /**
@@ -34,6 +35,7 @@ import me.ferrybig.javacoding.teamspeakconnector.repository.ChannelRepository;
  * name.
  */
 @Nonnull
+@Immutable
 @ParametersAreNonnullByDefault
 public class Channel extends UnresolvedChannelWithName {
 
@@ -57,7 +59,7 @@ public class Channel extends UnresolvedChannelWithName {
 	/**
 	 * Creates a Teamspeak channel object
 	 *
-	 * @param con connection that created this object
+	 * @param repo connection that created this object
 	 * @param cid id of this channel
 	 * @param order Sorting order of this channel
 	 * @param parent Parent channel, may be null
@@ -173,11 +175,11 @@ public class Channel extends UnresolvedChannelWithName {
 		return codecQuality;
 	}
 
-	public void replaceParentReference(@Nullable UnresolvedChannel parent) {
-		if(!this.parent.equals(parent) 
-				|| this.parent.hashCode() != parent.hashCode()) { 
+	public void replaceParentReference(@Nonnull UnresolvedChannel parent) {
+		if (!this.parent.equals(parent)
+				|| this.parent.hashCode() != parent.hashCode()) {
 			throw new IllegalArgumentException(
-					"changed parents don't have the same equality");
+					"changed parents don't have the same equality: " + this.parent + " vs " + parent);
 		}
 		this.parent = parent;
 	}
@@ -201,6 +203,17 @@ public class Channel extends UnresolvedChannelWithName {
 
 	public boolean isSpacer() {
 		return getName().startsWith("[spacer") && getName().indexOf(']') > 0;
+	}
+
+	@Override
+	@SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
+	public boolean equals(Object obj) {
+		return super.equals(obj);
+	}
+
+	@Override
+	public int hashCode() {
+		return super.hashCode();
 	}
 
 	public enum Codec {

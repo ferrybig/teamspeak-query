@@ -25,10 +25,12 @@ package me.ferrybig.javacoding.teamspeakconnector.entities;
 
 import io.netty.util.concurrent.Future;
 import java.util.List;
+import javax.annotation.concurrent.Immutable;
 import me.ferrybig.javacoding.teamspeakconnector.Resolvable;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command;
 import me.ferrybig.javacoding.teamspeakconnector.repository.ChannelRepository;
 
+@Immutable
 public class UnresolvedChannel implements Resolvable<Channel> {
 
 	protected final ChannelRepository repo;
@@ -79,6 +81,31 @@ public class UnresolvedChannel implements Resolvable<Channel> {
 	@Override
 	public boolean isResolved() {
 		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 17 * hash + this.id;
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof UnresolvedChannel)) {
+			return false;
+		}
+		final UnresolvedChannel other = (UnresolvedChannel) obj;
+		if (this.id != other.id) {
+			return false;
+		}
+		return true;
 	}
 
 }

@@ -66,6 +66,16 @@ public abstract class AbstractIntResolvableRepository<U extends Resolvable<? ext
 	@Nonnull
 	public abstract U unresolved(int id);
 
+	/**
+	 * Gets the id from an unresolved object.
+	 *
+	 * The general contract for {@code getId} is that it does the reverse of
+	 * {@code unresolved}, more specific, for any non-null input, the following
+	 * expression should be true: {@code obj.equals(unresolved(getId(obj))}
+	 *
+	 * @param value object to get the id from
+	 * @return
+	 */
 	@Nonnull
 	protected abstract int getId(U value);
 
