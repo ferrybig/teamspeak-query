@@ -5,27 +5,23 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector;
 
-import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.concurrent.Future;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import me.ferrybig.javacoding.teamspeakconnector.entities.Channel;
 import me.ferrybig.javacoding.teamspeakconnector.entities.Group;
 import me.ferrybig.javacoding.teamspeakconnector.entities.PrivilegeKey;
 import me.ferrybig.javacoding.teamspeakconnector.entities.User;
 import static me.ferrybig.javacoding.teamspeakconnector.util.FutureUtil.waitSync;
-import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import org.junit.Assume;
 import static org.junit.Assume.assumeTrue;
 import org.junit.Test;
 
@@ -33,66 +29,7 @@ import org.junit.Test;
  *
  *
  */
-public class TeamspeakConnectionIT {
-
-	private static final Logger LOG = Logger.getLogger(TeamspeakConnectionIT.class.getName());
-
-	private static final NioEventLoopGroup group = new NioEventLoopGroup();
-
-	@AfterClass
-	public static void afterClass() {
-		group.shutdownGracefully();
-	}
-
-	private TeamspeakBootstrap creatBootstrap() {
-		TeamspeakBootstrap ts = new TeamspeakBootstrap(group);
-
-		String username = System.getProperty("teamspesk3.username", "");
-		if (username.isEmpty()) {
-			username = "serveradmin";
-		}
-		String password = System.getProperty("teamspeak3.password", "");
-		if (password.isEmpty()) {
-			password = "test1234";
-		}
-		ts.login(username, password);
-		ts.selectServerID(1);
-		ts.clientName("TestingBot");
-		return ts;
-	}
-
-	private Future<TeamspeakConnection> createConnection() {
-		return createConnection("TestingBot");
-	}
-
-	private Future<TeamspeakConnection> createConnection(String clientname) {
-		String hostname = System.getProperty("teamspeak3.hostname", "");
-		if (hostname.isEmpty()) {
-			hostname = "localhost";
-		}
-		int port = Integer.parseInt(System.getProperty("teamspeak3.port", "").isEmpty()
-				? String.valueOf(TeamspeakBootstrap.DEFAULT_QUERY_PORT)
-				: System.getProperty("teamspeak3.port"));
-		return creatBootstrap().clientName(clientname).connect(hostname, port);
-	}
-
-	private void assumeConnectionWorking(Future<TeamspeakConnection>... cons)
-			throws InterruptedException {
-		if (Boolean.valueOf(System.getProperty("teamspeak3.required"))) {
-			return;
-		}
-		for (Future<TeamspeakConnection> con : cons) {
-			con.await();
-			if (!con.isSuccess()) {
-				if (con.cause().getCause() instanceof ConnectException) {
-					Assume.assumeFalse("Cannot connect to teamspeak server, "
-							+ "check the maven vales teamspeak3.hostname, "
-							+ "teamspeak3.port, teamspeak3.username, "
-							+ "teamspeak3.password", true);
-				}
-			}
-		}
-	}
+public class TeamspeakConnectionIT extends AbstractConnectionBasedIT {
 
 	@Test
 	public void testSomeMethod() throws InterruptedException, ExecutionException {
