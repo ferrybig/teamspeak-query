@@ -105,7 +105,7 @@ public class TeamspeakConnectionIT {
 		System.out.println("Connected!");
 
 		System.out.println("Channel list");
-		final List<Channel> channel = con.getChannelList().sync().get();
+		final List<Channel> channel = con.channels().list().get();
 		channel.forEach(System.out::println);
 
 		System.out.println("Group list");
