@@ -238,6 +238,25 @@ public class TeamspeakConnectionIT {
 		assertTrue(quit.toString(), quit.isSuccess());
 	}
 
+	@Test(timeout = 10000)
+	public void channelNormalCloseTest() throws InterruptedException, ExecutionException {
+
+		Future<TeamspeakConnection> connect = createConnection();
+		assumeConnectionWorking(connect);
+		TeamspeakConnection con = connect.get();
+
+		Future<?> namechange1 = con.setOwnName("Test1").await();
+		assertTrue(namechange1.toString(), namechange1.isSuccess());
+
+		con.quit().get();
+
+		Future<?> namechange2 = con.setOwnName("Test2").await();
+		assertFalse(namechange2.toString(), namechange2.isSuccess());
+
+		Future<?> quit = con.quit().await();
+		assertTrue(quit.toString(), quit.isSuccess());
+	}
+
 	@Test
 	public void privilegeTokensCanBeCreatedAndDeleted() throws InterruptedException, ExecutionException {
 		System.out.println("Connecting...");
