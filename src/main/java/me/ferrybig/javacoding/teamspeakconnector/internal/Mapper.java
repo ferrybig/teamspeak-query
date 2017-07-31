@@ -54,12 +54,12 @@ public class Mapper {
 		this.con = con;
 	}
 
-	private InetAddress tryConvertAddress(String address) {
+	public InetAddress tryConvertAddress(String address) {
 		try {
 			return InetAddress.getByName(address);
 		} catch (UnknownHostException ex) {
 			LOG.log(Level.FINE, "Trying to convert address to ip failed", ex);
-			return null;
+			return InetAddress.getLoopbackAddress();
 		}
 	}
 
