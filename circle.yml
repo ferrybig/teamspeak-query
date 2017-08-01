@@ -8,7 +8,9 @@ dependencies:
     - echo 'export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64' >> ~/.circlerc
   override:
     - mvn dependency:resolve
+    - mvn dependency:resolve-plugins
     - mvn dependency:go-offline
+    - mvn dependency:tree
   post:
 test:
   pre:
