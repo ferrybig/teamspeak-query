@@ -54,12 +54,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import me.ferrybig.javacoding.teamspeakconnector.util.Pair;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
 import me.ferrybig.javacoding.teamspeakconnector.internal.TeamspeakConnectionInitizer;
 import me.ferrybig.javacoding.teamspeakconnector.internal.handler.PacketQueueBuffer;
 import me.ferrybig.javacoding.teamspeakconnector.util.FutureUtil;
+import me.ferrybig.javacoding.teamspeakconnector.util.Pair;
 
 /**
  * Constructor for the Teamspeak api.
@@ -527,7 +527,7 @@ public class TeamspeakBootstrap {
 		if (virtualServerId != null) {
 			connection = FutureUtil.chainFutureFlat(
 					next.newPromise(), connection,
-					con -> con .servers().unresolved(virtualServerId)
+					con -> con.servers().unresolved(virtualServerId)
 							.select());
 		}
 		Integer virtualServerPort = this.virtualServerPort;
