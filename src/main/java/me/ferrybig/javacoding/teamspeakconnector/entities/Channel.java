@@ -27,7 +27,7 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
 import me.ferrybig.javacoding.teamspeakconnector.repository.ChannelRepository;
 
 /**
@@ -35,7 +35,7 @@ import me.ferrybig.javacoding.teamspeakconnector.repository.ChannelRepository;
  * name.
  */
 @Nonnull
-@Immutable
+@ThreadSafe
 @ParametersAreNonnullByDefault
 public class Channel extends UnresolvedChannelWithName {
 
