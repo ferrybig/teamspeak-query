@@ -28,14 +28,19 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.concurrent.Future;
 import java.io.Closeable;
 import static java.lang.Integer.parseInt;
+import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
 import me.ferrybig.javacoding.teamspeakconnector.entities.Channel;
@@ -75,6 +80,7 @@ import static me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Response;
 import me.ferrybig.javacoding.teamspeakconnector.repository.ChannelRepository;
 import me.ferrybig.javacoding.teamspeakconnector.repository.GroupRepository;
+import me.ferrybig.javacoding.teamspeakconnector.repository.OfflineClientRepository;
 import me.ferrybig.javacoding.teamspeakconnector.repository.PrivilegeKeyRepository;
 import me.ferrybig.javacoding.teamspeakconnector.repository.ServerRepository;
 
@@ -100,20 +106,25 @@ public class TeamspeakConnection implements Closeable {
 			SERVER_NOTIFY_UNREGISTER.addData("event", "tokenused").build());
 	private final Mapper mapper = new Mapper(this);
 
-	private final Object repositoryLock = new Object();
+	private final RepositoryAccessor<GroupRepository> groups;
+	private final RepositoryAccessor<PrivilegeKeyRepository> privilegeKeys;
+	private final RepositoryAccessor<ServerRepository> servers;
+	private final RepositoryAccessor<ChannelRepository> channels;
+	private final RepositoryAccessor<OfflineClientRepository> offlineClients;
 
-	@GuardedBy(value = "repositoryLock")
-	private volatile WeakReference<GroupRepository> groups
-			= new WeakReference<>(null);
-	@GuardedBy(value = "repositoryLock")
-	private volatile WeakReference<PrivilegeKeyRepository> privilegeKeys
-			= new WeakReference<>(null);
-	@GuardedBy(value = "repositoryLock")
-	private volatile WeakReference<ServerRepository> servers
-			= new WeakReference<>(null);
-	@GuardedBy(value = "repositoryLock")
-	private volatile WeakReference<ChannelRepository> channels
-			= new WeakReference<>(null);
+	{
+		final Object repositoryLock = new Object();
+		groups = new RepositoryAccessor<>(GroupRepository::new,
+				repositoryLock);
+		privilegeKeys = new RepositoryAccessor<>(PrivilegeKeyRepository::new,
+				repositoryLock);
+		servers = new RepositoryAccessor<>(ServerRepository::new,
+				repositoryLock);
+		channels = new RepositoryAccessor<>(ChannelRepository::new,
+				repositoryLock);
+		offlineClients = new RepositoryAccessor<>(OfflineClientRepository::new,
+				repositoryLock);
+	}
 
 	public TeamspeakConnection(TeamspeakIO channel) {
 		this.io = channel;
@@ -360,74 +371,86 @@ public class TeamspeakConnection implements Closeable {
 
 	@Nonnull
 	public GroupRepository groups() {
-		GroupRepository repo = groups.get();
-		if (repo != null) {
-			return repo;
-		}
-		synchronized (repositoryLock) {
-			repo = groups.get();
-			if (repo != null) {
-				return repo;
-			}
-			repo = new GroupRepository(this);
-			groups = new WeakReference<>(repo);
-		}
-		return repo;
+		return groups.get();
 	}
 
 	@Nonnull
 	public PrivilegeKeyRepository privilegeKeys() {
-		PrivilegeKeyRepository repo = privilegeKeys.get();
-		if (repo != null) {
-			return repo;
-		}
-		synchronized (repositoryLock) {
-			repo = privilegeKeys.get();
-			if (repo != null) {
-				return repo;
-			}
-			repo = new PrivilegeKeyRepository(this);
-			privilegeKeys = new WeakReference<>(repo);
-		}
-		return repo;
+		return privilegeKeys.get();
 	}
 
 	@Nonnull
 	public ServerRepository servers() {
-		ServerRepository repo = servers.get();
-		if (repo != null) {
-			return repo;
-		}
-		synchronized (repositoryLock) {
-			repo = servers.get();
-			if (repo != null) {
-				return repo;
-			}
-			repo = new ServerRepository(this);
-			servers = new WeakReference<>(repo);
-		}
-		return repo;
+		return servers.get();
 	}
 
 	@Nonnull
 	public ChannelRepository channels() {
-		ChannelRepository repo = channels.get();
-		if (repo != null) {
-			return repo;
-		}
-		synchronized (repositoryLock) {
-			repo = channels.get();
-			if (repo != null) {
-				return repo;
-			}
-			repo = new ChannelRepository(this);
-			channels = new WeakReference<>(repo);
-		}
-		return repo;
+		return channels.get();
+	}
+
+	@Nonnull
+	public OfflineClientRepository offlineClients() {
+		return offlineClients.get();
 	}
 
 	public final Mapper mapping() {
 		return mapper;
+	}
+
+	@ThreadSafe
+	@ParametersAreNonnullByDefault
+	private class RepositoryAccessor<T> {
+
+		@Nonnull
+		private final Function<TeamspeakConnection, T> newInstance;
+		@Nonnull
+		private final Object repositoryLock;
+		@Nonnull
+		private volatile Reference<T> ref = new WeakReference<>(null);
+
+		public RepositoryAccessor(Function<TeamspeakConnection, T> newInstance, Object repositoryLock) {
+			this.newInstance = Objects.requireNonNull(newInstance, "newInstance");
+			this.repositoryLock = Objects.requireNonNull(repositoryLock, "repositoryLock");
+		}
+
+		@CheckForNull
+		@Nullable
+		public T getIfLoaded() {
+			return ref.get();
+		}
+
+		@Nonnull
+		public T get() {
+			T repo = getIfLoaded();
+			if (repo != null) {
+				return repo;
+			}
+			synchronized (repositoryLock) {
+				repo = getIfLoaded();
+				if (repo != null) {
+					return repo;
+				}
+				repo = newInstance.apply(TeamspeakConnection.this);
+				if (repo == null) {
+					throw new IllegalStateException("Instance creator " + newInstance + " returned a null object");
+				}
+				makeRef(repo);
+			}
+			return repo;
+		}
+
+		@GuardedBy(value = "repositoryLock")
+		@Nonnull
+		private void makeRef(T object) {
+			ref = new WeakReference<>(object);
+		}
+
+		@Override
+		public String toString() {
+			return "RepositoryAccessor{" + "newInstance=" + newInstance + ", ref=" + ref + '}';
+		}
+
 	}
 
 	private class InternalPacketHandler extends SimpleChannelInboundHandler<Response> {
