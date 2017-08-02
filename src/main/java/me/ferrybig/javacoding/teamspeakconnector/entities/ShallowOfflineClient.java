@@ -23,6 +23,7 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.entities;
 
+import io.netty.util.concurrent.Future;
 import java.net.InetAddress;
 import me.ferrybig.javacoding.teamspeakconnector.repository.OfflineClientRepository;
 
@@ -30,37 +31,46 @@ import me.ferrybig.javacoding.teamspeakconnector.repository.OfflineClientReposit
  *
  * @author Fernando van Loenhout
  */
-public class OfflineClient extends ShallowOfflineClient {
+public class ShallowOfflineClient extends UnresolvedOfflineClient implements UnresolvedOfflineClientWithUid {
 
-	protected final int totalConnections;
-	protected final String description;
-	protected final long lastConnected;
+	protected final String uniqueIdentifier;
+	protected final String nickname;
+	protected final long created;
+	protected final InetAddress lastIp;
 
-	public OfflineClient(OfflineClientRepository repo,
+	public ShallowOfflineClient(OfflineClientRepository repo,
 			int databaseId,
 			String uniqueIdentifier,
 			String nickname,
 			long created,
-			long lastConnected,
-			int totalConnections,
-			String description,
 			InetAddress lastIp) {
-		super(repo, databaseId, uniqueIdentifier, nickname, created, lastIp);
-		this.totalConnections = totalConnections;
-		this.description = description;
-		this.lastConnected = lastConnected;
+		super(repo, databaseId);
+		this.uniqueIdentifier = uniqueIdentifier;
+		this.nickname = nickname;
+		this.created = created;
+		this.lastIp = lastIp;
 	}
 
-	public long getLastConnected() {
-		return lastConnected;
+	@Override
+	public String getUniqueIdentifier() {
+		return uniqueIdentifier;
 	}
 
-	public int getTotalConnections() {
-		return totalConnections;
+	public String getNickname() {
+		return nickname;
 	}
 
-	public String getDescription() {
-		return description;
+	public long getCreated() {
+		return created;
+	}
+
+	public InetAddress getLastIp() {
+		return lastIp;
+	}
+
+	@Override
+	public Future<UnresolvedOfflineClient> resolveTillDatabaseId() {
+		return repo.getConnection().io().getCompletedFuture(this);
 	}
 
 	@Override

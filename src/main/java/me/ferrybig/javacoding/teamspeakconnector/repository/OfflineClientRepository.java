@@ -30,6 +30,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.ThreadSafe;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
 import me.ferrybig.javacoding.teamspeakconnector.entities.OfflineClient;
+import me.ferrybig.javacoding.teamspeakconnector.entities.ShallowOfflineClient;
 import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedOfflineClient;
 import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedOfflineClientWithUid;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command;
@@ -60,6 +61,17 @@ public class OfflineClientRepository extends AbstractIntResolvableRepository<Unr
 	@Override
 	protected int getId(UnresolvedOfflineClient value) {
 		return value.getDatabaseId();
+	}
+
+	@Nonnull
+	protected ShallowOfflineClient readEntityShallow(Map<String, String> data) {
+		return new ShallowOfflineClient(this,
+				Integer.parseInt(data.get("client_database_id")),
+				data.get("client_unique_identifier"),
+				data.get("client_nickname"),
+				Long.parseLong(data.get("client_created")),
+				// Long.parseLong(data.get("client_lastconnected")),
+				connection.mapping().tryConvertAddress(data.get("connection_client_ip")));
 	}
 
 	@Override

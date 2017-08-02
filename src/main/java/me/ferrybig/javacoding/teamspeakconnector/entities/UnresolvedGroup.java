@@ -125,9 +125,9 @@ public class UnresolvedGroup implements Resolvable<Group> {
 	public Future<? extends UnresolvedGroup> rename(String newName) {
 		return repo.getConnection().io().chainFuture(
 				repo.getConnection().io().sendPacket(
-				Command.SERVER_GROUP_RENAME
-						.addData("sgid", this.getServerGroupId())
-						.addData("name", newName).build()),
+						Command.SERVER_GROUP_RENAME
+								.addData("sgid", this.getServerGroupId())
+								.addData("name", newName).build()),
 				(r) -> {
 					return this;
 				});

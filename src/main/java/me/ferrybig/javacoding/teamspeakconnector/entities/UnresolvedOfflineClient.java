@@ -24,6 +24,9 @@
 package me.ferrybig.javacoding.teamspeakconnector.entities;
 
 import io.netty.util.concurrent.Future;
+import java.util.Map;
+import java.util.stream.Collectors;
+import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command;
 import me.ferrybig.javacoding.teamspeakconnector.repository.OfflineClientRepository;
 
 /**
@@ -33,7 +36,7 @@ import me.ferrybig.javacoding.teamspeakconnector.repository.OfflineClientReposit
 public class UnresolvedOfflineClient implements UnresolvedClient {
 
 	protected final OfflineClientRepository repo;
-	private final int databaseId;
+	protected final int databaseId;
 
 	public UnresolvedOfflineClient(OfflineClientRepository repo, int databaseId) {
 		this.repo = repo;
@@ -57,6 +60,57 @@ public class UnresolvedOfflineClient implements UnresolvedClient {
 	@Override
 	public boolean isResolved() {
 		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 17 * hash + this.databaseId;
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof UnresolvedOfflineClient)) {
+			return false;
+		}
+		final UnresolvedOfflineClient other = (UnresolvedOfflineClient) obj;
+		if (this.databaseId != other.databaseId) {
+			return false;
+		}
+		return true;
+	}
+
+	public Future<?> removeFromGroup(UnresolvedGroup group) {
+		return repo.getConnection().io().sendPacket(
+				Command.SERVER_GROUP_DEL_CLIENT.
+						addData("sgid", group.getServerGroupId())
+						.addData("cldbid", this.databaseId).build());
+	}
+
+	public Future<?> addToGroup(UnresolvedGroup group) {
+		return repo.getConnection().io().sendPacket(
+				Command.SERVER_GROUP_ADD_CLIENT
+						.addData("sgid", group.getServerGroupId())
+						.addData("cldbid", this.databaseId).build());
+	}
+
+	public Future<Map<String, String>> getCustomInfo() {
+		return repo.getConnection().io().chainFuture(
+				repo.getConnection().io().sendPacket(
+						Command.CUSTOM_INFO
+								.addData("cldbid", this.databaseId).build()),
+				r -> r.getCommands().stream().collect(
+						Collectors.toMap(
+								k -> k.get("ident"),
+								v -> v.get("value")))
+		);
 	}
 
 }

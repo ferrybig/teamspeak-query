@@ -21,41 +21,52 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package me.ferrybig.javacoding.teamspeakconnector.repository;
+package me.ferrybig.javacoding.teamspeakconnector.entities;
 
-import io.netty.util.concurrent.Future;
-import me.ferrybig.javacoding.teamspeakconnector.Resolvable;
+import me.ferrybig.javacoding.teamspeakconnector.repository.AbstractResolvable;
+import me.ferrybig.javacoding.teamspeakconnector.repository.OnlineClientRepository;
 
-public abstract class AbstractResolvable<
-		S extends Resolvable<? extends T>, T extends S, R extends BaseResolvableRepository<S, T>>
-		implements Resolvable<T> {
+/**
+ *
+ * @author Fernando van Loenhout
+ */
+public class UnresolvedOnlineClient extends AbstractResolvable<
+		UnresolvedOnlineClient, OnlineClient, OnlineClientRepository> {
 
-	protected final R repo;
+	private final int clientId;
 
-	public AbstractResolvable(R repository) {
-		this.repo = repository;
+	public UnresolvedOnlineClient(OnlineClientRepository repo, int clientId) {
+		super(repo);
+		this.clientId = clientId;
+	}
+
+	public int getClientId() {
+		return clientId;
 	}
 
 	@Override
-	public boolean isResolved() {
-		return false;
+	public int hashCode() {
+		int hash = 7;
+		hash = 17 * hash + this.clientId;
+		return hash;
 	}
 
 	@Override
-	public Future<T> resolve() {
-		if (isResolved()) {
-			return repo.getConnection().io().getCompletedFuture((T) this);
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
 		}
-		return repo.get((S) this);
-	}
-
-	@Override
-	public Future<T> forceResolve() {
-		return repo.get((S) this, true);
-	}
-
-	public Future<?> delete(boolean force) {
-		return repo.deleteUnresolved((S) this, force);
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof UnresolvedOnlineClient)) {
+			return false;
+		}
+		final UnresolvedOnlineClient other = (UnresolvedOnlineClient) obj;
+		if (this.clientId != other.clientId) {
+			return false;
+		}
+		return true;
 	}
 
 }

@@ -58,7 +58,7 @@ public abstract class AbstractObjectResolvableRepository<U extends Resolvable<? 
 		} else {
 			return connection.mapping()
 					.mapComplexReponse(io.sendPacket(getById),
-							this::readEntity);
+							this::readEntityChecked);
 		}
 	}
 

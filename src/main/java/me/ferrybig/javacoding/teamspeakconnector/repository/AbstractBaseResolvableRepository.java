@@ -59,11 +59,21 @@ public abstract class AbstractBaseResolvableRepository<U extends Resolvable<? ex
 	public Future<List<T>> list() {
 		return connection.mapping().mapComplexReponseList(
 				io.sendPacket(requestList()),
-				this::readEntity);
+				this::readEntityChecked);
 	}
 
 	@Nonnull
 	protected abstract T readEntity(Map<String, String> data);
+
+	@Nonnull
+	protected final T readEntityChecked(Map<String, String> data) {
+		T object = readEntity(data);
+		assert object != null : "readEntity() returned null object on "
+				+ this;
+		assert object.isResolved() : "readEntity() returned unreolved object on "
+				+ this + ":" + object;
+		return object;
+	}
 
 	@Nonnull
 	protected abstract ComplexRequest requestList();

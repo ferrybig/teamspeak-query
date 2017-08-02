@@ -527,7 +527,7 @@ public class TeamspeakBootstrap {
 		if (virtualServerId != null) {
 			connection = FutureUtil.chainFutureFlat(
 					next.newPromise(), connection,
-					con -> con .servers().unresolved(virtualServerId)
+					con -> con.servers().unresolved(virtualServerId)
 							.select());
 		}
 		Integer virtualServerPort = this.virtualServerPort;
