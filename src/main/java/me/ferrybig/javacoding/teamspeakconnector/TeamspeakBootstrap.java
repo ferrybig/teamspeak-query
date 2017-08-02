@@ -54,12 +54,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import javafx.util.Pair;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
 import me.ferrybig.javacoding.teamspeakconnector.internal.TeamspeakConnectionInitizer;
 import me.ferrybig.javacoding.teamspeakconnector.internal.handler.PacketQueueBuffer;
 import me.ferrybig.javacoding.teamspeakconnector.util.FutureUtil;
+import me.ferrybig.javacoding.teamspeakconnector.util.Pair;
 
 /**
  * Constructor for the Teamspeak api.
@@ -587,19 +587,19 @@ public class TeamspeakBootstrap {
 			assert !exceptions.isEmpty();
 			StringBuilder message = new StringBuilder("Unable to connect");
 			for (Pair<SocketAddress, Throwable> ex : exceptions) {
-				String addr = ex.getKey().toString();
-				message.append("\n> ").append(ex.getValue().getMessage());
-				if (!ex.getValue().getMessage().contains(addr)) {
+				String addr = ex.getFirst().toString();
+				message.append("\n> ").append(ex.getSecond().getMessage());
+				if (!ex.getSecond().getMessage().contains(addr)) {
 					message.append(": ").append(addr);
 				}
 			}
 			ConnectException exception = new ConnectException(
 					message.toString(), "Unable to connect");
 			if (exceptions.size() == 1) {
-				exception.initCause(exceptions.get(0).getValue());
+				exception.initCause(exceptions.get(0).getSecond());
 			} else {
 				for (Pair<SocketAddress, Throwable> ex : exceptions) {
-					exception.addSuppressed(ex.getValue());
+					exception.addSuppressed(ex.getSecond());
 				}
 			}
 			return exception;
