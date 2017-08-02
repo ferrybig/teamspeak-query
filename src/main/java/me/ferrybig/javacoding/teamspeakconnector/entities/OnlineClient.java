@@ -222,6 +222,22 @@ public class OnlineClient extends UnresolvedOnlineClient {
 			String description,
 			long lastConnected,
 	 */
+	@Override
+	public boolean isResolved() {
+		return true;
+	}
+
+	@Override
+	@SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
+	public boolean equals(Object obj) {
+		return super.equals(obj);
+	}
+
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
+
 	public static enum Type {
 		NORMAL, QUERY;
 
@@ -236,10 +252,5 @@ public class OnlineClient extends UnresolvedOnlineClient {
 							"ClientType " + id + " not known");
 			}
 		}
-	}
-
-	@Override
-	public boolean isResolved() {
-		return true;
 	}
 }

@@ -23,6 +23,7 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.repository;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.netty.util.concurrent.Future;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +67,7 @@ public abstract class AbstractBaseResolvableRepository<U extends Resolvable<? ex
 	protected abstract T readEntity(Map<String, String> data);
 
 	@Nonnull
+	@SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
 	protected final T readEntityChecked(Map<String, String> data) {
 		T object = readEntity(data);
 		assert object != null : "readEntity() returned null object on "
