@@ -24,6 +24,7 @@
 package me.ferrybig.javacoding.teamspeakconnector.repository;
 
 import io.netty.util.concurrent.Future;
+import java.util.Objects;
 import me.ferrybig.javacoding.teamspeakconnector.Resolvable;
 
 public abstract class AbstractResolvable<
@@ -32,8 +33,8 @@ public abstract class AbstractResolvable<
 
 	protected final R repo;
 
-	public AbstractResolvable(R repository) {
-		this.repo = repository;
+	public AbstractResolvable(R repo) {
+		this.repo = Objects.requireNonNull(repo, "repo");
 	}
 
 	@Override
