@@ -34,7 +34,7 @@ import me.ferrybig.javacoding.teamspeakconnector.repository.OnlineClientReposito
  *
  * @author Fernando van Loenhout
  */
-public class OnlineClient extends UnresolvedOnlineClient {
+public class OnlineClient extends NamedOnlineClient {
 
 	private final UnresolvedChannel channel;
 	private final OnlineClient.Type type;
@@ -75,7 +75,7 @@ public class OnlineClient extends UnresolvedOnlineClient {
 			String platform, int idleTime,
 			int iconId, String country, ShallowOfflineClient offline
 	) {
-		super(repo, id);
+		super(repo, id, Objects.requireNonNull(offline, "offline").getUniqueIdentifier(), offline.getNickname());
 		this.channel = Objects.requireNonNull(channel, "channel");
 		this.type = Objects.requireNonNull(type, "type");
 		this.awayMessage = awayMessage;
@@ -100,17 +100,20 @@ public class OnlineClient extends UnresolvedOnlineClient {
 		this.idleTime = idleTime;
 		this.iconId = iconId;
 		this.country = Objects.requireNonNull(country, "country");
-		this.offlineClient = Objects.requireNonNull(offline, "offline");
+		this.offlineClient = offline;
 	}
 
+	@Override
 	public ShallowOfflineClient getOfflineClient() {
 		return offlineClient;
 	}
 
+	@Override
 	public String getUniqueIdentifier() {
 		return offlineClient.getUniqueIdentifier();
 	}
 
+	@Override
 	public String getNickname() {
 		return offlineClient.getNickname();
 	}
