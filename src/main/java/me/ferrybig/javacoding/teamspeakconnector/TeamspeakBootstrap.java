@@ -540,7 +540,7 @@ public class TeamspeakBootstrap {
 		String clientName = this.clientName;
 		if (clientName != null) {
 			connection = FutureUtil.chainFutureFlat(next.newPromise(),
-					connection, con -> con.setOwnName(clientName), (t, i) -> t);
+					connection, con -> con.self().setOwnName(clientName), (t, i) -> t);
 		}
 		return connection;
 	}

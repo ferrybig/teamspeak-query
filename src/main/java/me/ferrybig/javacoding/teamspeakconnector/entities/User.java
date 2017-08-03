@@ -28,6 +28,7 @@ import java.net.InetAddress;
 import java.util.List;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
 
+@Deprecated
 public class User extends ShallowUser {
 
 	protected final boolean talking;

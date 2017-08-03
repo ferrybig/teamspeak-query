@@ -23,10 +23,13 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.repository;
 
+import io.netty.util.concurrent.Future;
 import java.util.Map;
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.ThreadSafe;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
+import me.ferrybig.javacoding.teamspeakconnector.entities.NamedOnlineClient;
 import me.ferrybig.javacoding.teamspeakconnector.entities.OnlineClient;
 import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedOnlineClient;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command;
@@ -47,6 +50,11 @@ public class OnlineClientRepository extends AbstractIntResolvableRepository<Unre
 	@Override
 	public UnresolvedOnlineClient unresolved(int id) {
 		return new UnresolvedOnlineClient(this, id);
+	}
+
+	@Nonnull
+	public NamedOnlineClient unresolved(int id, String uniqueId, String nickname) {
+		return new NamedOnlineClient(this, id, uniqueId, nickname);
 	}
 
 	@Override
@@ -95,6 +103,11 @@ public class OnlineClientRepository extends AbstractIntResolvableRepository<Unre
 	@Override
 	protected ComplexRequest requestGet(UnresolvedOnlineClient unresolved) {
 		return null;
+	}
+
+	@Override
+	public Future<?> deleteUnresolved(UnresolvedOnlineClient unresolved, boolean force) {
+		return unresolved.kickFromServer("You have been kicked of the server");
 	}
 
 	@Override

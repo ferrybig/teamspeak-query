@@ -43,8 +43,7 @@ import java.util.logging.Logger;
 import javax.annotation.concurrent.GuardedBy;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakException;
-import me.ferrybig.javacoding.teamspeakconnector.entities.User;
-import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command;
+import me.ferrybig.javacoding.teamspeakconnector.entities.NamedOnlineClient;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequest;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexResponse;
 import me.ferrybig.javacoding.teamspeakconnector.util.BiExFunction;
@@ -70,7 +69,6 @@ public class TeamspeakIO {
 	private final Promise<ComplexResponse> closeFuture;
 	private TeamspeakConnection con;
 	private boolean started;
-	private volatile Future<User> whoAmIPromise;
 
 	public TeamspeakIO(Channel channel) {
 		this.channel = Objects.requireNonNull(channel);
@@ -274,26 +272,10 @@ public class TeamspeakIO {
 	 * refetch the information related to the server
 	 */
 	public void notifyServerChanged() {
-		this.whoAmIPromise = null;
-		whoAmI();
+		// TODO refresh who am i promise
 	}
 
-	public Future<User> whoAmI() {
-		Future<User> whoami = this.whoAmIPromise;
-		if (whoami != null) {
-			return whoami;
-		}
-		synchronized (this) {
-			whoami = this.whoAmIPromise;
-			if (whoami != null) {
-				return whoami;
-			}
-			whoami = con.mapping().mapComplexReponse(
-					sendPacket(Command.WHOAMI.build()),
-					con.mapping()::mapWhoAmI);
-			this.whoAmIPromise = whoami;
-		}
-		return whoami;
+	public Future<NamedOnlineClient> whoAmI() {
+		return con.self().whoAmI();
 	}
-
 }

@@ -25,16 +25,16 @@ package me.ferrybig.javacoding.teamspeakconnector.event;
 
 import java.util.Objects;
 import me.ferrybig.javacoding.teamspeakconnector.entities.PrivilegeKey;
-import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedUser;
+import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedOnlineClient;
 
 public class TokenUsedEvent {
 
-	private final UnresolvedUser client;
+	private final UnresolvedOnlineClient client;
 	private final int databaseId;
 	private final String uniqueId;
 	private final PrivilegeKey key;
 
-	public TokenUsedEvent(UnresolvedUser client, int databaseId,
+	public TokenUsedEvent(UnresolvedOnlineClient client, int databaseId,
 			String uniqueId, PrivilegeKey key) {
 		this.client = client;
 		this.databaseId = databaseId;
@@ -42,7 +42,7 @@ public class TokenUsedEvent {
 		this.key = key;
 	}
 
-	public UnresolvedUser getClient() {
+	public UnresolvedOnlineClient getClient() {
 		return client;
 	}
 

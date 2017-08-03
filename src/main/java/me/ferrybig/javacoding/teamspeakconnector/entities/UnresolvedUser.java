@@ -29,6 +29,7 @@ import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command;
 import me.ferrybig.javacoding.teamspeakconnector.util.FutureUtil;
 
+@Deprecated
 public class UnresolvedUser implements Resolvable<User> {
 
 	protected final TeamspeakConnection con;

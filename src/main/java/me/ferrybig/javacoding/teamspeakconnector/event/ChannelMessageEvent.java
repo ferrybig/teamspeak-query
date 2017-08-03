@@ -23,11 +23,11 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.event;
 
-import me.ferrybig.javacoding.teamspeakconnector.entities.NamedUser;
+import me.ferrybig.javacoding.teamspeakconnector.entities.NamedOnlineClient;
 
 public class ChannelMessageEvent extends MessageEvent {
 
-	public ChannelMessageEvent(String message, NamedUser invoker) {
+	public ChannelMessageEvent(String message, NamedOnlineClient invoker) {
 		super(message, TargetMode.CHANNEL, invoker);
 	}
 

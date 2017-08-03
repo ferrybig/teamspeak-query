@@ -109,11 +109,11 @@ public class TeamspeakConnectionIT extends AbstractConnectionBasedIT {
 		System.out.println("User list!");
 		User con1user2 = null;
 		List<User> users = con1.getUsersList().sync().get();
-		assertNotEquals(con1.io().whoAmI().get().getId(), con2.io().whoAmI().get().getId());
+		assertNotEquals(con1.io().whoAmI().get().getClientId(), con2.io().whoAmI().get().getClientId());
 		for (User user : users) {
 			if (user.getType() == User.Type.QUERY) {
-				System.err.println(user.getId() + ":" + con2.io().whoAmI().get().getId());
-				if (user.getId() == con2.io().whoAmI().get().getId()) {
+				System.err.println(user.getId() + ":" + con2.io().whoAmI().get().getClientId());
+				if (user.getId() == con2.io().whoAmI().get().getClientId()) {
 					con1user2 = user;
 				}
 			}

@@ -29,6 +29,7 @@ import io.netty.util.concurrent.Future;
 import java.io.Closeable;
 import static java.lang.Integer.parseInt;
 import java.lang.ref.Reference;
+import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import me.ferrybig.javacoding.teamspeakconnector.entities.Channel;
 import me.ferrybig.javacoding.teamspeakconnector.entities.File;
 import me.ferrybig.javacoding.teamspeakconnector.entities.Group;
+import me.ferrybig.javacoding.teamspeakconnector.entities.NamedOnlineClient;
 import me.ferrybig.javacoding.teamspeakconnector.entities.NamedUser;
 import me.ferrybig.javacoding.teamspeakconnector.entities.PrivilegeKey;
 import me.ferrybig.javacoding.teamspeakconnector.entities.Server;
@@ -54,6 +56,7 @@ import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedChannel;
 import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedChannelGroup;
 import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedFile;
 import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedGroup;
+import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedOnlineClient;
 import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedPrivilegeKey;
 import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedServerWithId;
 import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedUser;
@@ -81,6 +84,7 @@ import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Response;
 import me.ferrybig.javacoding.teamspeakconnector.repository.ChannelRepository;
 import me.ferrybig.javacoding.teamspeakconnector.repository.GroupRepository;
 import me.ferrybig.javacoding.teamspeakconnector.repository.OfflineClientRepository;
+import me.ferrybig.javacoding.teamspeakconnector.repository.OnlineClientRepository;
 import me.ferrybig.javacoding.teamspeakconnector.repository.PrivilegeKeyRepository;
 import me.ferrybig.javacoding.teamspeakconnector.repository.ServerRepository;
 
@@ -111,6 +115,8 @@ public class TeamspeakConnection implements Closeable {
 	private final RepositoryAccessor<ServerRepository> servers;
 	private final RepositoryAccessor<ChannelRepository> channels;
 	private final RepositoryAccessor<OfflineClientRepository> offlineClients;
+	private final RepositoryAccessor<OnlineClientRepository> onlineClients;
+	private final RepositoryAccessor<SelfInformation> self;
 
 	{
 		final Object repositoryLock = new Object();
@@ -123,6 +129,10 @@ public class TeamspeakConnection implements Closeable {
 		channels = new RepositoryAccessor<>(ChannelRepository::new,
 				repositoryLock);
 		offlineClients = new RepositoryAccessor<>(OfflineClientRepository::new,
+				repositoryLock);
+		onlineClients = new RepositoryAccessor<>(OnlineClientRepository::new,
+				repositoryLock);
+		self = new RepositoryAccessor<>(SelfInformation::new,
 				repositoryLock);
 	}
 
@@ -140,11 +150,11 @@ public class TeamspeakConnection implements Closeable {
 		this.io.getChannel().pipeline().addLast(new InternalPacketHandler());
 	}
 
-	private void handleMessage(Response msg, User whoAmI) {
+	private void handleMessage(Response msg, NamedOnlineClient whoAmI) {
 		LOG.log(Level.FINEST, "Who I am: {0}", whoAmI);
 		final Map<String, String> options = msg.getOptions();
 		final int invokerId = Integer.parseInt(options.get("invokerid"));
-		if (invokerId == whoAmI.getId()) {
+		if (invokerId == whoAmI.getClientId()) {
 			LOG.finer("Dropped packet coming from our user");
 			return;
 		}
@@ -152,14 +162,14 @@ public class TeamspeakConnection implements Closeable {
 		final String message = options.get("msg");
 		final String invokerName = options.get("invokername");
 		final String invokeruid = options.get("invokeruid");
-		final NamedUser invoker = invokerId == 0 ? null
-				: getUnresolvedNamedUser(invokerId, invokerName, invokeruid);
+		final NamedOnlineClient invoker = invokerId == 0 ? null
+				: onlineClients().unresolved(invokerId, invokeruid, invokerName);
 		switch (parseInt(options.get("targetmode"))) {
 			case 1: {
 				privateMessageHandler.callAll(
 						PrivateMessageListener::onPrivateMessage,
 						new PrivateMessageEvent(
-								getUnresolvedUserById(
+								onlineClients().unresolved(
 										parseInt(options.get("target"))),
 								message, invoker));
 			}
@@ -239,6 +249,7 @@ public class TeamspeakConnection implements Closeable {
 		return servers().unresolvedByPort(port).resolveTillId();
 	}
 
+	@Deprecated
 	public Future<User> getUserById(int id) {
 		return mapping().mapComplexReponse(io.sendPacket(
 				Command.CLIENT_INFO
@@ -247,10 +258,12 @@ public class TeamspeakConnection implements Closeable {
 				mapping()::mapUser);
 	}
 
+	@Deprecated
 	public UnresolvedUser getUnresolvedUserById(int id) {
 		return new UnresolvedUser(this, id);
 	}
 
+	@Deprecated
 	public NamedUser getUnresolvedNamedUser(int id,
 			String nickname, String uniqueId) {
 		return new NamedUser(this, id, nickname, uniqueId);
@@ -302,6 +315,7 @@ public class TeamspeakConnection implements Closeable {
 		return channels().list();
 	}
 
+	@Deprecated
 	public Future<List<User>> getUsersList() {
 		return mapping().mapComplexReponseList(io.sendPacket(
 				Command.CLIENT_LIST.addOption("uid")
@@ -340,9 +354,9 @@ public class TeamspeakConnection implements Closeable {
 				SendBehaviour.FORCE_CLOSE_CONNECTION);
 	}
 
+	@Deprecated
 	public Future<?> setOwnName(String name) {
-		return io.sendPacket(Command.CLIENT_UPDATE
-				.addData("client_nickname", name).build());
+		return self().setOwnName(name);
 	}
 
 	/**
@@ -394,6 +408,17 @@ public class TeamspeakConnection implements Closeable {
 		return offlineClients.get();
 	}
 
+	@Nonnull
+	public OnlineClientRepository onlineClients() {
+		return onlineClients.get();
+	}
+
+	@Nonnull
+	public SelfInformation self() {
+		return self.get();
+	}
+
+	@Nonnull
 	public final Mapper mapping() {
 		return mapper;
 	}
@@ -443,7 +468,7 @@ public class TeamspeakConnection implements Closeable {
 		@GuardedBy(value = "repositoryLock")
 		@Nonnull
 		private void makeRef(T object) {
-			ref = new WeakReference<>(object);
+			ref = new SoftReference<>(object);
 		}
 
 		@Override
@@ -464,7 +489,7 @@ public class TeamspeakConnection implements Closeable {
 			LOG.log(Level.FINE, "Handling packet: {0}", msg);
 			switch (msg.getCmd()) {
 				case "notifytextmessage": {
-					Future<User> whoami = io.whoAmI();
+					Future<NamedOnlineClient> whoami = self().whoAmI();
 					if (whoami.isSuccess()) {
 						handleMessage(msg, whoami.get());
 					} else {
@@ -517,7 +542,7 @@ public class TeamspeakConnection implements Closeable {
 					serverHandler.callAll(ServerListener::onEditServer,
 							new ServerEditEvent(ChangeReason.getById(
 									parseInt(options.get("reasonid"))),
-									getUnresolvedNamedUser(invokerId,
+									onlineClients().unresolved(invokerId,
 											invokerName, invokeruid)));
 				}
 				break;
@@ -525,7 +550,7 @@ public class TeamspeakConnection implements Closeable {
 					// clid=5 cldbid=4 cluid=zhPQ0oNLH8boM42jlbgTWC6G\\/64=
 					// token=4oquHhp03YKofI4dYVBLWZ9Ik+Mf0M6ogomh5RsU
 					// tokencustomset token1=7 token2=0
-					UnresolvedUser client = getUnresolvedUserById(
+					UnresolvedOnlineClient client = onlineClients().unresolved(
 							parseInt(options.get("clid")));
 					int databaseId = parseInt(options.get("cldbid"));
 					String uniqueId = options.get("cluid");

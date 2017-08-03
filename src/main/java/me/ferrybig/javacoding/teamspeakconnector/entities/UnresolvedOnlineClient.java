@@ -23,6 +23,8 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.entities;
 
+import io.netty.util.concurrent.Future;
+import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command;
 import me.ferrybig.javacoding.teamspeakconnector.repository.AbstractResolvable;
 import me.ferrybig.javacoding.teamspeakconnector.repository.OnlineClientRepository;
 
@@ -42,6 +44,41 @@ public class UnresolvedOnlineClient extends AbstractResolvable<
 
 	public int getClientId() {
 		return clientId;
+	}
+
+	public Future<?> sendMessage(String message) {
+		return this.repo.getConnection().io().sendPacket(
+				Command.SEND_TEXT_MESSAGE
+						.addData("targetmode", "1")
+						.addData("target", String.valueOf(getClientId()))
+						.addData("msg", message)
+						.build());
+	}
+
+	public Future<?> poke(String message) {
+		return this.repo.getConnection().io().sendPacket(
+				Command.CLIENT_POKE
+						.addData("clid", String.valueOf(getClientId()))
+						.addData("msg", message)
+						.build());
+	}
+
+	public Future<?> kickFromChannel(String message) {
+		return this.repo.getConnection().io().sendPacket(
+				Command.CLIENT_KICK
+						.addData("clid", String.valueOf(getClientId()))
+						.addData("reasonid", "4")
+						.addData("msg", message)
+						.build());
+	}
+
+	public Future<?> kickFromServer(String message) {
+		return this.repo.getConnection().io().sendPacket(
+				Command.CLIENT_KICK
+						.addData("clid", String.valueOf(getClientId()))
+						.addData("reasonid", "5")
+						.addData("msg", message)
+						.build());
 	}
 
 	@Override

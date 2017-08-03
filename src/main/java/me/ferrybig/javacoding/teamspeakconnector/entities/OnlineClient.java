@@ -75,7 +75,8 @@ public class OnlineClient extends NamedOnlineClient {
 			String platform, int idleTime,
 			int iconId, String country, ShallowOfflineClient offline
 	) {
-		super(repo, id, Objects.requireNonNull(offline, "offline").getUniqueIdentifier(), offline.getNickname());
+		super(repo, id, Objects.requireNonNull(offline, "offline")
+				.getUniqueIdentifier(), offline.getNickname());
 		this.channel = Objects.requireNonNull(channel, "channel");
 		this.type = Objects.requireNonNull(type, "type");
 		this.awayMessage = awayMessage;

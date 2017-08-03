@@ -23,11 +23,11 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.event;
 
-import me.ferrybig.javacoding.teamspeakconnector.entities.NamedUser;
+import me.ferrybig.javacoding.teamspeakconnector.entities.NamedOnlineClient;
 
 public class ServerMessageEvent extends MessageEvent {
 
-	public ServerMessageEvent(String message, NamedUser invoker) {
+	public ServerMessageEvent(String message, NamedOnlineClient invoker) {
 		super(message, TargetMode.SERVER, invoker);
 	}
 

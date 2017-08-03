@@ -23,7 +23,7 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.event;
 
-import me.ferrybig.javacoding.teamspeakconnector.entities.NamedUser;
+import me.ferrybig.javacoding.teamspeakconnector.entities.NamedOnlineClient;
 
 public abstract class MessageEvent extends InvokedEvent {
 
@@ -37,7 +37,7 @@ public abstract class MessageEvent extends InvokedEvent {
 	private final TargetMode targetMode;
 
 	public MessageEvent(String message, TargetMode targetMode,
-			NamedUser invoker) {
+			NamedOnlineClient invoker) {
 		super(invoker);
 		this.message = message;
 		this.targetMode = targetMode;

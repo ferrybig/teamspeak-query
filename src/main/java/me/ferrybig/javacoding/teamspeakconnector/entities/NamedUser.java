@@ -25,10 +25,7 @@ package me.ferrybig.javacoding.teamspeakconnector.entities;
 
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
 
-/**
- *
- * @author Fernando van Loenhout
- */
+@Deprecated
 public class NamedUser extends UnresolvedUser {
 
 	protected final String uniqueid;
