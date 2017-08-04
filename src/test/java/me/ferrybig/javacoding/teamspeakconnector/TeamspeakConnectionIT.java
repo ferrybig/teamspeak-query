@@ -14,8 +14,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import me.ferrybig.javacoding.teamspeakconnector.entities.Channel;
 import me.ferrybig.javacoding.teamspeakconnector.entities.Group;
+import me.ferrybig.javacoding.teamspeakconnector.entities.OnlineClient;
 import me.ferrybig.javacoding.teamspeakconnector.entities.PrivilegeKey;
-import me.ferrybig.javacoding.teamspeakconnector.entities.User;
 import static me.ferrybig.javacoding.teamspeakconnector.util.FutureUtil.waitSync;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -48,17 +48,17 @@ public class TeamspeakConnectionIT extends AbstractConnectionBasedIT {
 		Optional<Group> bottest = groups.stream().filter(g -> (g.getType() == Group.Type.REGULAR) && g.getName().equals("BotTest")).findAny();
 
 		System.out.println("User list!");
-		List<User> users = con.getUsersList().sync().get();
-		for (User user : users) {
-			if (user.getType() == User.Type.QUERY) {
+		List<OnlineClient> users = con.onlineClients().list().sync().get();
+		for (OnlineClient user : users) {
+			if (user.getType() == OnlineClient.Type.QUERY) {
 				continue;
 			}
 			if (bottest.isPresent()) {
-				user.addToGroup(bottest.get()).get();
+				user.getOfflineClient().addToGroup(bottest.get()).get();
 			}
 			//user.poke("Hello: " + user.getNickname() + ", Your ip address: " + user.getIp());
 			user.sendMessage("Hello: " + user.getNickname()
-					+ ", Your ip address: " + user.getIp()
+					+ ", Your ip address: " + user.getOfflineClient().getLastIp()
 					+ ", and your in the following groups: " + user.getServerGroup().stream().map(Object::toString).collect(Collectors.joining()));
 		}
 
@@ -85,8 +85,8 @@ public class TeamspeakConnectionIT extends AbstractConnectionBasedIT {
 //
 //			});
 		if (bottest.isPresent()) {
-			for (User user : users) {
-				user.removeFromGroup(bottest.get()).get();
+			for (OnlineClient user : users) {
+				user.getOfflineClient().removeFromGroup(bottest.get()).get();
 			}
 		}
 
@@ -107,13 +107,13 @@ public class TeamspeakConnectionIT extends AbstractConnectionBasedIT {
 		TeamspeakConnection con2 = connect2.get();
 
 		System.out.println("User list!");
-		User con1user2 = null;
-		List<User> users = con1.getUsersList().sync().get();
+		OnlineClient con1user2 = null;
+		List<OnlineClient> users = con1.onlineClients().list().get();
 		assertNotEquals(con1.io().whoAmI().get().getClientId(), con2.io().whoAmI().get().getClientId());
-		for (User user : users) {
-			if (user.getType() == User.Type.QUERY) {
-				System.err.println(user.getId() + ":" + con2.io().whoAmI().get().getClientId());
-				if (user.getId() == con2.io().whoAmI().get().getClientId()) {
+		for (OnlineClient user : users) {
+			if (user.getType() == OnlineClient.Type.QUERY) {
+				System.err.println(user.getClientId()+ ":" + con2.io().whoAmI().get().getClientId());
+				if (user.getClientId() == con2.io().whoAmI().get().getClientId()) {
 					con1user2 = user;
 				}
 			}
@@ -159,12 +159,12 @@ public class TeamspeakConnectionIT extends AbstractConnectionBasedIT {
 		assumeConnectionWorking(connect);
 		TeamspeakConnection con = connect.get();
 
-		Future<?> namechange1 = con.setOwnName("Test1").await();
+		Future<?> namechange1 = con.self().setOwnName("Test1").await();
 		assertTrue(namechange1.toString(), namechange1.isSuccess());
 
 		con.io().getChannel().close().get();
 
-		Future<?> namechange2 = con.setOwnName("Test2").await();
+		Future<?> namechange2 = con.self().setOwnName("Test2").await();
 		assertFalse(namechange2.toString(), namechange2.isSuccess());
 
 		Future<?> quit = con.quit().await();
@@ -178,12 +178,12 @@ public class TeamspeakConnectionIT extends AbstractConnectionBasedIT {
 		assumeConnectionWorking(connect);
 		TeamspeakConnection con = connect.get();
 
-		Future<?> namechange1 = con.setOwnName("Test1").await();
+		Future<?> namechange1 = con.self().setOwnName("Test1").await();
 		assertTrue(namechange1.toString(), namechange1.isSuccess());
 
 		con.quit().get();
 
-		Future<?> namechange2 = con.setOwnName("Test2").await();
+		Future<?> namechange2 = con.self().setOwnName("Test2").await();
 		assertFalse(namechange2.toString(), namechange2.isSuccess());
 
 		Future<?> quit = con.quit().await();
