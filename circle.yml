@@ -16,6 +16,7 @@ test:
   pre:
   override:
     - mvn verify
+    - if [[ -z $CI_PULL_REQUEST ]] ; then mvn -Drepotoken=$repotoken jacoco:report coveralls:report ; fi
   post:
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/
     - find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
