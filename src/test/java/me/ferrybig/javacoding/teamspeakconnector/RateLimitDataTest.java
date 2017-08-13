@@ -41,9 +41,16 @@ public class RateLimitDataTest {
 	@Parameterized.Parameters
 	public static Collection<Object[]> data() {
 		return Arrays.asList(
-				new Object[]{RateLimit.AUTODETECT, "RateLimit.AUTODETECT", new InetSocketAddress("::1", 0), new InetSocketAddress("127.0.0.1", 0), -1},
-				new Object[]{RateLimit.LIMITED, "RateLimit.LIMITED", new InetSocketAddress("::1", 0), new InetSocketAddress("127.0.0.1", 0), 0},
-				new Object[]{RateLimit.UNLIMITED, "RateLimit.UNLIMITED", new InetSocketAddress("::1", 0), new InetSocketAddress("127.0.0.1", 0), 0}
+				new Object[]{
+					RateLimit.AUTODETECT, "RateLimit.AUTODETECT",
+					new InetSocketAddress("::1", 0), new InetSocketAddress("127.0.0.1", 0),
+					-1},
+				new Object[]{RateLimit.LIMITED, "RateLimit.LIMITED", 
+					new InetSocketAddress("::1", 0), new InetSocketAddress("127.0.0.1", 0),
+					0},
+				new Object[]{RateLimit.UNLIMITED, "RateLimit.UNLIMITED", 
+					new InetSocketAddress("::1", 0), new InetSocketAddress("127.0.0.1", 0),
+					0}
 		);
 	}
 
@@ -69,9 +76,9 @@ public class RateLimitDataTest {
 
 	@Test
 	public void compareTest() {
-		final Comparator<SocketAddress> socketAddressComparator = limit.socketAddressComparator();
-		Assert.assertEquals(expected, socketAddressComparator.compare(compareFirst, compareSecond));
-		Assert.assertEquals(-expected, socketAddressComparator.compare(compareSecond, compareFirst));
+		final Comparator<SocketAddress> c = limit.socketAddressComparator();
+		Assert.assertEquals(expected, c.compare(compareFirst, compareSecond));
+		Assert.assertEquals(-expected, c.compare(compareSecond, compareFirst));
 	}
 
 }
