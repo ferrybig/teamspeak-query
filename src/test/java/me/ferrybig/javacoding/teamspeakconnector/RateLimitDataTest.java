@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017 Fernando van Loenhout.
+ * Copyright 2017 Fernando.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,37 +28,22 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import org.junit.Assert;
 import org.junit.Test;
+import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
-public class RateLimitTest {
+public class RateLimitDataTest {
 
 	@Parameterized.Parameters
 	public static Collection<Object[]> data() {
-		EmbeddedChannel channel = new EmbeddedChannel();
-		channel.close();
 		return Arrays.asList(
-				new Object[]{RateLimit.AUTODETECT, new InetSocketAddress("2001:db:08::2001", 0), 10 / 3.5},
-				new Object[]{RateLimit.AUTODETECT, new InetSocketAddress("10.10.10.10", 0), 10 / 3.5},
-				new Object[]{RateLimit.AUTODETECT, new InetSocketAddress("::1", 0), 10 / 3.5},
-				new Object[]{RateLimit.AUTODETECT, new InetSocketAddress("127.0.0.1", 0), 0},
-				new Object[]{RateLimit.AUTODETECT, channel.remoteAddress(), 10 / 3.5},
-				new Object[]{RateLimit.AUTODETECT, null, 10 / 3.5},
-				new Object[]{RateLimit.LIMITED, new InetSocketAddress("2001:db:08::2001", 0), 10 / 3.5},
-				new Object[]{RateLimit.LIMITED, new InetSocketAddress("10.10.10.10", 0), 10 / 3.5},
-				new Object[]{RateLimit.LIMITED, new InetSocketAddress("127.0.0.1", 0), 10 / 3.5},
-				new Object[]{RateLimit.LIMITED, new InetSocketAddress("::1", 0), 10 / 3.5},
-				new Object[]{RateLimit.LIMITED, channel.remoteAddress(), 10 / 3.5},
-				new Object[]{RateLimit.LIMITED, null, 10 / 3.5},
-				new Object[]{RateLimit.UNLIMITED, new InetSocketAddress("2001:db:08::2001", 0), 0},
-				new Object[]{RateLimit.UNLIMITED, new InetSocketAddress("10.10.10.10", 0), 0},
-				new Object[]{RateLimit.UNLIMITED, new InetSocketAddress("127.0.0.1", 0), 0},
-				new Object[]{RateLimit.UNLIMITED, new InetSocketAddress("::1", 0), 0},
-				new Object[]{RateLimit.UNLIMITED, channel.remoteAddress(), 0},
-				new Object[]{RateLimit.UNLIMITED, null, 0}
+				new Object[]{RateLimit.AUTODETECT, "RateLimit.AUTODETECT", new InetSocketAddress("::1", 0), new InetSocketAddress("127.0.0.1", 0), -1},
+				new Object[]{RateLimit.LIMITED, "RateLimit.LIMITED", new InetSocketAddress("::1", 0), new InetSocketAddress("127.0.0.1", 0), 0},
+				new Object[]{RateLimit.UNLIMITED, "RateLimit.UNLIMITED", new InetSocketAddress("::1", 0), new InetSocketAddress("127.0.0.1", 0), 0}
 		);
 	}
 
@@ -66,14 +51,27 @@ public class RateLimitTest {
 	public RateLimit limit;
 
 	@Parameterized.Parameter(value = 1)
-	public SocketAddress address;
+	public String toString;
 
 	@Parameterized.Parameter(value = 2)
-	public double expected;
+	public SocketAddress compareFirst;
+
+	@Parameterized.Parameter(value = 3)
+	public SocketAddress compareSecond;
+
+	@Parameterized.Parameter(value = 4)
+	public int expected;
 
 	@Test
-	public void testValue() {
-		Assert.assertEquals(expected, limit.maxPacketsPerSecond(address), 0.1);
+	public void toStringTest() {
+		Assert.assertEquals(toString, limit.toString());
+	}
+
+	@Test
+	public void compareTest() {
+		final Comparator<SocketAddress> socketAddressComparator = limit.socketAddressComparator();
+		Assert.assertEquals(expected, socketAddressComparator.compare(compareFirst, compareSecond));
+		Assert.assertEquals(-expected, socketAddressComparator.compare(compareSecond, compareFirst));
 	}
 
 }

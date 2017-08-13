@@ -31,6 +31,7 @@ import javax.annotation.Nonnegative;
 /**
  * Ratelimit specification for the flood protection.
  */
+@FunctionalInterface
 public interface RateLimit {
 
 	/**
