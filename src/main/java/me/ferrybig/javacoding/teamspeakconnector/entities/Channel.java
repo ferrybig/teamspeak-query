@@ -206,6 +206,11 @@ public class Channel extends UnresolvedChannelWithName {
 	}
 
 	@Override
+	public boolean isResolved() {
+		return true;
+	}
+
+	@Override
 	@SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
 	public boolean equals(Object obj) {
 		return super.equals(obj);
