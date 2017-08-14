@@ -73,15 +73,4 @@ public class ShallowOfflineClient extends UnresolvedOfflineClient implements Unr
 		return repo.getConnection().io().getCompletedFuture(this);
 	}
 
-	@Override
-	@SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
-	public boolean equals(Object obj) {
-		return super.equals(obj);
-	}
-
-	@Override
-	public int hashCode() {
-		return super.hashCode();
-	}
-
 }

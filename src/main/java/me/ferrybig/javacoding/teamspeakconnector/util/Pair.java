@@ -24,13 +24,20 @@
 package me.ferrybig.javacoding.teamspeakconnector.util;
 
 import java.util.Objects;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNullableByDefault;
+import javax.annotation.concurrent.Immutable;
 
-public class Pair<A, B> {
+@Immutable
+@ParametersAreNullableByDefault
+public final class Pair<A, B> {
 
+	@Nullable
 	private final A first;
+	@Nullable
 	private final B second;
 
-	public Pair(A first, B second) {
+	public Pair(@Nullable A first, @Nullable B second) {
 		this.first = first;
 		this.second = second;
 	}
@@ -56,10 +63,12 @@ public class Pair<A, B> {
 		return true;
 	}
 
+	@Nullable
 	public A getFirst() {
 		return first;
 	}
 
+	@Nullable
 	public B getSecond() {
 		return second;
 	}

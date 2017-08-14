@@ -23,43 +23,17 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.util;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 public class PairTest {
 
 	@Test
 	public void testEquals() {
-		Object a = new Object();
-		Object b = new Object();
-		Object c = null;
-
-		Pair<Object, Object> pab1 = new Pair<>(a, b);
-		Pair<Object, Object> pab2 = new Pair<>(a, b);
-		Pair<Object, Object> pac = new Pair<>(a, c);
-		Pair<Object, Object> pba = new Pair<>(b, a);
-
-		assertTrue(pab1.equals(pab1));
-		assertTrue(pab1.equals(pab2));
-		assertFalse(pab1.equals(pac));
-		assertFalse(pab1.equals(pba));
-
-		assertTrue(pab2.equals(pab1));
-		assertTrue(pab2.equals(pab2));
-		assertFalse(pab2.equals(pac));
-		assertFalse(pab2.equals(pba));
-
-		assertFalse(pac.equals(pab1));
-		assertFalse(pac.equals(pab2));
-		assertTrue(pac.equals(pac));
-		assertFalse(pac.equals(pba));
-
-		assertFalse(pba.equals(pab1));
-		assertFalse(pba.equals(pab2));
-		assertFalse(pba.equals(pac));
-		assertTrue(pba.equals(pba));
+		EqualsVerifier
+				.forClass(Pair.class)
+				.verify();
 	}
 
 	@Test
@@ -80,24 +54,6 @@ public class PairTest {
 		Object result = instance.getSecond();
 
 		assertEquals(expResult, result);
-	}
-
-	@Test
-	public void testHashCode() {
-		Object a = new Object();
-		Object b = new Object();
-		Object c = null;
-
-		Pair<Object, Object> pab1 = new Pair<>(a, b);
-		Pair<Object, Object> pab2 = new Pair<>(a, b);
-		Pair<Object, Object> pac = new Pair<>(a, c);
-		Pair<Object, Object> pba = new Pair<>(b, a);
-
-		assertEquals(pab1.hashCode(), pab1.hashCode());
-		assertEquals(pab1.hashCode(), pab2.hashCode());
-		assertEquals(pab2.hashCode(), pab2.hashCode());
-		assertEquals(pac.hashCode(), pac.hashCode());
-		assertEquals(pba.hashCode(), pba.hashCode());
 	}
 
 	@Test

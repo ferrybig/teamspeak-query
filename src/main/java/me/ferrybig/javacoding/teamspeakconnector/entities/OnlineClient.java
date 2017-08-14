@@ -231,17 +231,6 @@ public class OnlineClient extends NamedOnlineClient {
 		return true;
 	}
 
-	@Override
-	@SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
-	public boolean equals(Object obj) {
-		return super.equals(obj);
-	}
-
-	@Override
-	public int hashCode() {
-		return super.hashCode();
-	}
-
 	public static enum Type {
 		NORMAL, QUERY;
 

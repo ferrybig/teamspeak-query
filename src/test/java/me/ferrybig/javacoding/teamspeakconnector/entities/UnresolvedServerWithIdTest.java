@@ -23,26 +23,20 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.entities;
 
-import javax.annotation.concurrent.Immutable;
-import me.ferrybig.javacoding.teamspeakconnector.repository.ChannelRepository;
+import me.ferrybig.javacoding.teamspeakconnector.repository.ServerRepository;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.Test;
+import static org.mockito.Mockito.mock;
 
-@Immutable
-public class UnresolvedChannelWithName extends UnresolvedChannel {
+public class UnresolvedServerWithIdTest {
 
-	private final String name;
-
-	public UnresolvedChannelWithName(ChannelRepository repo, int id, String name) {
-		super(repo, id);
-		this.name = name;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public String toString() {
-		return "UnresolvedChannelWithName{" + "id=" + getId() + ",name=" + getName() + '}';
+	@Test
+	public void testEquals() {
+		EqualsVerifier
+				.forClass(UnresolvedServerWithId.class)
+				.withPrefabValues(ServerRepository.class, mock(ServerRepository.class), mock(ServerRepository.class))
+				.withIgnoredFields("repo")
+				.verify();
 	}
 
 }
