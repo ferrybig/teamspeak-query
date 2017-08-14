@@ -136,8 +136,8 @@ public class TeamspeakConnection implements Closeable {
 				repositoryLock);
 	}
 
-	public TeamspeakConnection(TeamspeakIO channel) {
-		this.io = channel;
+	public TeamspeakConnection(TeamspeakIO io) {
+		this.io = Objects.requireNonNull(io, "io");
 	}
 
 	public final TeamspeakIO io() {
