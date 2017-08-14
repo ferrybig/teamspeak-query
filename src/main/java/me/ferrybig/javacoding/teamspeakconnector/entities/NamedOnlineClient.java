@@ -54,15 +54,4 @@ public class NamedOnlineClient extends UnresolvedOnlineClient {
 		return nickname;
 	}
 
-	@Override
-	@SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
-	public boolean equals(Object obj) {
-		return super.equals(obj);
-	}
-
-	@Override
-	public int hashCode() {
-		return super.hashCode();
-	}
-
 }

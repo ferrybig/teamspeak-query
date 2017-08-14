@@ -210,17 +210,6 @@ public class Channel extends UnresolvedChannelWithName {
 		return true;
 	}
 
-	@Override
-	@SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
-	public boolean equals(Object obj) {
-		return super.equals(obj);
-	}
-
-	@Override
-	public int hashCode() {
-		return super.hashCode();
-	}
-
 	public enum Codec {
 		/**
 		 * speex narrowband (mono, 16bit, 8kHz)

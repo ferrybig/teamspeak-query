@@ -84,14 +84,14 @@ public class UnresolvedChannel implements Resolvable<Channel> {
 	}
 
 	@Override
-	public int hashCode() {
+	public final int hashCode() {
 		int hash = 7;
 		hash = 17 * hash + this.id;
 		return hash;
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public final boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
