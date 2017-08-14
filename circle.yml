@@ -15,8 +15,8 @@ dependencies:
 test:
   pre:
   override:
-    - mvn verify
-    - if [[ -z $CI_PULL_REQUEST ]] ; then mvn -Drepotoken=$repotoken jacoco:report coveralls:report ; fi
+    - mvn -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn verify
+    - if [[ -z $CI_PULL_REQUEST ]] ; then mvn -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn -Drepotoken=$repotoken jacoco:report coveralls:report ; fi
   post:
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/
     - find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
