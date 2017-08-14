@@ -43,6 +43,7 @@ public abstract class AbstractResolvable<
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public Future<T> resolve() {
 		if (isResolved()) {
 			return repo.getConnection().io().getCompletedFuture((T) this);
@@ -51,10 +52,12 @@ public abstract class AbstractResolvable<
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public Future<T> forceResolve() {
 		return repo.get((S) this, true);
 	}
 
+	@SuppressWarnings("unchecked")
 	public Future<?> delete(boolean force) {
 		return repo.deleteUnresolved((S) this, force);
 	}

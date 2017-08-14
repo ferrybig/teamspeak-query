@@ -24,7 +24,7 @@
 package me.ferrybig.javacoding.teamspeakconnector.event;
 
 import me.ferrybig.javacoding.teamspeakconnector.ChangeReason;
-import me.ferrybig.javacoding.teamspeakconnector.entities.NamedUser;
+import me.ferrybig.javacoding.teamspeakconnector.entities.NamedOnlineClient;
 import me.ferrybig.javacoding.teamspeakconnector.entities.ShallowUser;
 import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedChannel;
 
@@ -32,10 +32,10 @@ public class ClientEnterViewEvent extends ClientResolvedEvent {
 
 	private final UnresolvedChannel to;
 	private final ChangeReason reason;
-	private final NamedUser invoker;
+	private final NamedOnlineClient invoker;
 
 	public ClientEnterViewEvent(ShallowUser client, UnresolvedChannel to,
-			ChangeReason reason, NamedUser invoker) {
+			ChangeReason reason, NamedOnlineClient invoker) {
 		super(client);
 		this.to = to;
 		this.reason = reason;
@@ -50,7 +50,7 @@ public class ClientEnterViewEvent extends ClientResolvedEvent {
 		return reason;
 	}
 
-	public NamedUser getInvoker() {
+	public NamedOnlineClient getInvoker() {
 		return invoker;
 	}
 
