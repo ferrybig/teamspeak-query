@@ -468,6 +468,44 @@ public class TeamspeakBootstrapTest {
 		assertSame(tb, tb1);
 	}
 
+	@Test
+	public void selectedServerPortDefaultIsNullTest() {
+		TeamspeakBootstrap tb = new TeamspeakBootstrap(loop);
+
+		assertNull(tb.selectServerPort());
+	}
+
+	@Test
+	public void selectServerPortCanBeSetTest() {
+		TeamspeakBootstrap tb = new TeamspeakBootstrap(loop);
+
+		tb.selectServerPort(1);
+		assertEquals((Object)1, tb.selectServerPort());
+
+		tb.selectServerPort(3);
+		assertEquals((Object)3, tb.selectServerPort());
+	}
+
+	@Test
+	public void selectServerPortCanBeUnsetTest() {
+		TeamspeakBootstrap tb = new TeamspeakBootstrap(loop);
+
+		tb.selectServerPort(1);
+		assertEquals((Object)1, tb.selectServerPort());
+
+		tb.noSelectServerPort();
+		assertEquals(null, tb.selectServerPort());
+	}
+
+	@Test
+	public void selectServerPortReturnsSameInstanceTest() {
+		TeamspeakBootstrap tb = new TeamspeakBootstrap(loop);
+
+		TeamspeakBootstrap tb1 = tb.selectServerPort(1);
+
+		assertSame(tb, tb1);
+	}
+
 	@ChannelHandler.Sharable
 	private static class SharedHandler extends ChannelHandlerAdapter {
 
