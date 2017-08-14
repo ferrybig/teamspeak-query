@@ -24,7 +24,7 @@
 package me.ferrybig.javacoding.teamspeakconnector.event;
 
 import me.ferrybig.javacoding.teamspeakconnector.ChangeReason;
-import me.ferrybig.javacoding.teamspeakconnector.entities.NamedUser;
+import me.ferrybig.javacoding.teamspeakconnector.entities.NamedOnlineClient;
 import me.ferrybig.javacoding.teamspeakconnector.entities.ShallowUser;
 import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedChannel;
 
@@ -34,7 +34,7 @@ public class ClientChangedViewEvent extends ClientEnterViewEvent {
 
 	public ClientChangedViewEvent(ShallowUser client, UnresolvedChannel from,
 			UnresolvedChannel to, ChangeReason reason, String message,
-			NamedUser invoker) {
+			NamedOnlineClient invoker) {
 		super(client, to, reason, invoker);
 		this.from = from;
 	}
