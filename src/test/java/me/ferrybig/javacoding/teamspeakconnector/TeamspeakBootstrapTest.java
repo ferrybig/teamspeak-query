@@ -395,6 +395,79 @@ public class TeamspeakBootstrapTest {
 		}
 	}
 
+	@Test
+	public void defaultRateLimitIsAutoDetectTest() {
+		TeamspeakBootstrap tb = new TeamspeakBootstrap(loop);
+
+		assertEquals(RateLimit.AUTODETECT, tb.rateLimit());
+	}
+
+	@Test
+	public void rateLimitCanBeSetTest() {
+		TeamspeakBootstrap tb = new TeamspeakBootstrap(loop);
+
+		tb.rateLimit(RateLimit.UNLIMITED);
+		assertEquals(RateLimit.UNLIMITED, tb.rateLimit());
+
+		tb.rateLimit(RateLimit.LIMITED);
+		assertEquals(RateLimit.LIMITED, tb.rateLimit());
+	}
+
+	@Test(expected = NullPointerException.class)
+	@SuppressWarnings("null")
+	public void rateLimitDoesNotAcceptNullTest() {
+		TeamspeakBootstrap tb = new TeamspeakBootstrap(loop);
+
+		tb.rateLimit(null);
+	}
+
+	@Test
+	public void rateLimitReturnsSameInstanceTest() {
+		TeamspeakBootstrap tb = new TeamspeakBootstrap(loop);
+
+		TeamspeakBootstrap tb1 = tb.rateLimit(RateLimit.UNLIMITED);
+
+		assertSame(tb, tb1);
+	}
+
+	@Test
+	public void selectedServerDefaultIsNullTest() {
+		TeamspeakBootstrap tb = new TeamspeakBootstrap(loop);
+
+		assertNull(tb.selectServerID());
+	}
+
+	@Test
+	public void selectServerIdCanBeSetTest() {
+		TeamspeakBootstrap tb = new TeamspeakBootstrap(loop);
+
+		tb.selectServerID(1);
+		assertEquals((Object)1, tb.selectServerID());
+
+		tb.selectServerID(3);
+		assertEquals((Object)3, tb.selectServerID());
+	}
+
+	@Test
+	public void selectServerIdCanBeUnsetTest() {
+		TeamspeakBootstrap tb = new TeamspeakBootstrap(loop);
+
+		tb.selectServerID(1);
+		assertEquals((Object)1, tb.selectServerID());
+
+		tb.noSelectServerID();
+		assertEquals(null, tb.selectServerID());
+	}
+
+	@Test
+	public void selectServerIdReturnsSameInstanceTest() {
+		TeamspeakBootstrap tb = new TeamspeakBootstrap(loop);
+
+		TeamspeakBootstrap tb1 = tb.selectServerID(1);
+
+		assertSame(tb, tb1);
+	}
+
 	@ChannelHandler.Sharable
 	private static class SharedHandler extends ChannelHandlerAdapter {
 
