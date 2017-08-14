@@ -37,13 +37,17 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 
+@ParametersAreNonnullByDefault
 public class FutureUtil {
 
 	private FutureUtil() {
 		assert false;
 	}
 
+	@Nonnull
 	private static <T, R> Future<R> delegateFutureResult(Future<T> future,
 			Promise<R> prom, Function<T, R> map) {
 		Objects.requireNonNull(map, "map");
@@ -55,9 +59,12 @@ public class FutureUtil {
 		});
 	}
 
+	@Nonnull
 	private static <T, R> Future<R> delegateFutureResult(Future<T> future,
 			Promise<R> prom, BiExFunction<T, Throwable, R> map) {
 		Objects.requireNonNull(map, "map");
+		Objects.requireNonNull(prom, "prom");
+		Objects.requireNonNull(future, "future");
 		future.addListener((ignored) -> {
 			assert ignored == future;
 			try {
@@ -85,21 +92,25 @@ public class FutureUtil {
 		return prom;
 	}
 
+	@Nonnull
 	public static <T, R> Future<R> chainFuture(Promise<R> result,
 			Future<T> future, Function<T, R> mapping) {
 		return delegateFutureResult(future, result, mapping);
 	}
 
+	@Nonnull
 	public static <T, R> Future<R> chainFutureAdvanced(Promise<R> result,
 			Future<T> future, BiExFunction<T, Throwable, R> mapping) {
 		return delegateFutureResult(future, result, mapping);
 	}
 
+	@Nonnull
 	public static <T, R> Future<R> chainFutureFlat(Promise<R> result,
 			Future<T> future, Function<T, Future<R>> mapping) {
 		return chainFutureFlat(result, future, mapping, (t, i) -> i);
 	}
 
+	@Nonnull
 	public static <T, I, R> Future<R> chainFutureFlat(Promise<R> result,
 			Future<T> future, Function<T, Future<I>> mapping,
 			BiFunction<T, I, R> secondary) {
@@ -125,11 +136,13 @@ public class FutureUtil {
 		return result;
 	}
 
+	@Nonnull
 	public static <T> List<T> waitSync(Future<? extends T> future)
 			throws InterruptedException, ExecutionException {
 		return Collections.singletonList(future.get());
 	}
 
+	@Nonnull
 	public static <T> List<T> waitSync(Future<? extends T> future1,
 			Future<? extends T> future2)
 			throws InterruptedException, ExecutionException {
@@ -139,6 +152,7 @@ public class FutureUtil {
 		return result;
 	}
 
+	@Nonnull
 	public static <T> List<T> waitSync(Future<? extends T> future1,
 			Future<? extends T> future2, Future<? extends T> future3)
 			throws InterruptedException, ExecutionException {
@@ -149,6 +163,7 @@ public class FutureUtil {
 		return result;
 	}
 
+	@Nonnull
 	public static <T> List<T> waitSync(Future<? extends T> future1,
 			Future<? extends T> future2, Future<? extends T> future3,
 			Future<? extends T> future4)
@@ -161,6 +176,8 @@ public class FutureUtil {
 		return result;
 	}
 
+	@SafeVarargs
+	@Nonnull
 	public static <T> List<T> waitSync(Future<? extends T>... list)
 			throws InterruptedException, ExecutionException {
 		List<T> result = new ArrayList<>(list.length);
@@ -170,6 +187,7 @@ public class FutureUtil {
 		return result;
 	}
 
+	@Nonnull
 	public static <T> List<T> waitSync(Iterable<Future<? extends T>> iterable)
 			throws InterruptedException, ExecutionException {
 		List<T> result;

@@ -29,7 +29,7 @@ import java.util.Objects;
 import javax.annotation.concurrent.Immutable;
 
 @Immutable
-public class ComplexRequest {
+public final class ComplexRequest {
 
 	private final String cmd;
 	private final Map<String, String> data;
@@ -61,6 +61,39 @@ public class ComplexRequest {
 	@Override
 	public String toString() {
 		return "ComplexRequest{" + "cmd=" + cmd + ", data=" + data + '}';
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 5;
+		hash = 29 * hash + Objects.hashCode(this.cmd);
+		hash = 29 * hash + Objects.hashCode(this.data);
+		hash = 29 * hash + (this.raw ? 1 : 0);
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final ComplexRequest other = (ComplexRequest) obj;
+		if (this.raw != other.raw) {
+			return false;
+		}
+		if (!Objects.equals(this.cmd, other.cmd)) {
+			return false;
+		}
+		if (!Objects.equals(this.data, other.data)) {
+			return false;
+		}
+		return true;
 	}
 
 }

@@ -46,6 +46,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
+import me.ferrybig.javacoding.teamspeakconnector.internal.TeamspeakIO;
+import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command;
+import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequest;
+import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequestBuilder;
+import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexResponse;
+import me.ferrybig.javacoding.teamspeakconnector.util.FutureUtil;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -55,6 +62,13 @@ import static org.junit.Assert.*;
 import static org.junit.Assume.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
  *
@@ -124,6 +138,7 @@ public class TeamspeakBootstrapTest {
 	}
 
 	@Test(expected = NullPointerException.class)
+	@SuppressWarnings("null")
 	public void testGroupSetNPE() {
 		TeamspeakBootstrap ts = new TeamspeakBootstrap(loop);
 
@@ -319,6 +334,7 @@ public class TeamspeakBootstrapTest {
 	}
 
 	@Test(expected = NullPointerException.class)
+	@SuppressWarnings("null")
 	public void happyEyeballsHandlesNullArgument() throws UnknownHostException, InterruptedException, ExecutionException {
 		TeamspeakBootstrap.happyEyeballs(bootstrap, null);
 	}
@@ -504,6 +520,56 @@ public class TeamspeakBootstrapTest {
 		TeamspeakBootstrap tb1 = tb.selectServerPort(1);
 
 		assertSame(tb, tb1);
+	}
+
+	@Test
+	public void decorateConnectionCallsLoginWhenLoginIsPresent() throws InterruptedException, ExecutionException {
+		TeamspeakIO io = mock(TeamspeakIO.class);
+		TeamspeakConnection con = new TeamspeakConnection(io);
+		Future<TeamspeakConnection> future = loop.next().newSucceededFuture(con);
+		TeamspeakBootstrap tb = new TeamspeakBootstrap(loop);
+		doReturn(loop.next().newSucceededFuture(new ComplexResponse(new ArrayList<>(), 0, "", ""))).when(io).sendPacket(any(ComplexRequest.class));
+		doAnswer(new Answer<Future<?>>() {
+			@Override
+			@SuppressWarnings("unchecked")
+			public Future<?> answer(InvocationOnMock invocation) throws Throwable {
+				return FutureUtil.chainFuture(
+						loop.next().newPromise(),
+						(Future<Object>)invocation.getArgumentAt(0, Object.class),
+						(Function<Object, Object>)invocation.getArgumentAt(1, Object.class));
+			}
+		}).when(io).chainFuture(any(), any());
+
+		Future<TeamspeakConnection> newFuture = tb.login("foo", "bar").decorateConnection(loop.next(), future);
+
+		verify(io).sendPacket(new ComplexRequestBuilder(Command.LOG_IN).addData("client_login_name", "foo").addData("client_login_password", "bar").build());
+		assertNotEquals(future, newFuture);
+		assertSame(future.get(), newFuture.get());
+		assertTrue(newFuture.isDone());
+	}
+
+	@Test
+	public void decorateConnectionCallsWontCallLogin() {
+		TeamspeakIO io = mock(TeamspeakIO.class);
+		TeamspeakConnection con = new TeamspeakConnection(io);
+		Future<TeamspeakConnection> future = loop.next().newSucceededFuture(con);
+		TeamspeakBootstrap tb = new TeamspeakBootstrap(loop);
+		doReturn(loop.next().newSucceededFuture(new ComplexResponse(new ArrayList<>(), 0, "", ""))).when(io).sendPacket(any(ComplexRequest.class));
+		doAnswer(new Answer<Future<?>>() {
+			@Override
+			@SuppressWarnings("unchecked")
+			public Future<?> answer(InvocationOnMock invocation) throws Throwable {
+				return FutureUtil.chainFuture(
+						loop.next().newPromise(),
+						(Future<Object>)invocation.getArgumentAt(0, Object.class),
+						(Function<Object, Object>)invocation.getArgumentAt(1, Object.class));
+			}
+		}).when(io).chainFuture(any(), any());
+
+		Future<TeamspeakConnection> newFuture = tb.decorateConnection(loop.next(), future);
+
+		assertSame(future, newFuture);
+		assertTrue(newFuture.isDone());
 	}
 
 	@ChannelHandler.Sharable
