@@ -26,7 +26,7 @@ package me.ferrybig.javacoding.teamspeakconnector;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.concurrent.Future;
 import java.util.logging.Logger;
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Assume;
 import org.junit.Before;
 
