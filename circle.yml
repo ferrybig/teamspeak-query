@@ -12,7 +12,7 @@ dependencies:
     - mvn dependency:go-offline
     - mkdir teamspeak-download
     - mkdir teamspeak-server
-    - wget -nc http://teamspeak.gameserver.gamed.de/ts3/releases/3.0.11.3/teamspeak3-server_linux-x86-3.0.11.3.tar.gz -o teamspeak-download/teamspeak.tar.gz
+    - wget -nc http://teamspeak.gameserver.gamed.de/ts3/releases/3.0.11.3/teamspeak3-server_linux-x86-3.0.11.3.tar.gz -O teamspeak-download/teamspeak.tar.gz
     - tar xzvf teamspeak-download/teamspeak.tar.gz  -C teamspeak-server --strip-components=1
   post:
 test:
