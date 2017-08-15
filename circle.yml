@@ -2,18 +2,23 @@ checkout:
   pre:
   post:
 dependencies:
+  cache_directories:
+    - ~/teamspeak-download
   pre:
     - sudo update-alternatives --set java /usr/lib/jvm/jdk1.8.0/bin/java
     - sudo update-alternatives --set javac /usr/lib/jvm/java-8-openjdk-amd64/bin/javac
     - echo 'export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64' >> ~/.circlerc
   override:
-    - mvn dependency:resolve
-    - mvn dependency:resolve-plugins
     - mvn dependency:go-offline
-    - mvn dependency:tree
+    - mkdir teamspeak-download
+    - mkdir teamspeak-server
+    - cd teamspeak-download && [ -f teamspeak.tar.gz ] || wget http://teamspeak.gameserver.gamed.de/ts3/releases/3.0.11.3/teamspeak3-server_linux-x86-3.0.11.3.tar.gz -o teamspeak.tar.gz
+    - tar xzvf teamspeak-download/teamspeak.tar.gz  -C teamspeak-server --strip-components=1
   post:
 test:
   pre:
+    - ~/teamspeak-server/ts3server_minimal_runscript.sh clear_database=1 create_default_virtualserver=1 serveradmin_password=test1234:
+          background: true
   override:
     - mvn -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn verify
     - if [[ -z $CI_PULL_REQUEST ]] ; then mvn -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn -Drepotoken=$repotoken jacoco:report coveralls:report ; fi
