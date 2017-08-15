@@ -35,7 +35,7 @@ public class UnresolvedServerWithIdTest {
 		EqualsVerifier
 				.forClass(UnresolvedServerWithId.class)
 				.withPrefabValues(ServerRepository.class, mock(ServerRepository.class), mock(ServerRepository.class))
-				.withIgnoredFields("repo")
+				.withOnlyTheseFields("sid")
 				.verify();
 	}
 

@@ -35,7 +35,7 @@ public class UnresolvedChannelTest {
 		EqualsVerifier
 				.forClass(UnresolvedChannel.class)
 				.withPrefabValues(ChannelRepository.class, mock(ChannelRepository.class), mock(ChannelRepository.class))
-				.withIgnoredFields("repo")
+				.withOnlyTheseFields("id")
 				.verify();
 	}
 

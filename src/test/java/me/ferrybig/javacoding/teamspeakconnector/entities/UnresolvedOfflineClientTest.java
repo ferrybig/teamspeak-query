@@ -35,7 +35,7 @@ public class UnresolvedOfflineClientTest {
 		EqualsVerifier
 				.forClass(UnresolvedOfflineClient.class)
 				.withPrefabValues(OfflineClientRepository.class, mock(OfflineClientRepository.class), mock(OfflineClientRepository.class))
-				.withIgnoredFields("repo")
+				.withOnlyTheseFields("databaseId")
 				.verify();
 	}
 

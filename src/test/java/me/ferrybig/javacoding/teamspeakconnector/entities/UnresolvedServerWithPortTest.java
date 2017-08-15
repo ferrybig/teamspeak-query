@@ -35,7 +35,7 @@ public class UnresolvedServerWithPortTest {
 		EqualsVerifier
 				.forClass(UnresolvedServerWithPort.class)
 				.withPrefabValues(ServerRepository.class, mock(ServerRepository.class), mock(ServerRepository.class))
-				.withIgnoredFields("repo")
+				.withOnlyTheseFields("port")
 				.verify();
 	}
 
