@@ -28,6 +28,7 @@ import io.netty.util.concurrent.Future;
 import java.util.logging.Logger;
 import org.junit.AfterClass;
 import org.junit.Assume;
+import org.junit.Before;
 
 /**
  *
@@ -37,15 +38,20 @@ public abstract class AbstractConnectionBasedIT {
 
 	private static final Logger LOG = Logger.getLogger(TeamspeakConnectionIT.class.getName());
 
-	private static final NioEventLoopGroup GROUP = new NioEventLoopGroup();
+	private NioEventLoopGroup group;
+
+	@Before
+	public void before() {
+		group = new NioEventLoopGroup(1);
+	}
 
 	@AfterClass
-	public static void afterClass() {
-		GROUP.shutdownGracefully();
+	public  void after() {
+		group.shutdownGracefully();
 	}
 
 	protected TeamspeakBootstrap creatBootstrap() {
-		TeamspeakBootstrap ts = new TeamspeakBootstrap(GROUP);
+		TeamspeakBootstrap ts = new TeamspeakBootstrap(group);
 
 		String username = System.getProperty("teamspesk3.username", "");
 		if (username.isEmpty()) {
@@ -62,7 +68,7 @@ public abstract class AbstractConnectionBasedIT {
 	}
 
 	protected Future<TeamspeakConnection> createConnection() {
-		return createConnection("TestingBot-" + getClass().getSimpleName().hashCode() % 200);
+		return createConnection("TestingBot");
 	}
 
 	protected Future<TeamspeakConnection> createConnection(String clientname) {
