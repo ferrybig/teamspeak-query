@@ -62,13 +62,13 @@ public abstract class AbstractConnectionBasedIT {
 	}
 
 	protected Future<TeamspeakConnection> createConnection() {
-		return createConnection("TestingBot-" + getClass().getSimpleName());
+		return createConnection("TestingBot-" + getClass().getSimpleName().hashCode() % 200);
 	}
 
 	protected Future<TeamspeakConnection> createConnection(String clientname) {
 		String hostname = System.getProperty("teamspeak3.hostname", "");
 		if (hostname.isEmpty()) {
-			hostname = "localhost";
+			hostname = "127.0.0.1";
 		}
 		int port = Integer.parseInt(System.getProperty("teamspeak3.port", "").isEmpty()
 				? String.valueOf(TeamspeakBootstrap.DEFAULT_QUERY_PORT)
@@ -76,7 +76,8 @@ public abstract class AbstractConnectionBasedIT {
 		return creatBootstrap().clientName(clientname).connect(hostname, port);
 	}
 
-	protected void assumeConnectionWorking(Future<TeamspeakConnection>... cons)
+	@SafeVarargs
+	protected final void assumeConnectionWorking(Future<TeamspeakConnection>... cons)
 			throws InterruptedException {
 		if (Boolean.valueOf(System.getProperty("teamspeak3.required"))) {
 			return;
