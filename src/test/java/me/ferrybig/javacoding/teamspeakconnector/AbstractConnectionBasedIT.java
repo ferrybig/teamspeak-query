@@ -62,7 +62,7 @@ public abstract class AbstractConnectionBasedIT {
 	}
 
 	protected Future<TeamspeakConnection> createConnection() {
-		return createConnection("TestingBot");
+		return createConnection("TestingBot-" + getClass().getSimpleName());
 	}
 
 	protected Future<TeamspeakConnection> createConnection(String clientname) {
