@@ -45,8 +45,8 @@ public abstract class AbstractConnectionBasedIT {
 		group = new NioEventLoopGroup(1);
 	}
 
-	@AfterClass
-	public  void after() {
+	@After
+	public void after() {
 		group.shutdownGracefully();
 	}
 

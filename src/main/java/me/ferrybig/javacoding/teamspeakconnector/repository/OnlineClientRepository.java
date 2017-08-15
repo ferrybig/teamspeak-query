@@ -68,7 +68,7 @@ public class OnlineClientRepository extends AbstractIntResolvableRepository<Unre
 				Integer.parseInt(data.get("clid")),
 				connection.channels().unresolved(Integer.parseInt(data.get("cid"))),
 				OnlineClient.Type.getById(Integer.parseInt(data.get("client_type"))),
-				data.get("client_away").equals("1")
+				"1".equals(data.get("client_away"))
 				? data.get("client_away_message") : null,
 				data.get("client_flag_talking").equals("1"),
 				data.get("client_input_muted").equals("1"),
