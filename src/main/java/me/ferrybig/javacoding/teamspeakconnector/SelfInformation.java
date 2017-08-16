@@ -44,7 +44,7 @@ public class SelfInformation {
 
 	protected NamedOnlineClient readWhoAmI(Map<String, String> data) {
 		return new NamedOnlineClient(connection.onlineClients(),
-				Integer.parseInt(data.get("clid")),
+				Integer.parseInt(data.get("client_id")),
 				data.get("virtualserver_unique_identifier"),
 				data.get("client_nickname"));
 	}

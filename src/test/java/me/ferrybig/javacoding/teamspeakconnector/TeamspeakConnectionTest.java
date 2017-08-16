@@ -40,10 +40,10 @@ import me.ferrybig.javacoding.teamspeakconnector.repository.PrivilegeKeyReposito
 import me.ferrybig.javacoding.teamspeakconnector.repository.ServerRepository;
 import me.ferrybig.javacoding.teamspeakconnector.util.FutureUtil;
 import org.junit.AfterClass;
-import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Test;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;

@@ -63,4 +63,9 @@ public class OfflineClient extends ShallowOfflineClient {
 		return description;
 	}
 
+	@Override
+	public boolean isResolved() {
+		return true;
+	}
+
 }

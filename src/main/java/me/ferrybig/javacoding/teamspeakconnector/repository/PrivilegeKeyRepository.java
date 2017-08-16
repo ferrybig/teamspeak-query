@@ -65,7 +65,7 @@ public class PrivilegeKeyRepository
 	protected PrivilegeKey readEntity(Map<String, String> data) {
 		Map<String, String> customSet = new HashMap<>();
 		final String tokenCustomSetString = data.get("tokencustomset");
-		if (!tokenCustomSetString.isEmpty()) {
+		if (tokenCustomSetString != null && !tokenCustomSetString.isEmpty()) {
 			Map<String, String> customSetCache = new HashMap<>(2);
 			for (String part : tokenCustomSetString.split("\\|")) {
 				PacketDecoder.singleDecode(part, customSetCache, true, true);
@@ -80,7 +80,7 @@ public class PrivilegeKeyRepository
 				data.getOrDefault("tokendescription", ""),
 				PrivilegeKey.Type.getById(Integer.parseInt(
 						data.getOrDefault("token_type",
-								data.get("tokenid2").equals("0") ? "0" : "1"))),
+								"0".equals(data.get("tokenid2")) ? "0" : "1"))),
 				Integer.parseInt(data.get("token_id1")),
 				Integer.parseInt(data.get("token_id2")));
 	}

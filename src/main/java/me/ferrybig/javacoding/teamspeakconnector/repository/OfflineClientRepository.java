@@ -77,7 +77,7 @@ public class OfflineClientRepository extends AbstractIntResolvableRepository<Unr
 	@Override
 	protected OfflineClient readEntity(Map<String, String> data) {
 		return new OfflineClient(this,
-				Integer.parseInt(data.get("client_database_id")),
+				Integer.parseInt(data.get("cldbid")),
 				data.get("client_unique_identifier"),
 				data.get("client_nickname"),
 				Long.parseLong(data.get("client_created")),

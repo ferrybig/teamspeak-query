@@ -207,7 +207,7 @@ public class Mapper {
 	}
 
 	public <R> List<R> mapIntList(String in, IntFunction<R> mapper) {
-		return in.isEmpty() ? new ArrayList<>() : Arrays.stream(in.split(","))
+		return in == null || in.isEmpty() ? new ArrayList<>() : Arrays.stream(in.split(","))
 				.mapToInt(Integer::parseInt)
 				.mapToObj(mapper).collect(Collectors.toList());
 	}

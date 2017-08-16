@@ -68,7 +68,7 @@ public class OnlineClientRepository extends AbstractIntResolvableRepository<Unre
 				Integer.parseInt(data.get("clid")),
 				connection.channels().unresolved(Integer.parseInt(data.get("cid"))),
 				OnlineClient.Type.getById(Integer.parseInt(data.get("client_type"))),
-				"1".equals(data.get("client_away"))
+				data.get("client_away").equals("1")
 				? data.get("client_away_message") : null,
 				"1".equals(data.get("client_flag_talking")),
 				"1".equals(data.get("client_input_muted")),
@@ -97,7 +97,17 @@ public class OnlineClientRepository extends AbstractIntResolvableRepository<Unre
 
 	@Override
 	protected ComplexRequest requestList() {
-		return Command.CLIENT_LIST.build();
+		return Command.CLIENT_LIST
+				.addOption("uid")
+				.addOption("away")
+				.addOption("voice")
+				.addOption("groups")
+				.addOption("times")
+				.addOption("info")
+				.addOption("icon")
+				.addOption("country")
+				.addOption("ip")
+				.build();
 	}
 
 	@Override

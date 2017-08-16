@@ -64,7 +64,7 @@ public class ServerRepository extends AbstractIntResolvableRepository<Unresolved
 
 	@Override
 	protected ComplexRequest requestList() {
-		return Command.SERVER_LIST.addOption("virtual").build();
+		return Command.SERVER_LIST.addOption("all").build();
 	}
 
 	@Override

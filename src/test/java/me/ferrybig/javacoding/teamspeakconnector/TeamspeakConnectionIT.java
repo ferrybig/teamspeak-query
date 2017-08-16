@@ -14,8 +14,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import me.ferrybig.javacoding.teamspeakconnector.entities.Channel;
 import me.ferrybig.javacoding.teamspeakconnector.entities.Group;
+import me.ferrybig.javacoding.teamspeakconnector.entities.OfflineClient;
 import me.ferrybig.javacoding.teamspeakconnector.entities.OnlineClient;
 import me.ferrybig.javacoding.teamspeakconnector.entities.PrivilegeKey;
+import me.ferrybig.javacoding.teamspeakconnector.entities.Server;
 import static me.ferrybig.javacoding.teamspeakconnector.util.FutureUtil.waitSync;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -41,9 +43,17 @@ public class TeamspeakConnectionIT extends AbstractConnectionBasedIT {
 		final List<Channel> channel = con.channels().list().get();
 		channel.forEach(System.out::println);
 
+		System.out.println("Server list");
+		final List<Server> server = con.servers().list().get();
+		server.forEach(System.out::println);
+
 		System.out.println("Group list");
 		final List<Group> groups = con.groups().list().get();
 		groups.forEach(System.out::println);
+
+		System.out.println("Offline list");
+		final List<OfflineClient> offlineClients = con.offlineClients().list().get();
+		offlineClients.forEach(System.out::println);
 
 		Optional<Group> bottest = groups.stream().filter(g -> (g.getType() == Group.Type.REGULAR) && g.getName().equals("BotTest")).findAny();
 
@@ -86,6 +96,9 @@ public class TeamspeakConnectionIT extends AbstractConnectionBasedIT {
 //			});
 		if (bottest.isPresent()) {
 			for (OnlineClient user : users) {
+				if (user.getType() == OnlineClient.Type.QUERY) {
+					continue;
+				}
 				user.getOfflineClient().removeFromGroup(bottest.get()).get();
 			}
 		}
