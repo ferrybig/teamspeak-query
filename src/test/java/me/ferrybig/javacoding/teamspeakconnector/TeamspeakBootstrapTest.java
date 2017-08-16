@@ -46,7 +46,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import me.ferrybig.javacoding.teamspeakconnector.internal.TeamspeakIO;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequest;
@@ -541,6 +545,10 @@ public class TeamspeakBootstrapTest {
 		}).when(io).chainFuture(any(), any());
 
 		Future<TeamspeakConnection> newFuture = tb.login("foo", "bar").decorateConnection(loop.next(), future);
+
+		try {
+			newFuture.get(1000, TimeUnit.MILLISECONDS);
+		} catch (TimeoutException ex) {}
 
 		verify(io).sendPacket(new ComplexRequestBuilder(Command.LOG_IN).addData("client_login_name", "foo").addData("client_login_password", "bar").build());
 		assertNotEquals(future, newFuture);
