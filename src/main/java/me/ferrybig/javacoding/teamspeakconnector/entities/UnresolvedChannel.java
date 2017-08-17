@@ -25,6 +25,7 @@ package me.ferrybig.javacoding.teamspeakconnector.entities;
 
 import io.netty.util.concurrent.Future;
 import java.util.List;
+import java.util.Objects;
 import javax.annotation.concurrent.Immutable;
 import me.ferrybig.javacoding.teamspeakconnector.Resolvable;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command;
@@ -38,7 +39,7 @@ public class UnresolvedChannel implements Resolvable<Channel> {
 	private final int id;
 
 	public UnresolvedChannel(ChannelRepository repo, int id) {
-		this.repo = repo;
+		this.repo = Objects.requireNonNull(repo, "repo");
 		this.id = id;
 	}
 

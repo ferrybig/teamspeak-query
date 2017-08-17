@@ -24,6 +24,7 @@
 package me.ferrybig.javacoding.teamspeakconnector.entities;
 
 import io.netty.util.concurrent.Future;
+import java.util.Objects;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command;
 import me.ferrybig.javacoding.teamspeakconnector.repository.ServerRepository;
@@ -34,7 +35,7 @@ public class UnresolvedServerWithPort implements UnresolvedServer {
 	private final int port;
 
 	public UnresolvedServerWithPort(ServerRepository repo, int port) {
-		this.repo = repo;
+		this.repo = Objects.requireNonNull(repo, "repo");
 		this.port = port;
 	}
 

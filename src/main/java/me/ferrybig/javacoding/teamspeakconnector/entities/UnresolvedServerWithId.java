@@ -24,6 +24,7 @@
 package me.ferrybig.javacoding.teamspeakconnector.entities;
 
 import io.netty.util.concurrent.Future;
+import java.util.Objects;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command;
 import me.ferrybig.javacoding.teamspeakconnector.repository.ServerRepository;
@@ -34,7 +35,7 @@ public class UnresolvedServerWithId implements UnresolvedServer {
 	private final int sid;
 
 	public UnresolvedServerWithId(ServerRepository repo, int sid) {
-		this.repo = repo;
+		this.repo = Objects.requireNonNull(repo, "repo");
 		this.sid = sid;
 	}
 

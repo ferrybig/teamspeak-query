@@ -39,7 +39,7 @@ public class UnresolvedPrivilegeKey implements Resolvable<PrivilegeKey> {
 	protected final String token;
 
 	public UnresolvedPrivilegeKey(PrivilegeKeyRepository repo, String token) {
-		this.repo = repo;
+		this.repo = Objects.requireNonNull(repo, "repo");
 		this.token = token;
 	}
 

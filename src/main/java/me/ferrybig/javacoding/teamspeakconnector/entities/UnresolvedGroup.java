@@ -26,6 +26,7 @@ package me.ferrybig.javacoding.teamspeakconnector.entities;
 import io.netty.util.concurrent.Future;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import me.ferrybig.javacoding.teamspeakconnector.Resolvable;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command;
 import me.ferrybig.javacoding.teamspeakconnector.repository.GroupRepository;
@@ -38,7 +39,7 @@ public class UnresolvedGroup implements Resolvable<Group> {
 	private final int serverGroupId;
 
 	public UnresolvedGroup(GroupRepository repo, int serverGroupId) {
-		this.repo = repo;
+		this.repo = Objects.requireNonNull(repo, "repo");
 		this.serverGroupId = serverGroupId;
 	}
 

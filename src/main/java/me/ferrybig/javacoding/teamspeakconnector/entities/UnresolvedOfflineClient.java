@@ -25,6 +25,7 @@ package me.ferrybig.javacoding.teamspeakconnector.entities;
 
 import io.netty.util.concurrent.Future;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command;
 import me.ferrybig.javacoding.teamspeakconnector.repository.OfflineClientRepository;
@@ -39,7 +40,7 @@ public class UnresolvedOfflineClient implements UnresolvedClient {
 	protected final int databaseId;
 
 	public UnresolvedOfflineClient(OfflineClientRepository repo, int databaseId) {
-		this.repo = repo;
+		this.repo = Objects.requireNonNull(repo, "repo");
 		this.databaseId = databaseId;
 	}
 
