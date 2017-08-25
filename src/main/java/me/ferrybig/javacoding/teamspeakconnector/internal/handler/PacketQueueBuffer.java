@@ -27,6 +27,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +37,7 @@ import java.util.function.Consumer;
  *
  * @author Fernando
  */
-public class PacketQueueBuffer extends ChannelHandlerAdapter {
+public class PacketQueueBuffer extends ChannelInboundHandlerAdapter {
 
 	// TODO optimalize using a single bytebuf
 	private final List<ByteBuf> queue = new ArrayList<>();

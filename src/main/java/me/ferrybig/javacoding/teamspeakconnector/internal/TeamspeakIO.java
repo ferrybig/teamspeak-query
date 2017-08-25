@@ -212,7 +212,7 @@ public class TeamspeakIO {
 			private Throwable lastException = null;
 
 			@Override
-			protected void messageReceived(ChannelHandlerContext ctx,
+			protected void channelRead0(ChannelHandlerContext ctx,
 					ComplexResponse msg) throws Exception {
 				recievePacket(msg);
 			}

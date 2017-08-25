@@ -483,7 +483,7 @@ public class TeamspeakConnection implements Closeable {
 		private Response lastPacket = null;
 
 		@Override
-		protected void messageReceived(ChannelHandlerContext ctx,
+		protected void channelRead0(ChannelHandlerContext ctx,
 				Response msg) throws Exception {
 			final Map<String, String> options = msg.getOptions();
 			LOG.log(Level.FINE, "Handling packet: {0}", msg);

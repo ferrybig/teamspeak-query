@@ -91,7 +91,7 @@ public class HandshakeListener extends SimpleChannelInboundHandler<String> {
 	}
 
 	@Override
-	protected void messageReceived(ChannelHandlerContext ctx, String msg)
+	protected void channelRead0(ChannelHandlerContext ctx, String msg)
 			throws Exception {
 		if (!headerReceived) {
 			headerReceived = true;
