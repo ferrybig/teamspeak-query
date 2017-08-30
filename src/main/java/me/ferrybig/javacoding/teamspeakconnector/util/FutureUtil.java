@@ -40,6 +40,16 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+/**
+ * FutureUtil provides large amount of utility functions for working with
+ * futures. On of the most useful utilities of this class are the
+ * {@code chainFuture} and {@code chainFutureFlat} methods, these methods allow
+ * for easy chaining of multiple Futures in a row.
+ *
+ * @see FutureUtil#chainFuture(io.netty.util.concurrent.Promise, io.netty.util.concurrent.Future, java.util.function.Function)
+ * @see FutureUtil#chainFutureFlat(io.netty.util.concurrent.Promise, io.netty.util.concurrent.Future, java.util.function.Function)
+ * @see FutureUtil#generateListener(java.util.function.Consumer, java.util.function.Consumer)
+ */
 @ParametersAreNonnullByDefault
 public class FutureUtil {
 
