@@ -383,11 +383,11 @@ public class TeamspeakBootstrap {
 	protected static Future<Channel> happyEyeballs(
 			@Nonnull Bootstrap bootstrap,
 			@Nonnull List<SocketAddress> addresses) {
-		if (bootstrap.group() == null) {
+		if (bootstrap.config().group() == null) {
 			throw new IllegalArgumentException("bootstrap.group() == null");
 		}
-		return new ConnectionAttempt(bootstrap.group().next().newPromise(),
-				addresses, bootstrap.group(), bootstrap).start();
+		return new ConnectionAttempt(bootstrap.config().group().next().newPromise(),
+				addresses, bootstrap.config().group(), bootstrap).start();
 	}
 
 	/**
