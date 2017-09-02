@@ -36,6 +36,7 @@ public class ClientLeftViewEvent extends ClientEvent {
 	private final String invokerName;
 	private final String invokerUid;
 
+	@Deprecated
 	public ClientLeftViewEvent(UnresolvedUser client, UnresolvedChannel from,
 			ChangeReason reason, String message, UnresolvedUser invoker,
 			String invokerName, String invokerUid) {

@@ -25,5 +25,5 @@ package me.ferrybig.javacoding.teamspeakconnector.event;
 
 public interface ChannelMessageListener {
 
-	public void onChannelMessage(ChannelMessageEvent event);
+	void onChannelMessage(ChannelMessageEvent event);
 }

@@ -45,7 +45,7 @@ public interface ObjectRepository<T, I> extends BaseRepository<T> {
 	 * @return a future containing the deletion result
 	 */
 	@Nonnull
-	public default Future<?> deleteById(I id) {
+	default Future<?> deleteById(I id) {
 		return deleteById(id, false);
 	}
 
@@ -58,7 +58,7 @@ public interface ObjectRepository<T, I> extends BaseRepository<T> {
 	 * @return a future containing the deletion result
 	 */
 	@Nonnull
-	public Future<?> deleteById(I id, boolean force);
+	Future<?> deleteById(I id, boolean force);
 
 	/**
 	 * Gets an object by its id
@@ -67,7 +67,7 @@ public interface ObjectRepository<T, I> extends BaseRepository<T> {
 	 * @return a future containing the received object
 	 */
 	@Nonnull
-	public default Future<T> getById(I id) {
+	default Future<T> getById(I id) {
 		return getById(id, false);
 	}
 
@@ -79,6 +79,6 @@ public interface ObjectRepository<T, I> extends BaseRepository<T> {
 	 * @return a future containing the received object
 	 */
 	@Nonnull
-	public Future<T> getById(I id, boolean force);
+	Future<T> getById(I id, boolean force);
 
 }

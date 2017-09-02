@@ -38,7 +38,7 @@ public interface RateLimit {
 	 * An unlimited RateLimit, this one returns {@code 0l} always. Use this if
 	 * your ip is listed inside the whitelist.
 	 */
-	public static final RateLimit UNLIMITED = new RateLimit() {
+	static final RateLimit UNLIMITED = new RateLimit() {
 		@Override
 		public double maxPacketsPerSecond(SocketAddress s) {
 			return 0;
@@ -54,7 +54,7 @@ public interface RateLimit {
 	 * Teamspeak. This one allows for 10 commands every 3.5 seconds, while
 	 * Teamspeak starts to disconnect the client at 10 commands every 3 seconds.
 	 */
-	public static final RateLimit LIMITED = new RateLimit() {
+	static final RateLimit LIMITED = new RateLimit() {
 		@Override
 		public double maxPacketsPerSecond(SocketAddress s) {
 			return 10 / 3.5;
@@ -72,7 +72,7 @@ public interface RateLimit {
 	 * will be using the {@link RateLimit#UNLIMITED} else it uses the
 	 * {@link RateLimit#LIMITED} one.
 	 */
-	public static final RateLimit AUTODETECT = new RateLimit() {
+	static final RateLimit AUTODETECT = new RateLimit() {
 		@Override
 		public double maxPacketsPerSecond(SocketAddress s) {
 			return (s instanceof InetSocketAddress
@@ -95,7 +95,7 @@ public interface RateLimit {
 	 * @return the maximum packets allowed every second.
 	 */
 	@Nonnegative
-	public double maxPacketsPerSecond(SocketAddress remoteAddress);
+	double maxPacketsPerSecond(SocketAddress remoteAddress);
 
 	/**
 	 * A comparator that returns the highest throughput (in terms of commands
@@ -105,7 +105,7 @@ public interface RateLimit {
 	 * @see SocketAddress
 	 * @see RateLimit#maxPacketsPerSecond(java.net.SocketAddress)
 	 */
-	public default Comparator<SocketAddress> socketAddressComparator() {
+	default Comparator<SocketAddress> socketAddressComparator() {
 		return (SocketAddress o1, SocketAddress o2) -> {
 			double l1 = maxPacketsPerSecond(o1);
 			double l2 = maxPacketsPerSecond(o2);

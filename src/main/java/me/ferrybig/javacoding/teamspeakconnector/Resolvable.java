@@ -39,7 +39,7 @@ public interface Resolvable<T> {
 	 *
 	 * @return the result of a normal resolve
 	 */
-	public default Future<T> resolve() {
+	default Future<T> resolve() {
 		return this.forceResolve();
 	}
 
@@ -48,12 +48,12 @@ public interface Resolvable<T> {
 	 *
 	 * @return the result of the force resolve
 	 */
-	public Future<T> forceResolve();
+	Future<T> forceResolve();
 
 	/**
 	 * Check if this instance is already resolved.
 	 *
 	 * @return if the instance is resolved
 	 */
-	public boolean isResolved();
+	boolean isResolved();
 }

@@ -76,6 +76,7 @@ public class UnresolvedGroup implements Resolvable<Group> {
 	 * @param user user to add to the group
 	 * @return the modified user
 	 */
+	@Deprecated
 	public Future<? extends UnresolvedUser> addUser(UnresolvedUser user) {
 		return user.addToGroup(this);
 	}
@@ -88,6 +89,7 @@ public class UnresolvedGroup implements Resolvable<Group> {
 	 * @param user user to remove from the group
 	 * @return the modified user
 	 */
+	@Deprecated
 	public Future<? extends UnresolvedUser> removeUser(UnresolvedUser user) {
 		return user.removeFromGroup(this);
 	}

@@ -119,7 +119,6 @@ public class PacketDecoder extends MessageToMessageDecoder<String> {
 	@Override
 	protected void decode(ChannelHandlerContext ctx, String msg,
 			List<Object> out) throws Exception {
-		String cmd = "";
 		Map<String, String> cache = new HashMap<>();
 		if (msg.charAt(0) == '\r') {
 			msg = msg.substring(1);

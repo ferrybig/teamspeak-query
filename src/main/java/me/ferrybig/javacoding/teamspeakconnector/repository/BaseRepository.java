@@ -42,7 +42,7 @@ public interface BaseRepository<T> {
 	 * @return a future containing the deletion result
 	 */
 	@Nonnull
-	public default Future<?> delete(T type) {
+	default Future<?> delete(T type) {
 		return delete(type, false);
 	}
 
@@ -55,7 +55,7 @@ public interface BaseRepository<T> {
 	 * @return a future containing the deletion result
 	 */
 	@Nonnull
-	public Future<?> delete(T type, boolean force);
+	Future<?> delete(T type, boolean force);
 
 	/**
 	 * Gets the {@code TeamspeakConnection} that this repository contains
@@ -63,7 +63,7 @@ public interface BaseRepository<T> {
 	 * @return the {@code TeamspeakConnection} that this repository contains
 	 */
 	@Nonnull
-	public TeamspeakConnection getConnection();
+	TeamspeakConnection getConnection();
 
 	/**
 	 * Gets a list of objects of this type
@@ -72,6 +72,6 @@ public interface BaseRepository<T> {
 	 * never wrap a null
 	 */
 	@Nonnull
-	public Future<List<T>> list();
+	Future<List<T>> list();
 
 }

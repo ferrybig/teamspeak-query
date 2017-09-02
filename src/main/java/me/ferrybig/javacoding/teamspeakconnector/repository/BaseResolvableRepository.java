@@ -32,24 +32,24 @@ public interface BaseResolvableRepository<U extends Resolvable<? extends T>, T e
 
 	@Nonnull
 	@Override
-	public default Future<?> delete(T type, boolean force) {
+	default Future<?> delete(T type, boolean force) {
 		return deleteUnresolved(type, force);
 	}
 
 	@Nonnull
-	public default Future<?> deleteUnresolved(U type) {
+	default Future<?> deleteUnresolved(U type) {
 		return deleteUnresolved(type, false);
 	}
 
 	@Nonnull
-	public Future<?> deleteUnresolved(U type, boolean force);
+	Future<?> deleteUnresolved(U type, boolean force);
 
 	@Nonnull
-	public default Future<T> get(U unresolved) {
+	default Future<T> get(U unresolved) {
 		return get(unresolved, false);
 	}
 
 	@Nonnull
-	public Future<T> get(U unresolved, boolean force);
+	Future<T> get(U unresolved, boolean force);
 
 }

@@ -36,8 +36,6 @@ import org.junit.Before;
  */
 public abstract class AbstractConnectionBasedIT {
 
-	private static final Logger LOG = Logger.getLogger(TeamspeakConnectionIT.class.getName());
-
 	private NioEventLoopGroup group;
 
 	@Before

@@ -73,6 +73,7 @@ public class UnresolvedChannel implements Resolvable<Channel> {
 				repo.getConnection().mapping()::mapFile);
 	}
 
+	@Deprecated
 	public Future<?> moveInto(UnresolvedUser user) {
 		return repo.getConnection().io().sendPacket(Command.CLIENT_MOVE
 				.addData("cid", getId()).addData("clid", user.getId())

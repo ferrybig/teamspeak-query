@@ -29,6 +29,7 @@ public abstract class ClientEvent {
 
 	private final UnresolvedUser client;
 
+	@Deprecated
 	public ClientEvent(UnresolvedUser client) {
 		this.client = client;
 	}

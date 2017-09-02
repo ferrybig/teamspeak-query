@@ -33,10 +33,10 @@ import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
  */
 public interface UnresolvedServer extends Resolvable<Server> {
 
-	public Future<TeamspeakConnection> select();
+	Future<TeamspeakConnection> select();
 
-	public Future<TeamspeakConnection> start();
+	Future<TeamspeakConnection> start();
 
-	public Future<TeamspeakConnection> stop();
+	Future<TeamspeakConnection> stop();
 
 }

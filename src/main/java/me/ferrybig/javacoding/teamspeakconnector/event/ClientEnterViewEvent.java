@@ -34,6 +34,7 @@ public class ClientEnterViewEvent extends ClientResolvedEvent {
 	private final ChangeReason reason;
 	private final NamedOnlineClient invoker;
 
+	@Deprecated
 	public ClientEnterViewEvent(ShallowUser client, UnresolvedChannel to,
 			ChangeReason reason, NamedOnlineClient invoker) {
 		super(client);

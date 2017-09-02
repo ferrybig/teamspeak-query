@@ -31,12 +31,19 @@ import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedChannel;
 public class ClientChangedViewEvent extends ClientEnterViewEvent {
 
 	private final UnresolvedChannel from;
+	private final String message;
 
+	@Deprecated
 	public ClientChangedViewEvent(ShallowUser client, UnresolvedChannel from,
 			UnresolvedChannel to, ChangeReason reason, String message,
 			NamedOnlineClient invoker) {
 		super(client, to, reason, invoker);
 		this.from = from;
+		this.message = message;
+	}
+
+	public String getMessage() {
+		return message;
 	}
 
 	public UnresolvedChannel getFrom() {

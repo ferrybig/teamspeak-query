@@ -63,6 +63,7 @@ public class Mapper {
 		}
 	}
 
+	@Deprecated
 	public User mapUser(Map<String, String> data) {
 		return new User(con,
 				Integer.parseInt(data.get("clid")),
@@ -100,6 +101,7 @@ public class Mapper {
 				tryConvertAddress(data.get("connection_client_ip")));
 	}
 
+	@Deprecated
 	public ShallowUser mapShallowUser(Map<String, String> data) {
 		return new ShallowUser(con,
 				Integer.parseInt(data.get("clid")),
@@ -129,6 +131,7 @@ public class Mapper {
 				data.get("client_country"));
 	}
 
+	@Deprecated
 	public User mapWhoAmI(Map<String, String> data) {
 		return new User(con,
 				Integer.parseInt(data.get("client_id")),

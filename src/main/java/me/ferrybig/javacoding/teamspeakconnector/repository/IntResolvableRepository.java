@@ -40,15 +40,15 @@ public interface IntResolvableRepository<U extends Resolvable<? extends T>, T ex
 		extends IntRepository<T>, BaseResolvableRepository<U, T> {
 
 	@Override
-	public default Future<?> deleteById(int id, boolean force) {
+	default Future<?> deleteById(int id, boolean force) {
 		return deleteUnresolved(unresolved(id), force);
 	}
 
 	@Nonnull
-	public U unresolved(int id);
+	U unresolved(int id);
 
 	@Override
-	public default Future<T> getById(int id, boolean force) {
+	default Future<T> getById(int id, boolean force) {
 		return get(unresolved(id), force);
 	}
 

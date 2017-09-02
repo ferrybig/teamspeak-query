@@ -31,8 +31,8 @@ import io.netty.util.concurrent.Future;
  */
 public interface UnresolvedOfflineClientWithUid extends UnresolvedClient {
 
-	public String getUniqueIdentifier();
+	String getUniqueIdentifier();
 
-	public Future<UnresolvedOfflineClient> resolveTillDatabaseId();
+	Future<UnresolvedOfflineClient> resolveTillDatabaseId();
 
 }

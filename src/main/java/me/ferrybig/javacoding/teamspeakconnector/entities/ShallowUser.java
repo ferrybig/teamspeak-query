@@ -34,6 +34,7 @@ import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Command;
  *
  * @author Fernando van Loenhout
  */
+@Deprecated
 public class ShallowUser extends NamedUser {
 
 	protected final int databaseId;
