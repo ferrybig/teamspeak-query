@@ -25,17 +25,19 @@ package me.ferrybig.javacoding.teamspeakconnector.internal.packets;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Objects;
 import javax.annotation.concurrent.Immutable;
 
 @Immutable
-public class ComplexResponse {
+public final class ComplexResponse {
 
 	private final ArrayList<Map<String, String>> commands;
 	private final int id;
 	private final String msg;
 	private final String extraMsg;
 
-	public ComplexResponse(ArrayList<Map<String, String>> commands, int id, String msg, String extraMsg) {
+	public ComplexResponse(ArrayList<Map<String, String>> commands, int id,
+			String msg, String extraMsg) {
 		this.commands = commands;
 		this.id = id;
 		this.msg = msg;
@@ -60,7 +62,45 @@ public class ComplexResponse {
 
 	@Override
 	public String toString() {
-		return "ComplexResponse{" + "commands=" + commands + ",\nid=" + id + ", msg=" + msg + '}';
+		return "ComplexResponse{" + "commands=" + commands + ",\nid="
+				+ id + ", msg=" + msg + '}';
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 3;
+		hash = 19 * hash + Objects.hashCode(this.commands);
+		hash = 19 * hash + this.id;
+		hash = 19 * hash + Objects.hashCode(this.msg);
+		hash = 19 * hash + Objects.hashCode(this.extraMsg);
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final ComplexResponse other = (ComplexResponse) obj;
+		if (this.id != other.id) {
+			return false;
+		}
+		if (!Objects.equals(this.msg, other.msg)) {
+			return false;
+		}
+		if (!Objects.equals(this.extraMsg, other.extraMsg)) {
+			return false;
+		}
+		if (!Objects.equals(this.commands, other.commands)) {
+			return false;
+		}
+		return true;
 	}
 
 }

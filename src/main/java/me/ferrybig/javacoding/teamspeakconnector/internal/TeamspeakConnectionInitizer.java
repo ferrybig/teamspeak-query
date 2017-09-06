@@ -50,14 +50,16 @@ public class TeamspeakConnectionInitizer implements Consumer<Channel> {
 	private static final PacketDecoder PACKET_DECODER = new PacketDecoder();
 	private static final PacketEncoder PACKET_ENCODER = new PacketEncoder();
 	private static final ByteBuf[] LINES = new ByteBuf[]{
-		Unpooled.wrappedBuffer(new byte[]{'\r', '\n'}), // I hate you teamspeak, Why do you use this format??
+		// I hate you teamspeak, Why do you use this format??
+		Unpooled.wrappedBuffer(new byte[]{'\r', '\n'}),
 		Unpooled.wrappedBuffer(new byte[]{'\n', '\r'}),
 		Unpooled.wrappedBuffer(new byte[]{'\n'}),};
 	private final Promise<TeamspeakConnection> prom;
 	private final RateLimit rateLimit;
 	private final int timeout;
 
-	public TeamspeakConnectionInitizer(Promise<TeamspeakConnection> prom, RateLimit rateLimit, int timeout) {
+	public TeamspeakConnectionInitizer(Promise<TeamspeakConnection> prom,
+			RateLimit rateLimit, int timeout) {
 		this.prom = prom;
 		this.rateLimit = rateLimit;
 		this.timeout = timeout;
@@ -66,7 +68,8 @@ public class TeamspeakConnectionInitizer implements Consumer<Channel> {
 	@Override
 	public void accept(Channel ch) {
 		ChannelPipeline pipeline = ch.pipeline();
-		pipeline.addLast(new DelimiterBasedFrameDecoder(Short.MAX_VALUE, LINES));
+		pipeline.addLast(new DelimiterBasedFrameDecoder(
+				Short.MAX_VALUE, LINES));
 		pipeline.addLast(DECODER);
 		pipeline.addLast(ENCODER);
 		pipeline.addLast(new ReadTimeoutHandler(timeout));
@@ -76,7 +79,8 @@ public class TeamspeakConnectionInitizer implements Consumer<Channel> {
 		pipeline.addLast(new ComplexPacketDecoder());
 		pipeline.addLast(PACKET_ENCODER);
 
-		pipeline.addLast(new LoggingHandler(TeamspeakConnectionInitizer.class, LogLevel.DEBUG));
+		pipeline.addLast(new LoggingHandler(TeamspeakConnectionInitizer.class,
+				LogLevel.DEBUG));
 
 		pipeline.addLast(new PacketRateLimitingHandler(rateLimit));
 	}

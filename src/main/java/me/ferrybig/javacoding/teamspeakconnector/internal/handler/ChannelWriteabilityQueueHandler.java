@@ -23,13 +23,13 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.internal.handler;
 
+import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.channel.PendingWriteQueue;
 
-public class ChannelWriteabilityQueueHandler extends ChannelHandlerAdapter {
+public class ChannelWriteabilityQueueHandler extends ChannelDuplexHandler {
 
 	private boolean trafficStopped = false;
 
@@ -56,7 +56,8 @@ public class ChannelWriteabilityQueueHandler extends ChannelHandlerAdapter {
 	}
 
 	@Override
-	public void channelWritabilityChanged(ChannelHandlerContext ctx) throws Exception {
+	public void channelWritabilityChanged(ChannelHandlerContext ctx)
+			throws Exception {
 		super.channelWritabilityChanged(ctx);
 		trafficStopped = !ctx.channel().isWritable();
 		if (!trafficStopped) {
@@ -65,7 +66,8 @@ public class ChannelWriteabilityQueueHandler extends ChannelHandlerAdapter {
 	}
 
 	@Override
-	public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
+	public void write(ChannelHandlerContext ctx, Object msg,
+			ChannelPromise promise) throws Exception {
 		if (trafficStopped) {
 			queue.add(msg, promise);
 		} else {

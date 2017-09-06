@@ -23,6 +23,7 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector;
 
+import me.ferrybig.javacoding.teamspeakconnector.entities.Group;
 import org.junit.Test;
 
 /**

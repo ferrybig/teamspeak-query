@@ -23,13 +23,14 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.event;
 
-import me.ferrybig.javacoding.teamspeakconnector.NamedUser;
+import me.ferrybig.javacoding.teamspeakconnector.ChangeReason;
+import me.ferrybig.javacoding.teamspeakconnector.entities.NamedOnlineClient;
 
 public class ServerEditEvent extends InvokedEvent {
 
 	private final ChangeReason reason;
 
-	public ServerEditEvent(ChangeReason reason, NamedUser invoker) {
+	public ServerEditEvent(ChangeReason reason, NamedOnlineClient invoker) {
 		super(invoker);
 		this.reason = reason;
 	}
@@ -40,7 +41,8 @@ public class ServerEditEvent extends InvokedEvent {
 
 	@Override
 	public String toString() {
-		return "ServerEditEvent{" + "reason=" + reason + ", invoker=" + getInvoker() + '}';
+		return "ServerEditEvent{" + "reason=" + reason
+				+ ", invoker=" + getInvoker() + '}';
 	}
 
 }

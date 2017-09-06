@@ -39,11 +39,14 @@ public class PacketRateLimitingHandler extends ChannelTrafficShapingHandler {
 
 	@Override
 	protected long calculateSize(Object msg) {
-		return msg instanceof ComplexRequest ? 1000 : 0; // Assume size of 1000 B for all packets so this handler can use a max "packet" per seconds instead
+		// Assume size of 1000 B for all packets so this handler can use a
+		// max "packet" per seconds instead
+		return msg instanceof ComplexRequest ? 1000 : 0;
 	}
 
 	private void adjustRateLimits(ChannelHandlerContext ctx) {
-		this.setPacketsPerSeconds(rateLimit.maxPacketsPerSecond(ctx.channel().remoteAddress()));
+		this.setPacketsPerSeconds(rateLimit
+				.maxPacketsPerSecond(ctx.channel().remoteAddress()));
 	}
 
 	@Override

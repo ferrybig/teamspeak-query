@@ -25,5 +25,5 @@ package me.ferrybig.javacoding.teamspeakconnector.event;
 
 public interface ServerMessageListener {
 
-	public void onServerMessage(ServerMessageEvent event);
+	void onServerMessage(ServerMessageEvent event);
 }

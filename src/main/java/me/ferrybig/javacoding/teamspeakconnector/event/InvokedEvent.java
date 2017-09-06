@@ -23,18 +23,17 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.event;
 
-import me.ferrybig.javacoding.teamspeakconnector.NamedUser;
-import me.ferrybig.javacoding.teamspeakconnector.UnresolvedUser;
+import me.ferrybig.javacoding.teamspeakconnector.entities.NamedOnlineClient;
 
 public abstract class InvokedEvent {
 
-	private final NamedUser invoker;
+	private final NamedOnlineClient invoker;
 
-	public InvokedEvent(NamedUser invoker) {
+	public InvokedEvent(NamedOnlineClient invoker) {
 		this.invoker = invoker;
 	}
 
-	public UnresolvedUser getInvoker() {
+	public NamedOnlineClient getInvoker() {
 		return invoker;
 	}
 

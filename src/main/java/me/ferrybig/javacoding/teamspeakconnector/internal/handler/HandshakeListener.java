@@ -37,7 +37,9 @@ public class HandshakeListener extends SimpleChannelInboundHandler<String> {
 
 	private static final String TS_HEADER_1 = "TS3";
 	private static final String TS_HEADER_2
-			= "Welcome to the TeamSpeak 3 ServerQuery interface, type \"help\" for a list of commands and \"help <command>\" for information on a specific command.";
+			= "Welcome to the TeamSpeak 3 ServerQuery interface, "
+			+ "type \"help\" for a list of commands and \"help <command>\" "
+			+ "for information on a specific command.";
 	private boolean headerReceived = false;
 	private final Promise<TeamspeakConnection> prom;
 
@@ -48,7 +50,8 @@ public class HandshakeListener extends SimpleChannelInboundHandler<String> {
 	private void registerTimeout(ChannelHandlerContext ctx) {
 		ctx.executor().schedule(() -> {
 			if (!prom.isDone()) {
-				prom.tryFailure(new TeamspeakException("Timeout waiting for TS headers"));
+				prom.tryFailure(new TeamspeakException(
+						"Timeout waiting for TS headers"));
 				ctx.close();
 			}
 		}, 10, TimeUnit.SECONDS);
@@ -72,12 +75,14 @@ public class HandshakeListener extends SimpleChannelInboundHandler<String> {
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 		super.channelInactive(ctx);
 		if (!prom.isDone()) {
-			prom.tryFailure(new TeamspeakException("Connection closed before handshake"));
+			prom.tryFailure(new TeamspeakException(
+					"Connection closed before handshake"));
 		}
 	}
 
 	@Override
-	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
+			throws Exception {
 		super.exceptionCaught(ctx, cause);
 		if (!prom.isDone()) {
 			prom.tryFailure(new TeamspeakException("Exception caugth", cause));
@@ -86,24 +91,28 @@ public class HandshakeListener extends SimpleChannelInboundHandler<String> {
 	}
 
 	@Override
-	protected void messageReceived(ChannelHandlerContext ctx, String msg) throws Exception {
-		if (headerReceived) {
+	protected void channelRead0(ChannelHandlerContext ctx, String msg)
+			throws Exception {
+		if (!headerReceived) {
+			headerReceived = true;
+			if (TS_HEADER_1.equals(msg)) {
+				return;
+			}
+			throw new DecoderException("Line 1 of magic header mismatch, "
+					+ "expected: " + TS_HEADER_1 + "; got:" + msg);
+		} else {
 			if (!TS_HEADER_2.equals(msg)) {
-				throw new DecoderException("Line 2 of magic header mismatch, expected: " + TS_HEADER_2 + "; got:" + msg);
+				throw new DecoderException("Line 2 of magic header mismatch, "
+						+ "expected: " + TS_HEADER_2 + "; got:" + msg);
 			}
 			ctx.pipeline().remove(ReadTimeoutHandler.class);
-			TeamspeakConnection con = new TeamspeakConnection(new TeamspeakIO(ctx.channel()));
+			TeamspeakConnection con = new TeamspeakConnection(
+					new TeamspeakIO(ctx.channel()));
 			con.start();
 			if (!prom.trySuccess(con)) {
 				ctx.channel().close();
 			}
 			ctx.pipeline().remove(this);
-		} else {
-			headerReceived = true;
-			if (TS_HEADER_1.equals(msg)) {
-				return;
-			}
-			throw new DecoderException("Line 1 of magic header mismatch, expected: " + TS_HEADER_1 + "; got:" + msg);
 		}
 	}
 

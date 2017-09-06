@@ -32,16 +32,16 @@ import javax.annotation.concurrent.NotThreadSafe;
 @NotThreadSafe
 public class ComplexRequestBuilder {
 
-	private String cmd;
+	private final Command cmd;
 	private Map<String, String> data = Collections.emptyMap();
 
-	public ComplexRequestBuilder(String cmd) {
+	public ComplexRequestBuilder(Command cmd) {
 		this.cmd = cmd;
 	}
 
-	public ComplexRequestBuilder setCmd(String cmd) {
-		this.cmd = cmd;
-		return this;
+	@Deprecated
+	public ComplexRequestBuilder(String cmd) {
+		this.cmd = Command.byName(cmd);
 	}
 
 	public ComplexRequestBuilder setData(HashMap<String, String> data) {
@@ -50,10 +50,22 @@ public class ComplexRequestBuilder {
 	}
 
 	public ComplexRequestBuilder addData(String key, Object value) {
-		return this.addData(key, String.valueOf(value));
+		return addData(key, value, false);
+	}
+
+	public ComplexRequestBuilder addData(String key, Object value, boolean force) {
+		return this.addData(key, String.valueOf(value), force);
 	}
 
 	public ComplexRequestBuilder addData(String key, String value) {
+		return addData(key, value, false);
+	}
+
+	public ComplexRequestBuilder addData(String key, String value, boolean force) {
+		if (!force && !cmd.isValidOption(key)) {
+			throw new IllegalArgumentException("Options '" + key
+					+ "' is not known for cmd '" + cmd + "'");
+		}
 		if (data.isEmpty()) {
 			data = new LinkedHashMap<>();
 		}
@@ -62,6 +74,14 @@ public class ComplexRequestBuilder {
 	}
 
 	public ComplexRequestBuilder addOption(String key) {
+		return addOption(key, false);
+	}
+
+	public ComplexRequestBuilder addOption(String key, boolean force) {
+		if (!force && !cmd.isValidFlag(key)) {
+			throw new IllegalArgumentException("Flag '" + key
+					+ "' is not known for cmd '" + cmd + "'");
+		}
 		if (data.isEmpty()) {
 			data = new LinkedHashMap<>();
 		}
@@ -70,7 +90,11 @@ public class ComplexRequestBuilder {
 	}
 
 	public ComplexRequest build() {
-		return new ComplexRequest(cmd, data);
+		return new ComplexRequest(cmd.getCmd(), data, false);
+	}
+
+	public Command getCmd() {
+		return cmd;
 	}
 
 }

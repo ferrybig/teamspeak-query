@@ -23,24 +23,27 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.event;
 
-import me.ferrybig.javacoding.teamspeakconnector.NamedUser;
-import me.ferrybig.javacoding.teamspeakconnector.UnresolvedUser;
+import me.ferrybig.javacoding.teamspeakconnector.entities.NamedOnlineClient;
+import me.ferrybig.javacoding.teamspeakconnector.entities.UnresolvedOnlineClient;
 
 public class PrivateMessageEvent extends MessageEvent {
 
-	private final UnresolvedUser target;
+	private final UnresolvedOnlineClient target;
 
-	public PrivateMessageEvent(UnresolvedUser target, String message, NamedUser invoker) {
+	public PrivateMessageEvent(UnresolvedOnlineClient target, String message,
+			NamedOnlineClient invoker) {
 		super(message, TargetMode.PRIVATE, invoker);
 		this.target = target;
 	}
 
 	@Override
 	public String toString() {
-		return "PrivateMessageEvent{" + "message=" + getMessage() + ", targetMode=" + getTargetMode() + ", target=" + getTarget() + ", invoker=" + getInvoker() + '}';
+		return "PrivateMessageEvent{" + "message=" + getMessage()
+				+ ", targetMode=" + getTargetMode() + ", target=" + getTarget()
+				+ ", invoker=" + getInvoker() + '}';
 	}
 
-	public UnresolvedUser getTarget() {
+	public UnresolvedOnlineClient getTarget() {
 		return target;
 	}
 

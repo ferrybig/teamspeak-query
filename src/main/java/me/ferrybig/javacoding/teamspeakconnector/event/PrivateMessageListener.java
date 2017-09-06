@@ -25,5 +25,5 @@ package me.ferrybig.javacoding.teamspeakconnector.event;
 
 public interface PrivateMessageListener {
 
-	public void onPrivateMessage(PrivateMessageEvent event);
+	void onPrivateMessage(PrivateMessageEvent event);
 }

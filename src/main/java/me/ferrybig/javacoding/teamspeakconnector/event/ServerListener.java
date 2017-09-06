@@ -25,9 +25,9 @@ package me.ferrybig.javacoding.teamspeakconnector.event;
 
 public interface ServerListener {
 
-	public void onClientEnterView(ClientEnterViewEvent event);
+	void onClientEnterView(ClientEnterViewEvent event);
 
-	public void onClientLeaveView(ClientLeftViewEvent event);
+	void onClientLeaveView(ClientLeftViewEvent event);
 
-	public void onEditServer(ServerEditEvent event);
+	void onEditServer(ServerEditEvent event);
 }

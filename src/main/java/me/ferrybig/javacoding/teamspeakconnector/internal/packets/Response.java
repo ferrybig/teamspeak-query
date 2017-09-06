@@ -28,7 +28,7 @@ import java.util.Objects;
 import javax.annotation.concurrent.Immutable;
 
 @Immutable
-public class Response {
+public final class Response {
 
 	private final Map<String, String> options;
 	private final String cmd;

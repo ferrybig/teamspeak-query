@@ -35,7 +35,7 @@ import me.ferrybig.javacoding.teamspeakconnector.internal.packets.Response;
 @ChannelHandler.Sharable
 public class PacketDecoder extends MessageToMessageDecoder<String> {
 
-	private String decodeTeamspeakCode(String input) {
+	private static String decodeTeamspeakCode(String input) {
 
 		char[] chars = input.toCharArray();
 		int newLength = chars.length;
@@ -79,7 +79,8 @@ public class PacketDecoder extends MessageToMessageDecoder<String> {
 						break;
 					default:
 						throw new DecoderException("Unable to decode pattern \\"
-								+ chars[i + ahead + 1] + " in the following text: " + input);
+								+ chars[i + ahead + 1] + " in the "
+								+ "following text: " + input);
 				}
 
 				ahead++;
@@ -94,29 +95,38 @@ public class PacketDecoder extends MessageToMessageDecoder<String> {
 		return new String(chars, 0, newLength);
 	}
 
-	@Override
-	protected void decode(ChannelHandlerContext ctx, String msg, List<Object> out) throws Exception {
-		Map<String, String> options = new HashMap<>();
+	public static Response singleDecode(String msg, Map<String, String> cache,
+			boolean first, boolean last) {
+		String[] split = msg.split(" ");
 		String cmd = "";
+		for (int i = 0; i < split.length; i++) {
+			String[] args = split[i].split("=", 2);
+			if (args.length == 1) {
+				if (i == 0 && first) {
+					cmd = decodeTeamspeakCode(args[0]);
+				} else {
+					// Special cases for when the value is empty
+					cache.put(decodeTeamspeakCode(args[0]), "");
+				}
+			} else {
+				cache.put(decodeTeamspeakCode(args[0]),
+						decodeTeamspeakCode(args[1]));
+			}
+		}
+		return new Response(last ? cache : new HashMap<>(cache), cmd);
+	}
+
+	@Override
+	protected void decode(ChannelHandlerContext ctx, String msg,
+			List<Object> out) throws Exception {
+		Map<String, String> cache = new HashMap<>();
 		if (msg.charAt(0) == '\r') {
 			msg = msg.substring(1);
 		}
 		String[] compound = msg.split("\\|");
 		for (int j = 0; j < compound.length; j++) {
-			String[] split = compound[j].split(" ");
-			for (int i = 0; i < split.length; i++) {
-				String[] args = split[i].split("=", 2);
-				if (args.length == 1) {
-					if (i == 0 && j == 0) {
-						cmd = decodeTeamspeakCode(args[0]);
-					} else {
-						options.put(decodeTeamspeakCode(args[0]), ""); // Special cases for when the value is empty
-					}
-				} else {
-					options.put(decodeTeamspeakCode(args[0]), decodeTeamspeakCode(args[1]));
-				}
-			}
-			out.add(new Response(compound.length - 1 == j ? options : new HashMap<>(options), cmd));
+			out.add(singleDecode(compound[j], cache, j == 0,
+					compound.length - 1 == j));
 		}
 	}
 

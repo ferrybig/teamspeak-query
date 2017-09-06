@@ -23,10 +23,11 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.event;
 
-import me.ferrybig.javacoding.teamspeakconnector.ShallowUser;
+import me.ferrybig.javacoding.teamspeakconnector.entities.ShallowUser;
 
 public class ClientResolvedEvent extends ClientEvent {
 
+	@Deprecated
 	public ClientResolvedEvent(ShallowUser client) {
 		super(client);
 	}

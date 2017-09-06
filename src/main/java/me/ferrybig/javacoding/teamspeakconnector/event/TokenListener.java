@@ -25,5 +25,5 @@ package me.ferrybig.javacoding.teamspeakconnector.event;
 
 public interface TokenListener {
 
-	public void onTokenUsed(TokenUsedEvent event);
+	void onTokenUsed(TokenUsedEvent event);
 }

@@ -27,6 +27,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,15 +37,17 @@ import java.util.function.Consumer;
  *
  * @author Fernando
  */
-public class PacketQueueBuffer extends ChannelHandlerAdapter {
+public class PacketQueueBuffer extends ChannelInboundHandlerAdapter {
 
-	private final List<ByteBuf> queue = new ArrayList<>(); // TODO optimalize using a single bytebuf
+	// TODO optimalize using a single bytebuf
+	private final List<ByteBuf> queue = new ArrayList<>();
 	private boolean readComplete;
 	private boolean replaced = false;
 	private ChannelHandlerContext ctx;
 
 	@Override
-	public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+	public void channelReadComplete(ChannelHandlerContext ctx)
+			throws Exception {
 		if (replaced) {
 			ctx.fireChannelReadComplete();
 		} else {
@@ -53,7 +56,8 @@ public class PacketQueueBuffer extends ChannelHandlerAdapter {
 	}
 
 	@Override
-	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+	public void channelRead(ChannelHandlerContext ctx, Object msg)
+			throws Exception {
 		if (replaced) {
 			ctx.fireChannelRead(msg);
 		} else {
