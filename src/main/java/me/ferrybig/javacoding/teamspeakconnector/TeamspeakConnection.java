@@ -331,6 +331,10 @@ public class TeamspeakConnection implements Closeable {
 				packet -> this);
 	}
 
+	/**
+	 * Shuts down the teamspeak server
+	 * @return a future containing the results
+	 */
 	public Future<?> shutdownServer() {
 		return io.sendPacket(Command.SERVER_PROCESS_STOP.build(),
 				SendBehaviour.CLOSE_CONNECTION);
@@ -373,6 +377,11 @@ public class TeamspeakConnection implements Closeable {
 		return privilegeKeys().list();
 	}
 
+	/**
+	 * Closes this connection. This may not always reflect on the close status,
+	 * if you need this, call quit()
+	 * @throws TeamspeakException optionally when an error happens during the closing
+	 */
 	@Override
 	public void close() throws TeamspeakException {
 		try {
@@ -391,6 +400,10 @@ public class TeamspeakConnection implements Closeable {
 		}
 	}
 
+	/**
+	 * Quits this connection, after quiting, no commands can be executed
+	 * @return the future for quit progress
+	 */
 	public Future<?> quit() {
 		return io.sendPacket(Command.QUIT.build(),
 				SendBehaviour.FORCE_CLOSE_CONNECTION);
@@ -425,41 +438,73 @@ public class TeamspeakConnection implements Closeable {
 		return groups().list();
 	}
 
+	/**
+	 * Gets the group repository, for interacting with any teamspeak groups
+	 * @return the group repository
+	 */
 	@Nonnull
 	public GroupRepository groups() {
 		return groups.get();
 	}
 
+	/**
+	 * Gets the privilege key repository, for interacting with any teamspeak groups
+	 * @return the privilege key repository
+	 */
 	@Nonnull
 	public PrivilegeKeyRepository privilegeKeys() {
 		return privilegeKeys.get();
 	}
 
+	/**
+	 * Gets the server repository, for interacting with any teamspeak groups
+	 * @return the server repository
+	 */
 	@Nonnull
 	public ServerRepository servers() {
 		return servers.get();
 	}
 
+	/**
+	 * Gets the channel repository, for interacting with any teamspeak groups
+	 * @return the channel repository
+	 */
 	@Nonnull
 	public ChannelRepository channels() {
 		return channels.get();
 	}
 
+	/**
+	 * Gets the offlineClients repository, for interacting with any teamspeak groups
+	 * @return the offlineClients repository
+	 */
 	@Nonnull
 	public OfflineClientRepository offlineClients() {
 		return offlineClients.get();
 	}
 
+	/**
+	 * Gets the onlineClients repository, for interacting with any teamspeak groups
+	 * @return the onlineClients repository
+	 */
 	@Nonnull
 	public OnlineClientRepository onlineClients() {
 		return onlineClients.get();
 	}
 
+	/**
+	 * Gets the own information container, for interacting with itself
+	 * @return the own information container
+	 */
 	@Nonnull
 	public SelfInformation self() {
 		return self.get();
 	}
 
+	/**
+	 * Gets the mapper, a class used to transform protocol specific data
+	 * @return the mapper
+	 */
 	@Nonnull
 	public final Mapper mapping() {
 		return mapper;
