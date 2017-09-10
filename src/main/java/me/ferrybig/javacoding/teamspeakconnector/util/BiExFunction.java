@@ -23,6 +23,12 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.util;
 
+/**
+ * Functional interface that has support for throwing exceptions
+ * @param <T> input1
+ * @param <U> input2
+ * @param <R> output
+ */
 @FunctionalInterface
 public interface BiExFunction<T, U, R> {
 
