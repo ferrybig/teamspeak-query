@@ -23,7 +23,26 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.internal;
 
+/**
+ * Class that configures the send behavior for a send packet
+ * @author Fernando
+ */
 public enum SendBehaviour {
-	NORMAL, FORCE_CLOSE_CONNECTION, CLOSE_CONNECTION, IGNORE_CLOSE
+	/**
+	 * Packets are send normally, any errors are forwarded to the called
+	 */
+	NORMAL,
+	/**
+	 * Force closes the connection after this packet, this never returns an error related to closure
+	 */
+	FORCE_CLOSE_CONNECTION,
+	/**
+	 * Optionally close the connection only if a succesfull response is returned
+	 */
+	CLOSE_CONNECTION,
+	/**
+	 * Ignore any close behavior that has resulted in sending the packet
+	 */
+	IGNORE_CLOSE
 
 }
