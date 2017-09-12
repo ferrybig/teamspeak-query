@@ -24,17 +24,29 @@
 package me.ferrybig.javacoding.teamspeakconnector.internal;
 
 import io.netty.util.concurrent.Promise;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakCommandException;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakException;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequest;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexResponse;
 
+/**
+ * A container that stores a packet that has just been send
+ */
+@ParametersAreNonnullByDefault
 public class PendingPacket {
 
 	private final Promise<ComplexResponse> promise;
 	private final ComplexRequest request;
 	private final SendBehaviour sendBehaviour;
 
+	/**
+	 * Creates a PendingPacket
+	 * @param promise A promise for the result
+	 * @param request The original send packet
+	 * @param sendBehaviour The sendbehaviour to apply
+	 */
 	public PendingPacket(Promise<ComplexResponse> promise,
 			ComplexRequest request, SendBehaviour sendBehaviour) {
 		this.promise = promise;
@@ -42,6 +54,10 @@ public class PendingPacket {
 		this.sendBehaviour = sendBehaviour;
 	}
 
+	/**
+	 * Called when a packet is received for this pending packet
+	 * @param response
+	 */
 	public void onResponseReceived(ComplexResponse response) {
 		if (response.getId() != 0) {
 			promise.setFailure(new TeamspeakCommandException(request.getCmd(),
@@ -52,7 +68,11 @@ public class PendingPacket {
 		}
 	}
 
-	public void onChannelClose(Throwable lastException) {
+	/**
+	 * Called when the channel is closed
+	 * @param lastException last exception thrown during the connection
+	 */
+	public void onChannelClose(@Nullable Throwable lastException) {
 		if (sendBehaviour != SendBehaviour.NORMAL) {
 			promise.setSuccess(null);
 		} else {
