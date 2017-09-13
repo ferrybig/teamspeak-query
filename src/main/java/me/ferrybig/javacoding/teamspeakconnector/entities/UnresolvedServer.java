@@ -24,19 +24,38 @@
 package me.ferrybig.javacoding.teamspeakconnector.entities;
 
 import io.netty.util.concurrent.Future;
+import javax.annotation.Nonnull;
 import me.ferrybig.javacoding.teamspeakconnector.Resolvable;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
 
 /**
- *
- * @author Fernando van Loenhout
+ * A server instance that hasn't been resolved yet
  */
 public interface UnresolvedServer extends Resolvable<Server> {
 
+	/**
+	 * Selects this server, so all future server based interactions will use
+	 * this server
+	 *
+	 * @return the results as a future
+	 */
+	@Nonnull
 	Future<TeamspeakConnection> select();
 
+	/**
+	 * Starts this virtual server
+	 *
+	 * @return the results as a future
+	 */
+	@Nonnull
 	Future<TeamspeakConnection> start();
 
+	/**
+	 * Stops this virtual server
+	 *
+	 * @return the results as a future
+	 */
+	@Nonnull
 	Future<TeamspeakConnection> stop();
 
 }
