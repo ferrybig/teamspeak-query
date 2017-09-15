@@ -25,7 +25,6 @@ package me.ferrybig.javacoding.teamspeakconnector.internal;
 
 /**
  * Class that configures the send behavior for a send packet
- * @author Fernando
  */
 public enum SendBehaviour {
 	/**
