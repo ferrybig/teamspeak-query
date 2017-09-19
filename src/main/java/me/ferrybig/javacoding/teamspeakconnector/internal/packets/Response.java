@@ -69,7 +69,7 @@ public final class Response {
 	}
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 */
 	@Nonnull
 	@Override
@@ -78,7 +78,7 @@ public final class Response {
 	}
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 */
 	@Override
 	public int hashCode() {
@@ -89,7 +89,7 @@ public final class Response {
 	}
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 */
 	@Override
 	public boolean equals(@Nullable Object obj) {
