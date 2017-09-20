@@ -24,10 +24,16 @@
 package me.ferrybig.javacoding.teamspeakconnector.util;
 
 import java.util.Objects;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNullableByDefault;
 import javax.annotation.concurrent.Immutable;
 
+/**
+ * Simple pair class
+ * @param <A> first argument
+ * @param <B> second argument
+ */
 @Immutable
 @ParametersAreNullableByDefault
 public final class Pair<A, B> {
@@ -37,13 +43,21 @@ public final class Pair<A, B> {
 	@Nullable
 	private final B second;
 
+	/**
+	 * Constructs a pair class
+	 * @param first first argument
+	 * @param second second argument
+	 */
 	public Pair(@Nullable A first, @Nullable B second) {
 		this.first = first;
 		this.second = second;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(@Nullable Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -63,16 +77,27 @@ public final class Pair<A, B> {
 		return true;
 	}
 
+	/**
+	 * Gets the first argument
+	 * @return the first argument
+	 */
 	@Nullable
 	public A getFirst() {
 		return first;
 	}
 
+	/**
+	 * Gets the second argument
+	 * @return the second argument
+	 */
 	@Nullable
 	public B getSecond() {
 		return second;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int hashCode() {
 		int hash = 7;
@@ -81,6 +106,10 @@ public final class Pair<A, B> {
 		return hash;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Nonnull
 	@Override
 	public String toString() {
 		return "Pair{" + "first=" + first + ", second=" + second + '}';
