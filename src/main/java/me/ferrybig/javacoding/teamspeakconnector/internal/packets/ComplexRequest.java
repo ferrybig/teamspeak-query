@@ -23,6 +23,7 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.internal.packets;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
@@ -109,6 +110,7 @@ public final class ComplexRequest {
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressFBWarnings(value = "NP_METHOD_PARAMETER_TIGHTENS_ANNOTATION")
 	@Override
 	public boolean equals(@Nullable Object obj) {
 		if (this == obj) {

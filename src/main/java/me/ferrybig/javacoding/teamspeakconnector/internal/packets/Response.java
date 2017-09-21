@@ -23,6 +23,7 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.internal.packets;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Map;
 import java.util.Objects;
 import javax.annotation.Nonnull;
@@ -91,6 +92,7 @@ public final class Response {
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressFBWarnings(value = "NP_METHOD_PARAMETER_TIGHTENS_ANNOTATION")
 	@Override
 	public boolean equals(@Nullable Object obj) {
 		if (this == obj) {

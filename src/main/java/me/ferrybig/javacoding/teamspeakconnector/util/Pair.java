@@ -23,6 +23,7 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.util;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -56,6 +57,7 @@ public final class Pair<A, B> {
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressFBWarnings(value = "NP_METHOD_PARAMETER_TIGHTENS_ANNOTATION")
 	@Override
 	public boolean equals(@Nullable Object obj) {
 		if (this == obj) {
