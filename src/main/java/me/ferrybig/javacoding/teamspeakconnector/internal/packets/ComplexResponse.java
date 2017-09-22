@@ -23,49 +23,98 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.internal.packets;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.Immutable;
 
+/**
+ * A ComplexResponse represents a class that contains a parsed inbound response
+ */
+@ParametersAreNonnullByDefault
 @Immutable
 public final class ComplexResponse {
 
+	@Nonnull
 	private final ArrayList<Map<String, String>> commands;
 	private final int id;
+	@Nonnull
 	private final String msg;
+	@Nullable
 	private final String extraMsg;
 
+	/**
+	 * Generates a new ComplexResponse
+	 *
+	 * @param commands All received commands
+	 * @param id error id
+	 * @param msg Message
+	 * @param extraMsg Extra message
+	 */
 	public ComplexResponse(ArrayList<Map<String, String>> commands, int id,
-			String msg, String extraMsg) {
+			String msg, @Nullable String extraMsg) {
 		this.commands = commands;
 		this.id = id;
 		this.msg = msg;
 		this.extraMsg = extraMsg;
 	}
 
+	/**
+	 * Returns all received commands
+	 *
+	 * @return all received commands
+	 */
+	@Nonnull
 	public ArrayList<Map<String, String>> getCommands() {
 		return commands;
 	}
 
+	/**
+	 * Gets the error id
+	 *
+	 * @return the error id
+	 */
 	public int getId() {
 		return id;
 	}
 
+	/**
+	 * Gets the message
+	 *
+	 * @return the message
+	 */
+	@Nonnull
 	public String getMsg() {
 		return msg;
 	}
 
+	/**
+	 * Gets the extra message
+	 *
+	 * @return the extra message
+	 */
+	@Nullable
 	public String getExtraMsg() {
 		return extraMsg;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
+	@Nonnull
 	public String toString() {
 		return "ComplexResponse{" + "commands=" + commands + ",\nid="
 				+ id + ", msg=" + msg + '}';
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int hashCode() {
 		int hash = 3;
@@ -76,8 +125,12 @@ public final class ComplexResponse {
 		return hash;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressFBWarnings(value = "NP_METHOD_PARAMETER_TIGHTENS_ANNOTATION")
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(@Nullable Object obj) {
 		if (this == obj) {
 			return true;
 		}
