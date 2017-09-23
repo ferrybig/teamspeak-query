@@ -46,9 +46,12 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * {@code chainFuture} and {@code chainFutureFlat} methods, these methods allow
  * for easy chaining of multiple Futures in a row.
  *
- * @see FutureUtil#chainFuture(io.netty.util.concurrent.Promise, io.netty.util.concurrent.Future, java.util.function.Function)
- * @see FutureUtil#chainFutureFlat(io.netty.util.concurrent.Promise, io.netty.util.concurrent.Future, java.util.function.Function)
- * @see FutureUtil#generateListener(java.util.function.Consumer, java.util.function.Consumer)
+ * @see FutureUtil#chainFuture(io.netty.util.concurrent.Promise,
+ * io.netty.util.concurrent.Future, java.util.function.Function)
+ * @see FutureUtil#chainFutureFlat(io.netty.util.concurrent.Promise,
+ * io.netty.util.concurrent.Future, java.util.function.Function)
+ * @see FutureUtil#generateListener(java.util.function.Consumer,
+ * java.util.function.Consumer)
  */
 @ParametersAreNonnullByDefault
 public class FutureUtil {
