@@ -40,6 +40,7 @@ public abstract class AbstractResolvable<
 		S extends Resolvable<? extends T>, T extends S, R extends BaseResolvableRepository<S, T>>
 		implements Resolvable<T> {
 
+	@Nonnull
 	protected final R repo;
 
 	/**
