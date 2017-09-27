@@ -207,6 +207,7 @@ public class TeamspeakIO {
 
 	/**
 	 * Generates a new promise
+	 *
 	 * @param <T> the object stored in this promise
 	 * @return an new empty promise
 	 * @see EventLoop#newPromise()
@@ -268,6 +269,7 @@ public class TeamspeakIO {
 
 	/**
 	 * Generates a new completedfuture
+	 *
 	 * @param <T> the type of object stored
 	 * @param object the object thats returned as the future
 	 * @return the inputed object wrapped in a completed future
@@ -279,6 +281,7 @@ public class TeamspeakIO {
 
 	/**
 	 * Gets the Netty channel object
+	 *
 	 * @return the Netty channel object
 	 */
 	@Nonnull
@@ -299,6 +302,7 @@ public class TeamspeakIO {
 
 	/**
 	 * Generates a new number to use for the file transfer submodule
+	 *
 	 * @return a new number to use for the file transfer submodule
 	 */
 	public long generateFileTransferId() {
