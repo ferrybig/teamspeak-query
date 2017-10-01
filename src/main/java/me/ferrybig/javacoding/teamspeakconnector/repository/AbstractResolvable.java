@@ -40,6 +40,9 @@ public abstract class AbstractResolvable<
 		S extends Resolvable<? extends T>, T extends S, R extends BaseResolvableRepository<S, T>>
 		implements Resolvable<T> {
 
+	/**
+	 * Upstream repository for this entity
+	 */
 	@Nonnull
 	protected final R repo;
 
