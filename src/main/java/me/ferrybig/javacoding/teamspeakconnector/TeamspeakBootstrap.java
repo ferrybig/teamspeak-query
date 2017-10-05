@@ -587,9 +587,12 @@ public class TeamspeakBootstrap {
 			assert !exceptions.isEmpty();
 			StringBuilder message = new StringBuilder("Unable to connect");
 			for (Pair<SocketAddress, Throwable> ex : exceptions) {
-				String addr = ex.getFirst().toString();
-				message.append("\n> ").append(ex.getSecond().getMessage());
-				if (!ex.getSecond().getMessage().contains(addr)) {
+				SocketAddress adr = ex.getFirst();
+				String addr = adr == null ? "localconnection" : adr.toString();
+				Throwable exception = ex.getSecond();
+				String exceptionMessage = exception == null ? null : exception.getMessage();
+				message.append("\n> ").append(exceptionMessage);
+				if (exceptionMessage == null || !exceptionMessage.contains(addr)) {
 					message.append(": ").append(addr);
 				}
 			}
