@@ -142,7 +142,7 @@ public class TeamspeakConnection implements Closeable {
 
 	/**
 	 * Constructs a TeamspeakConnection from a completed Teamspeak IO
-	 * @param io
+	 * @param io TeamspeakIO object for ts packet management
 	 */
 	public TeamspeakConnection(TeamspeakIO io) {
 		this.io = Objects.requireNonNull(io, "io");

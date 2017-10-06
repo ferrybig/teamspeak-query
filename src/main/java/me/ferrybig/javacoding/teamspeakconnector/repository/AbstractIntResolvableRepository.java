@@ -74,7 +74,7 @@ public abstract class AbstractIntResolvableRepository<U extends Resolvable<? ext
 	 * expression should be true: {@code obj.equals(unresolved(getId(obj))}
 	 *
 	 * @param value object to get the id from
-	 * @return
+	 * @return the id for the unresolved resolvable
 	 */
 	@Nonnull
 	protected abstract int getId(U value);

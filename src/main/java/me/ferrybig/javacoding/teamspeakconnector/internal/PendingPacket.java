@@ -56,7 +56,7 @@ public class PendingPacket {
 
 	/**
 	 * Called when a packet is received for this pending packet
-	 * @param response
+	 * @param response the received response
 	 */
 	public void onResponseReceived(ComplexResponse response) {
 		if (response.getId() != 0) {
