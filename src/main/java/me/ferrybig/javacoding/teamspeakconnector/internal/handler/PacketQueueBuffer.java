@@ -43,7 +43,6 @@ public class PacketQueueBuffer extends ChannelInboundHandlerAdapter {
 	private final List<ByteBuf> queue = new ArrayList<>();
 	private boolean readComplete;
 	private boolean replaced = false;
-	@Nonnull
 	private ChannelHandlerContext ctx;
 
 	@Override
