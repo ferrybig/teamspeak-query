@@ -28,6 +28,11 @@ import io.netty.handler.traffic.ChannelTrafficShapingHandler;
 import me.ferrybig.javacoding.teamspeakconnector.RateLimit;
 import me.ferrybig.javacoding.teamspeakconnector.internal.packets.ComplexRequest;
 
+
+/**
+ * Handler to rate limit the maximum packets per second
+ * @author Fernando
+ */
 public class PacketRateLimitingHandler extends ChannelTrafficShapingHandler {
 
 	private final RateLimit rateLimit;
