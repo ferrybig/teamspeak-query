@@ -67,6 +67,7 @@ public class ChannelRepository extends AbstractIntResolvableRepository<Unresolve
 		return new UnresolvedChannel(this, id);
 	}
 
+	@Nonnull
 	@Override
 	protected ComplexRequest requestGet(UnresolvedChannel unresolved) {
 		return Command.CHANNEL_INFO
