@@ -88,6 +88,10 @@ import me.ferrybig.javacoding.teamspeakconnector.repository.OnlineClientReposito
 import me.ferrybig.javacoding.teamspeakconnector.repository.PrivilegeKeyRepository;
 import me.ferrybig.javacoding.teamspeakconnector.repository.ServerRepository;
 
+/**
+ * Main teamspeak connection.
+ * @author Fernando
+ */
 @ThreadSafe
 public class TeamspeakConnection implements Closeable {
 
@@ -136,14 +140,25 @@ public class TeamspeakConnection implements Closeable {
 				repositoryLock);
 	}
 
+	/**
+	 * Constructs a TeamspeakConnection from a completed Teamspeak IO
+	 * @param io TeamspeakIO object for ts packet management
+	 */
 	public TeamspeakConnection(TeamspeakIO io) {
 		this.io = Objects.requireNonNull(io, "io");
 	}
 
+	/**
+	 * Gets the internal IO object
+	 * @return the internal IO object
+	 */
 	public final TeamspeakIO io() {
 		return io;
 	}
 
+	/**
+	 * Registers this TeamspeakConnection with the upstream TeamspeakIO
+	 */
 	public void start() {
 		this.io.registerConnection(this);
 		this.io.start();
@@ -194,18 +209,35 @@ public class TeamspeakConnection implements Closeable {
 
 	}
 
+	/**
+	 * Gets the handler used for all server based messages
+	 * @return the server handler
+	 */
 	public Handler<ServerMessageListener> getServerMessageHandler() {
 		return serverMessageHandler;
 	}
 
+	/**
+	 * Gets the handler used for all private messages
+	 * @return the private message handler
+	 */
 	public Handler<PrivateMessageListener> getPrivateMessageHandler() {
 		return privateMessageHandler;
 	}
 
+	/**
+	 * Gets the handler used for all channel based messages
+	 * @return the channel handler
+	 */
 	public Handler<ChannelMessageListener> getChannelMessageHandler() {
 		return channelMessageHandler;
 	}
 
+
+	/**
+	 * Gets the handler used for all server based actions
+	 * @return the server handler
+	 */
 	public Handler<ServerListener> getServerHandler() {
 		return serverHandler;
 	}
@@ -284,6 +316,12 @@ public class TeamspeakConnection implements Closeable {
 		return servers().getSelected();
 	}
 
+	/**
+	 * Sends a login packet upstream
+	 * @param username The username
+	 * @param password The password
+	 * @return a future containing the results
+	 */
 	public Future<TeamspeakConnection> login(String username, String password) {
 		return io.chainFuture(io.sendPacket(
 				Command.LOG_IN
@@ -293,11 +331,19 @@ public class TeamspeakConnection implements Closeable {
 				packet -> this);
 	}
 
+	/**
+	 * Shuts down the teamspeak server
+	 * @return a future containing the results
+	 */
 	public Future<?> shutdownServer() {
 		return io.sendPacket(Command.SERVER_PROCESS_STOP.build(),
 				SendBehaviour.CLOSE_CONNECTION);
 	}
 
+	/**
+	 * Sends a logout packet upstream
+	 * @return a future containing the results
+	 */
 	public Future<TeamspeakConnection> logout() {
 		return io.chainFuture(
 				io.sendPacket(Command.LOG_OUT.build()),
@@ -331,6 +377,11 @@ public class TeamspeakConnection implements Closeable {
 		return privilegeKeys().list();
 	}
 
+	/**
+	 * Closes this connection. This may not always reflect on the close status,
+	 * if you need this, call quit()
+	 * @throws TeamspeakException optionally when an error happens during the closing
+	 */
 	@Override
 	public void close() throws TeamspeakException {
 		try {
@@ -349,6 +400,10 @@ public class TeamspeakConnection implements Closeable {
 		}
 	}
 
+	/**
+	 * Quits this connection, after quiting, no commands can be executed
+	 * @return the future for quit progress
+	 */
 	public Future<?> quit() {
 		return io.sendPacket(Command.QUIT.build(),
 				SendBehaviour.FORCE_CLOSE_CONNECTION);
@@ -383,41 +438,73 @@ public class TeamspeakConnection implements Closeable {
 		return groups().list();
 	}
 
+	/**
+	 * Gets the group repository, for interacting with any teamspeak groups
+	 * @return the group repository
+	 */
 	@Nonnull
 	public GroupRepository groups() {
 		return groups.get();
 	}
 
+	/**
+	 * Gets the privilege key repository, for interacting with any teamspeak groups
+	 * @return the privilege key repository
+	 */
 	@Nonnull
 	public PrivilegeKeyRepository privilegeKeys() {
 		return privilegeKeys.get();
 	}
 
+	/**
+	 * Gets the server repository, for interacting with any teamspeak groups
+	 * @return the server repository
+	 */
 	@Nonnull
 	public ServerRepository servers() {
 		return servers.get();
 	}
 
+	/**
+	 * Gets the channel repository, for interacting with any teamspeak groups
+	 * @return the channel repository
+	 */
 	@Nonnull
 	public ChannelRepository channels() {
 		return channels.get();
 	}
 
+	/**
+	 * Gets the offlineClients repository, for interacting with any teamspeak groups
+	 * @return the offlineClients repository
+	 */
 	@Nonnull
 	public OfflineClientRepository offlineClients() {
 		return offlineClients.get();
 	}
 
+	/**
+	 * Gets the onlineClients repository, for interacting with any teamspeak groups
+	 * @return the onlineClients repository
+	 */
 	@Nonnull
 	public OnlineClientRepository onlineClients() {
 		return onlineClients.get();
 	}
 
+	/**
+	 * Gets the own information container, for interacting with itself
+	 * @return the own information container
+	 */
 	@Nonnull
 	public SelfInformation self() {
 		return self.get();
 	}
 
+	/**
+	 * Gets the mapper, a class used to transform protocol specific data
+	 * @return the mapper
+	 */
 	@Nonnull
 	public final Mapper mapping() {
 		return mapper;

@@ -46,9 +46,12 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * {@code chainFuture} and {@code chainFutureFlat} methods, these methods allow
  * for easy chaining of multiple Futures in a row.
  *
- * @see FutureUtil#chainFuture(io.netty.util.concurrent.Promise, io.netty.util.concurrent.Future, java.util.function.Function)
- * @see FutureUtil#chainFutureFlat(io.netty.util.concurrent.Promise, io.netty.util.concurrent.Future, java.util.function.Function)
- * @see FutureUtil#generateListener(java.util.function.Consumer, java.util.function.Consumer)
+ * @see FutureUtil#chainFuture(io.netty.util.concurrent.Promise,
+ * io.netty.util.concurrent.Future, java.util.function.Function)
+ * @see FutureUtil#chainFutureFlat(io.netty.util.concurrent.Promise,
+ * io.netty.util.concurrent.Future, java.util.function.Function)
+ * @see FutureUtil#generateListener(java.util.function.Consumer,
+ * java.util.function.Consumer)
  */
 @ParametersAreNonnullByDefault
 public class FutureUtil {
@@ -102,12 +105,34 @@ public class FutureUtil {
 		return prom;
 	}
 
+	/**
+	 * Chains a future object using a method
+	 *
+	 * @param <T> Input future type
+	 * @param <R> Output future type
+	 * @param result A promise to store the results, may be marked uncancelable
+	 * @param future future to chain the results to
+	 * @param mapping Future mappings function
+	 * @return a new future that executes the mapping function after the
+	 * previeus future completes
+	 */
 	@Nonnull
 	public static <T, R> Future<R> chainFuture(Promise<R> result,
 			Future<T> future, Function<T, R> mapping) {
 		return delegateFutureResult(future, result, mapping);
 	}
 
+	/**
+	 * Chains a future object using a method
+	 *
+	 * @param <T> Input future type
+	 * @param <R> Output future type
+	 * @param result A promise to store the results, may be marked uncancelable
+	 * @param future future to chain the results to
+	 * @param mapping Future mappings function
+	 * @return a new future that executes the mapping function after the
+	 * previeus future completes
+	 */
 	@Nonnull
 	public static <T, R> Future<R> chainFutureAdvanced(Promise<R> result,
 			Future<T> future, BiExFunction<T, Throwable, R> mapping) {

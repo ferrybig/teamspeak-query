@@ -23,34 +23,64 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.internal.packets;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Map;
 import java.util.Objects;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.Immutable;
 
+/**
+ * A class representing a line of received content
+ */
+@ParametersAreNonnullByDefault
 @Immutable
 public final class Response {
 
 	private final Map<String, String> options;
 	private final String cmd;
 
+	/**
+	 * Creates a new Response
+	 * @param options Arguments
+	 * @param cmd Optional command
+	 */
 	public Response(Map<String, String> options, String cmd) {
 		this.options = options;
 		this.cmd = cmd;
 	}
 
+	/**
+	 * Gets the arguments
+	 * @return the arguments
+	 */
+	@Nonnull
 	public Map<String, String> getOptions() {
 		return options;
 	}
 
+	/**
+	 * Get the passed response name, or an empty string if there is none
+	 * @return the passed response name, or an empty string if there is none
+	 */
+	@Nonnull
 	public String getCmd() {
 		return cmd;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Nonnull
 	@Override
 	public String toString() {
 		return "Response{" + "options=" + options + ", cmd=" + cmd + '}';
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int hashCode() {
 		int hash = 7;
@@ -59,8 +89,12 @@ public final class Response {
 		return hash;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressFBWarnings(value = "NP_METHOD_PARAMETER_TIGHTENS_ANNOTATION")
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(@Nullable Object obj) {
 		if (this == obj) {
 			return true;
 		}

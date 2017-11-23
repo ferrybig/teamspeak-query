@@ -25,10 +25,26 @@ package me.ferrybig.javacoding.teamspeakconnector.event.meta;
 
 import io.netty.util.concurrent.Future;
 
+/**
+ * Handler registry for any event listener
+ * @author Fernando
+ * @param <L>
+ */
 public interface Handler<L> {
 
+	/**
+	 * Registers the handler, returning a future for the status
+	 * @param handler the event listener to register
+	 * @return the status of the operation
+	 */
 	Future<?> addHandler(L handler);
 
+
+	/**
+	 * Unregisters the handler, returning a future for the status
+	 * @param handler the event listener to unregister
+	 * @return the status of the operation
+	 */
 	Future<?> removeHandler(L handler);
 
 }

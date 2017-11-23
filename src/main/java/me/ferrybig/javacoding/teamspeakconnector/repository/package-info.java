@@ -21,41 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package me.ferrybig.javacoding.teamspeakconnector.entities;
-
-import io.netty.util.concurrent.Future;
-import javax.annotation.Nonnull;
-import me.ferrybig.javacoding.teamspeakconnector.Resolvable;
-import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
-
 /**
- * A server instance that hasn't been resolved yet
+ * A repository is a manager for entities, all repositories support getting by
+ * id and by unresolved entities.
  */
-public interface UnresolvedServer extends Resolvable<Server> {
-
-	/**
-	 * Selects this server, so all future server based interactions will use
-	 * this server
-	 *
-	 * @return the results as a future
-	 */
-	@Nonnull
-	Future<TeamspeakConnection> select();
-
-	/**
-	 * Starts this virtual server
-	 *
-	 * @return the results as a future
-	 */
-	@Nonnull
-	Future<TeamspeakConnection> start();
-
-	/**
-	 * Stops this virtual server
-	 *
-	 * @return the results as a future
-	 */
-	@Nonnull
-	Future<TeamspeakConnection> stop();
-
-}
+package me.ferrybig.javacoding.teamspeakconnector.repository;

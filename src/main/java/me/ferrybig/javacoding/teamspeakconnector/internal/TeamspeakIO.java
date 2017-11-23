@@ -28,6 +28,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.EventLoop;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.Promise;
@@ -40,6 +41,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.GuardedBy;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakException;
@@ -54,6 +57,7 @@ import me.ferrybig.javacoding.teamspeakconnector.util.FutureUtil;
  * methods, and it is not recommended to call methods of this class by yourself.
  *
  */
+@ParametersAreNonnullByDefault
 public class TeamspeakIO {
 
 	private static final Logger LOG
@@ -83,19 +87,23 @@ public class TeamspeakIO {
 		this.con = con;
 	}
 
+	@Nonnull
 	public Future<ComplexResponse> sendPacket(String raw) {
 		return sendPacket(new ComplexRequest(raw, true), SendBehaviour.NORMAL);
 	}
 
+	@Nonnull
 	public Future<ComplexResponse> sendPacket(
 			String raw, SendBehaviour sendBehaviour) {
 		return sendPacket(new ComplexRequest(raw, true), sendBehaviour);
 	}
 
+	@Nonnull
 	public Future<ComplexResponse> sendPacket(ComplexRequest req) {
 		return sendPacket(req, SendBehaviour.NORMAL);
 	}
 
+	@Nonnull
 	public Future<ComplexResponse> sendPacket(
 			ComplexRequest req, SendBehaviour sendBehaviour) {
 		if (closed) {
@@ -159,16 +167,19 @@ public class TeamspeakIO {
 		return prom;
 	}
 
+	@Nonnull
 	public <T, R> Future<R> chainFuture(
 			Future<T> future, Function<T, R> mapping) {
 		return FutureUtil.chainFuture(newPromise(), future, mapping);
 	}
 
+	@Nonnull
 	public <T, R> Future<R> chainFutureFlat(
 			Future<T> future, Function<T, Future<R>> mapping) {
 		return FutureUtil.chainFutureFlat(newPromise(), future, mapping);
 	}
 
+	@Nonnull
 	public <T, R> Future<R> chainFutureAdvanced(
 			Future<T> future, BiExFunction<T, Throwable, R> mapping) {
 		return FutureUtil.chainFutureAdvanced(newPromise(), future, mapping);
@@ -194,10 +205,21 @@ public class TeamspeakIO {
 		}
 	}
 
+	/**
+	 * Generates a new promise
+	 *
+	 * @param <T> the object stored in this promise
+	 * @return an new empty promise
+	 * @see EventLoop#newPromise()
+	 */
+	@Nonnull
 	public <T> Promise<T> newPromise() {
 		return this.channel.eventLoop().newPromise();
 	}
 
+	/**
+	 * Starts this teamspeakIO
+	 */
 	public void start() {
 		if (this.con == null) {
 			throw new IllegalStateException(
@@ -245,10 +267,24 @@ public class TeamspeakIO {
 
 	}
 
+	/**
+	 * Generates a new completedfuture
+	 *
+	 * @param <T> the type of object stored
+	 * @param object the object thats returned as the future
+	 * @return the inputed object wrapped in a completed future
+	 */
+	@Nonnull
 	public <T> Future<T> getCompletedFuture(T object) {
 		return channel.eventLoop().newSucceededFuture(object);
 	}
 
+	/**
+	 * Gets the Netty channel object
+	 *
+	 * @return the Netty channel object
+	 */
+	@Nonnull
 	public Channel getChannel() {
 		return channel;
 	}
@@ -259,10 +295,16 @@ public class TeamspeakIO {
 	 *
 	 * @return the result of the ping
 	 */
+	@Nonnull
 	public Future<?> ping() {
 		return channel.writeAndFlush(PING_PACKET.retain());
 	}
 
+	/**
+	 * Generates a new number to use for the file transfer submodule
+	 *
+	 * @return a new number to use for the file transfer submodule
+	 */
 	public long generateFileTransferId() {
 		return fileTransferId.getAndIncrement();
 	}
@@ -275,6 +317,8 @@ public class TeamspeakIO {
 		// TODO refresh who am i promise
 	}
 
+	@Nonnull
+	@Deprecated
 	public Future<NamedOnlineClient> whoAmI() {
 		return con.self().whoAmI();
 	}

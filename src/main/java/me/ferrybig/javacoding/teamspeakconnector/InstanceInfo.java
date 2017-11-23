@@ -45,10 +45,20 @@ public class InstanceInfo {
 
 	private final int filetransferPort;
 
+	/**
+	 * Creates a InstanceInfo
+	 *
+	 * @param filetransferPort the file transfer port
+	 */
 	public InstanceInfo(int filetransferPort) {
 		this.filetransferPort = filetransferPort;
 	}
 
+	/**
+	 * Gets the file transfer port
+	 *
+	 * @return the file transfer port
+	 */
 	public int getFiletransferPort() {
 		return filetransferPort;
 	}

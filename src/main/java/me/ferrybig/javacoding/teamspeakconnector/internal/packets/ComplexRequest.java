@@ -23,11 +23,17 @@
  */
 package me.ferrybig.javacoding.teamspeakconnector.internal.packets;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
+/**
+ * A request, ready to be send to the Teamspeak server
+ * @author Fernando
+ */
 @Immutable
 public final class ComplexRequest {
 
@@ -35,10 +41,21 @@ public final class ComplexRequest {
 	private final Map<String, String> data;
 	private final boolean raw;
 
+	/**
+	 * Creates a <code>ComplexRequest</code>
+	 * @param cmd Command to be send
+	 * @param raw Should the command be escaped when send
+	 */
 	public ComplexRequest(String cmd, boolean raw) {
 		this(cmd, Collections.emptyMap(), raw);
 	}
 
+	/**
+	 * Creates a <code>ComplexRequest</code>
+	 * @param cmd Command to be send
+	 * @param data Arguments of this packet
+	 * @param raw Should the command be escaped when send
+	 */
 	public ComplexRequest(String cmd, Map<String, String> data, boolean raw) {
 		this.cmd = Objects.requireNonNull(cmd);
 		this.data = data.isEmpty()
@@ -46,23 +63,41 @@ public final class ComplexRequest {
 		this.raw = raw;
 	}
 
+	/**
+	 * Checks if this packet is in raw mode
+	 * @return returns true if in raw mode
+	 */
 	public boolean isRaw() {
 		return raw;
 	}
 
+	/**
+	 * Get the command, and optionally arguments if in raw mode
+	 * @return the command
+	 */
 	public String getCmd() {
 		return cmd;
 	}
 
+	/**
+	 * Returns all arguments for this packet
+	 * @return all arguments for this packet
+	 */
 	public Map<String, String> getData() {
 		return data;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String toString() {
 		return "ComplexRequest{" + "cmd=" + cmd + ", data=" + data + '}';
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int hashCode() {
 		int hash = 5;
@@ -72,8 +107,12 @@ public final class ComplexRequest {
 		return hash;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressFBWarnings(value = "NP_METHOD_PARAMETER_TIGHTENS_ANNOTATION")
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(@Nullable Object obj) {
 		if (this == obj) {
 			return true;
 		}

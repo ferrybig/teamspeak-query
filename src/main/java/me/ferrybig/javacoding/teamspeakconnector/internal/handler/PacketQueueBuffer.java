@@ -32,10 +32,10 @@ import io.netty.util.ReferenceCountUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import javax.annotation.Nonnull;
 
 /**
- *
- * @author Fernando
+ * Netty handler to buffer packets send till the next handler is ready
  */
 public class PacketQueueBuffer extends ChannelInboundHandlerAdapter {
 
@@ -46,7 +46,7 @@ public class PacketQueueBuffer extends ChannelInboundHandlerAdapter {
 	private ChannelHandlerContext ctx;
 
 	@Override
-	public void channelReadComplete(ChannelHandlerContext ctx)
+	public void channelReadComplete(@Nonnull ChannelHandlerContext ctx)
 			throws Exception {
 		if (replaced) {
 			ctx.fireChannelReadComplete();
@@ -56,7 +56,7 @@ public class PacketQueueBuffer extends ChannelInboundHandlerAdapter {
 	}
 
 	@Override
-	public void channelRead(ChannelHandlerContext ctx, Object msg)
+	public void channelRead(@Nonnull ChannelHandlerContext ctx, @Nonnull Object msg)
 			throws Exception {
 		if (replaced) {
 			ctx.fireChannelRead(msg);
@@ -66,19 +66,19 @@ public class PacketQueueBuffer extends ChannelInboundHandlerAdapter {
 	}
 
 	@Override
-	public void channelActive(ChannelHandlerContext ctx) throws Exception {
+	public void channelActive(@Nonnull ChannelHandlerContext ctx) throws Exception {
 		super.channelActive(ctx);
 		this.ctx = ctx;
 	}
 
 	@Override
-	public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+	public void channelRegistered(@Nonnull ChannelHandlerContext ctx) throws Exception {
 		super.channelRegistered(ctx);
 		this.ctx = ctx;
 	}
 
 	@Override
-	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+	public void channelInactive(@Nonnull ChannelHandlerContext ctx) throws Exception {
 		super.channelInactive(ctx);
 		this.ctx = ctx;
 		for (ByteBuf b : queue) {
@@ -87,12 +87,12 @@ public class PacketQueueBuffer extends ChannelInboundHandlerAdapter {
 		queue.clear();
 	}
 
-	public void replace(ChannelHandlerAdapter other) {
+	public void replace(@Nonnull ChannelHandlerAdapter other) {
 		this.ctx.pipeline().addLast(other);
 		flushBuffers();
 	}
 
-	public void replace(Consumer<? super Channel> other) {
+	public void replace(@Nonnull Consumer<? super Channel> other) {
 		other.accept(ctx.channel());
 		flushBuffers();
 	}

@@ -29,10 +29,16 @@ import io.netty.handler.codec.DecoderException;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.util.concurrent.Promise;
 import java.util.concurrent.TimeUnit;
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakConnection;
 import me.ferrybig.javacoding.teamspeakconnector.TeamspeakException;
 import me.ferrybig.javacoding.teamspeakconnector.internal.TeamspeakIO;
 
+/**
+ * Handler that finalizes the handshaking with Teamspeak
+ */
+@ParametersAreNonnullByDefault
 public class HandshakeListener extends SimpleChannelInboundHandler<String> {
 
 	private static final String TS_HEADER_1 = "TS3";
@@ -41,8 +47,14 @@ public class HandshakeListener extends SimpleChannelInboundHandler<String> {
 			+ "type \"help\" for a list of commands and \"help <command>\" "
 			+ "for information on a specific command.";
 	private boolean headerReceived = false;
+	@Nonnull
 	private final Promise<TeamspeakConnection> prom;
 
+	/**
+	 * Constructs a HandshakeListener
+	 *
+	 * @param prom promise for the result
+	 */
 	public HandshakeListener(Promise<TeamspeakConnection> prom) {
 		this.prom = prom;
 	}
